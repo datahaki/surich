@@ -2,7 +2,7 @@
 // inspired by Shangtong Zhang
 package ch.alpine.surich.ch03.grid;
 
-import ch.alpine.bridge.pro.RunProvider;
+import ch.alpine.bridge.pro.VoidProvider;
 import ch.alpine.subare.alg.ValueIteration;
 import ch.alpine.subare.api.Policy;
 import ch.alpine.subare.util.DiscreteUtils;
@@ -40,11 +40,11 @@ import ch.alpine.tensor.sca.Round;
  * {4, 2} 14.4
  * {4, 3} 13.0
  * {4, 4} 11.7 */
-/* package */ enum VI_Gridworld implements RunProvider {
+/* package */ enum VI_Gridworld implements VoidProvider {
   INSTANCE;
 
   @Override
-  public Object runStandalone() {
+  public Void runStandalone() {
     Gridworld gridworld = new Gridworld();
     ValueIteration vi = new ValueIteration(gridworld, gridworld);
     vi.untilBelow(Chop._04);
@@ -52,7 +52,7 @@ import ch.alpine.tensor.sca.Round;
     DiscreteUtils.print(vi.vs(), Round._1);
     Policy policy = PolicyType.GREEDY.bestEquiprobable(gridworld, vi.vs(), null);
     Policies.print(policy, gridworld.states());
-    return policy;
+    return null;
   }
 
   static void main() {

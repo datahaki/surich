@@ -1,7 +1,7 @@
 // code by jph
 package ch.alpine.surich.ch06.maxbias;
 
-import ch.alpine.bridge.pro.RunProvider;
+import ch.alpine.bridge.pro.VoidProvider;
 import ch.alpine.subare.util.DiscreteQsa;
 import ch.alpine.subare.util.DiscreteUtils;
 import ch.alpine.subare.util.DiscreteVs;
@@ -26,18 +26,18 @@ import ch.alpine.subare.util.DiscreteVs;
  * 1 -0.1
  * 2 0
  * 3 0 */
-enum AVI_Maxbias implements RunProvider {
+enum AVI_Maxbias implements VoidProvider {
   INSTANCE;
 
   @Override
-  public Object runStandalone() {
+  public Void runStandalone() {
     Maxbias maxbias = new Maxbias(5);
     DiscreteQsa qsa = MaxbiasHelper.getOptimalQsa(maxbias);
     DiscreteUtils.print(qsa);
     System.out.println("---");
     DiscreteVs vs = DiscreteUtils.createVs(maxbias, qsa);
     DiscreteUtils.print(vs);
-    return vs;
+    return null;
   }
 
   static void main() {

@@ -2,7 +2,7 @@
 // inspired by Shangtong Zhang
 package ch.alpine.surich.ch03.grid;
 
-import ch.alpine.bridge.pro.RunProvider;
+import ch.alpine.bridge.pro.VoidProvider;
 import ch.alpine.subare.alg.ActionValueIteration;
 import ch.alpine.subare.util.DiscreteUtils;
 import ch.alpine.subare.util.DiscreteVs;
@@ -38,11 +38,11 @@ import ch.alpine.tensor.sca.Round;
  * {4, 2} 14.4
  * {4, 3} 13.0
  * {4, 4} 11.7 */
-/* package */ enum AVI_Gridworld implements RunProvider {
+/* package */ enum AVI_Gridworld implements VoidProvider {
   INSTANCE;
 
   @Override
-  public Object runStandalone() {
+  public Void runStandalone() {
     Gridworld gridworld = new Gridworld();
     ActionValueIteration avi = ActionValueIteration.of(gridworld);
     avi.untilBelow(Chop._04);
@@ -50,7 +50,7 @@ import ch.alpine.tensor.sca.Round;
     DiscreteUtils.print(avi.qsa(), Round._1);
     DiscreteVs dvs = DiscreteUtils.createVs(gridworld, avi.qsa());
     DiscreteUtils.print(dvs, Round._1);
-    return dvs;
+    return null;
   }
 
   static void main() {

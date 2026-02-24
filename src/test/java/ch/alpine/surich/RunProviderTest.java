@@ -1,0 +1,22 @@
+// code by jph
+package ch.alpine.surich;
+
+import java.util.function.Supplier;
+import java.util.stream.Stream;
+
+import org.junit.jupiter.api.DynamicTest;
+import org.junit.jupiter.api.TestFactory;
+
+import ch.alpine.bridge.pro.RunProvider;
+import ch.alpine.bridge.pro.SanityCheckRunProvider;
+import ch.alpine.tensor.ext.ref.InstanceDiscovery;
+
+class RunProviderTest {
+  @TestFactory
+  Stream<DynamicTest> dynamicTests() {
+    return InstanceDiscovery.of(getClass().getPackageName(), RunProvider.class).stream() //
+        .map(Supplier::get) //
+        .map(instance -> DynamicTest.dynamicTest(instance.toString(), //
+            () -> SanityCheckRunProvider.INSTANCE.accept(instance)));
+  }
+}
