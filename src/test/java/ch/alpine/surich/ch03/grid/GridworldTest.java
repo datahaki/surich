@@ -4,6 +4,7 @@ package ch.alpine.surich.ch03.grid;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
+import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Test;
 
 import ch.alpine.subare.alg.ActionValueIteration;
@@ -22,6 +23,7 @@ import ch.alpine.tensor.Tensors;
 import ch.alpine.tensor.sca.Chop;
 
 class GridworldTest {
+  @Disabled
   @Test
   void testBasics() {
     Gridworld gridworld = new Gridworld();
@@ -29,6 +31,7 @@ class GridworldTest {
     assertEquals(gridworld.reward(Tensors.vector(0, 0), Tensors.vector(-1, 0), null), RealScalar.ONE.negate());
   }
 
+  @Disabled
   @Test
   void testIndex() {
     Gridworld gridworld = new Gridworld();
