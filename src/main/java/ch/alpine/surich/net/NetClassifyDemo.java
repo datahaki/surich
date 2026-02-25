@@ -3,6 +3,7 @@ package ch.alpine.surich.net;
 
 import java.awt.Graphics2D;
 import java.awt.Rectangle;
+import java.util.List;
 
 import ch.alpine.ascony.dis.ManifoldDisplay;
 import ch.alpine.ascony.dis.ManifoldDisplays;
@@ -37,8 +38,7 @@ public class NetClassifyDemo extends ControlPointsDemo {
   @ReflectionMarker
   public static class Param0 extends AsconaParam {
     public Param0() {
-      super(false, ManifoldDisplays.R2_ONLY);
-      manifoldDisplays = ManifoldDisplays.R2;
+      super(false);
       drawControlPoints = false;
     }
 
@@ -58,6 +58,7 @@ public class NetClassifyDemo extends ControlPointsDemo {
   }
 
   private final Param0 param0;
+  @SuppressWarnings("unused")
   private final Param2 param2;
   // ---
   Show show = new Show();
@@ -71,9 +72,15 @@ public class NetClassifyDemo extends ControlPointsDemo {
     super(param0, param2);
     this.param0 = param0;
     this.param2 = param2;
+    setManifoldDisplay(ManifoldDisplays.R2);
     fieldsEditor(0).addUniversalListener(this::shuffle);
     fieldsEditor(1).addUniversalListener(this::train);
     shuffle();
+  }
+
+  @Override
+  public List<ManifoldDisplays> permitted_manifoldDisplays() {
+    return ManifoldDisplays.R2_ONLY;
   }
 
   private void shuffle() {
