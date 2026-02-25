@@ -7,7 +7,7 @@ import java.util.List;
 
 import ch.alpine.ascony.dis.ManifoldDisplay;
 import ch.alpine.ascony.dis.ManifoldDisplays;
-import ch.alpine.ascony.ref.AsconaParam;
+import ch.alpine.ascony.ren.AsconaParam;
 import ch.alpine.ascony.ren.PointsRender;
 import ch.alpine.ascony.win.ControlPointsDemo;
 import ch.alpine.bridge.fig.DensityPlot;
@@ -36,12 +36,7 @@ import ch.alpine.tensor.qty.Quantity;
 
 public class NetClassifyDemo extends ControlPointsDemo {
   @ReflectionMarker
-  public static class Param0 extends AsconaParam {
-    public Param0() {
-      super(false);
-      drawControlPoints = false;
-    }
-
+  public static class Param0 {
     @FieldSelectionArray({ "10", "20", "50" })
     public Integer size = 20;
     @FieldSelectionArray({ "2", "3", "4", "5" })
@@ -69,7 +64,8 @@ public class NetClassifyDemo extends ControlPointsDemo {
   }
 
   public NetClassifyDemo(Param0 param0, Param2 param2) {
-    super(param0, param2);
+    super(new AsconaParam(false), param0, param2);
+    asconaParam().drawControlPoints = false;
     this.param0 = param0;
     this.param2 = param2;
     setManifoldDisplay(ManifoldDisplays.R2);
