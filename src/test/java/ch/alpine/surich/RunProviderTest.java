@@ -1,7 +1,6 @@
 // code by jph
 package ch.alpine.surich;
 
-import java.util.function.Supplier;
 import java.util.stream.Stream;
 
 import org.junit.jupiter.api.DynamicTest;
@@ -15,8 +14,7 @@ class RunProviderTest {
   @TestFactory
   Stream<DynamicTest> dynamicTests() {
     return InstanceDiscovery.of(getClass().getPackageName(), RunProvider.class).stream() //
-        .map(Supplier::get) //
-        .map(instance -> DynamicTest.dynamicTest(instance.toString(), //
-            () -> SanityCheckRunProvider.INSTANCE.accept(instance)));
+        .map(instanceRecord -> DynamicTest.dynamicTest(instanceRecord.toString(), //
+            () -> SanityCheckRunProvider.INSTANCE.accept(instanceRecord.supplier().get())));
   }
 }
