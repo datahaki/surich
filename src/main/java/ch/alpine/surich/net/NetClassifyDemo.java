@@ -7,7 +7,6 @@ import java.util.List;
 
 import ch.alpine.ascony.dis.ManifoldDisplay;
 import ch.alpine.ascony.dis.ManifoldDisplays;
-import ch.alpine.ascony.ren.AsconaParam;
 import ch.alpine.ascony.ren.PointsRender;
 import ch.alpine.ascony.win.ControlPointsDemo;
 import ch.alpine.bridge.fig.DensityPlot;
@@ -64,8 +63,7 @@ public class NetClassifyDemo extends ControlPointsDemo {
   }
 
   public NetClassifyDemo(Param0 param0, Param2 param2) {
-    super(new AsconaParam(false), param0, param2);
-    asconaParam().drawControlPoints = false;
+    super(param0, param2);
     this.param0 = param0;
     this.param2 = param2;
     setManifoldDisplay(ManifoldDisplays.R2);
@@ -77,6 +75,16 @@ public class NetClassifyDemo extends ControlPointsDemo {
   @Override
   public List<ManifoldDisplays> permitted_manifoldDisplays() {
     return ManifoldDisplays.R2_ONLY;
+  }
+
+  @Override
+  protected boolean addRemoveControlPoints() {
+    return false;
+  }
+
+  @Override
+  protected boolean drawControlPoints() {
+    return false;
   }
 
   private void shuffle() {
