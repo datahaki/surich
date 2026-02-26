@@ -3,12 +3,12 @@ package ch.alpine.surich.net;
 
 import java.awt.Graphics2D;
 import java.awt.Rectangle;
-import java.util.List;
 
 import ch.alpine.ascony.dis.ManifoldDisplay;
-import ch.alpine.ascony.dis.ManifoldDisplays;
 import ch.alpine.ascony.ren.PointsRender;
-import ch.alpine.ascony.win.ControlPointsDemo;
+import ch.alpine.ascony.win.ControlPointType;
+import ch.alpine.ascony.win.ControlPointTypes;
+import ch.alpine.ascony.win.EuclideanPlaneDemo;
 import ch.alpine.bridge.fig.DensityPlot;
 import ch.alpine.bridge.fig.Show;
 import ch.alpine.bridge.gfx.GeometricLayer;
@@ -22,7 +22,6 @@ import ch.alpine.tensor.RealScalar;
 import ch.alpine.tensor.Scalar;
 import ch.alpine.tensor.Tensor;
 import ch.alpine.tensor.Tensors;
-import ch.alpine.tensor.alg.Dimensions;
 import ch.alpine.tensor.img.ColorDataGradients;
 import ch.alpine.tensor.img.ColorDataIndexed;
 import ch.alpine.tensor.img.ColorDataLists;
@@ -33,58 +32,46 @@ import ch.alpine.tensor.pdf.RandomVariate;
 import ch.alpine.tensor.pdf.d.DiscreteUniformDistribution;
 import ch.alpine.tensor.qty.Quantity;
 
-public class NetClassifyDemo extends ControlPointsDemo {
+class NetClassifyDemo extends EuclideanPlaneDemo {
   @ReflectionMarker
-  public static class Param0 {
+  static class Param0 {
     @FieldSelectionArray({ "10", "20", "50" })
     public Integer size = 20;
     @FieldSelectionArray({ "2", "3", "4", "5" })
     public Integer labels = 3;
     @FieldFuse
     public transient Boolean shuffle = false;
-    public ColorDataLists cdg = ColorDataLists._097;
   }
 
   @ReflectionMarker
-  public static class Param2 {
+  static class Param1 {
     @FieldFuse
     public transient Boolean train = false;
   }
 
+  @ReflectionMarker
+  static class Param2 {
+    public ColorDataGradients cdg = ColorDataGradients.COPPER;
+    public ColorDataLists cdl = ColorDataLists._097;
+  }
+
   private final Param0 param0;
   @SuppressWarnings("unused")
+  private final Param1 param1;
   private final Param2 param2;
   // ---
-  Show show = new Show();
   protected Tensor vector;
 
   public NetClassifyDemo() {
-    this(new Param0(), new Param2());
-  }
-
-  public NetClassifyDemo(Param0 param0, Param2 param2) {
-    super(param0, param2);
-    this.param0 = param0;
-    this.param2 = param2;
-    setManifoldDisplay(ManifoldDisplays.R2);
+    super(param0 = new Param0(), param1 = new Param1(), param2 = new Param2());
     fieldsEditor(0).addUniversalListener(this::shuffle);
     fieldsEditor(1).addUniversalListener(this::train);
     shuffle();
   }
 
   @Override
-  public List<ManifoldDisplays> permitted_manifoldDisplays() {
-    return ManifoldDisplays.R2_ONLY;
-  }
-
-  @Override
-  protected boolean addRemoveControlPoints() {
-    return false;
-  }
-
-  @Override
-  protected boolean drawControlPoints() {
-    return false;
+  protected ControlPointType controlPointType() {
+    return ControlPointTypes.DELEGATED;
   }
 
   private void shuffle() {
@@ -99,15 +86,13 @@ public class NetClassifyDemo extends ControlPointsDemo {
     train();
   }
 
+  NetChain netChain;
+
   private void train() {
     Tensor xdata = getGeodesicControlPoints();
-    CoordinateBoundingBox cbb = CoordinateBounds.of(xdata);
-    NetChain netChain = NetChains.argMaxMLP(2, 7, param0.labels);
-    IO.println(Dimensions.of(xdata));
+    netChain = NetChains.argMaxMLP(2, 7, param0.labels);
     NetTrain.of(netChain, xdata, vector, RealScalar.of(0.05), _ -> {
     }, Quantity.of(0.3, "s"), 3000, 10);
-    show = new Show();
-    show.add(DensityPlot.of((x, y) -> (Scalar) netChain.forward(Tensors.of(x, y)), cbb, ColorDataGradients.COPPER));
   }
 
   @Override // from RenderInterface
@@ -116,10 +101,12 @@ public class NetClassifyDemo extends ControlPointsDemo {
     Tensor xdata = getGeodesicControlPoints();
     CoordinateBoundingBox cbb = CoordinateBounds.of(xdata);
     Rectangle rectangle = geometricLayer.toRectangle(cbb);
+    Show show = new Show();
+    show.add(DensityPlot.of((x, y) -> (Scalar) netChain.forward(Tensors.of(x, y)), cbb, param2.cdg));
     show.setAspectRatioDontCare();
     show.render(graphics, rectangle);
     // ---
-    render(geometricLayer, graphics, manifoldDisplay, getGeodesicControlPoints(), vector, param0.cdg.cyclic());
+    render(geometricLayer, graphics, manifoldDisplay, getGeodesicControlPoints(), vector, param2.cdl.cyclic());
   }
 
   static void render(GeometricLayer geometricLayer, Graphics2D graphics, ManifoldDisplay manifoldDisplay, Tensor sequence, Tensor vector,
