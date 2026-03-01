@@ -40,7 +40,7 @@ import ch.alpine.tensor.sca.Round;
  * {4, 2} 14.4
  * {4, 3} 13.0
  * {4, 4} 11.7 */
-/* package */ enum VI_Gridworld implements VoidProvider {
+enum VI_Gridworld implements VoidProvider {
   INSTANCE;
 
   @Override

@@ -5,7 +5,6 @@ import java.awt.Container;
 import java.awt.Point;
 
 import javax.swing.ImageIcon;
-import javax.swing.JLabel;
 
 import ch.alpine.bridge.awt.AwtUtil;
 import ch.alpine.bridge.pro.ManipulateProvider;
@@ -27,12 +26,19 @@ import ch.alpine.tensor.Tensor;
 import ch.alpine.tensor.alg.Subdivide;
 
 /** Sarsa applied to gambler for different learning rate parameters */
-/* package */ enum Bulk_Gambler implements ManipulateProvider {
+enum Bulk_Gambler implements ManipulateProvider {
   INSTANCE(SarsaType.QLEARNING, 1);
 
-  private final JLabel jLabel;
+  private final SarsaType sarsaType;
+  private final int nstep;
 
   private Bulk_Gambler(SarsaType sarsaType, int nstep) {
+    this.sarsaType = sarsaType;
+    this.nstep = nstep;
+  }
+
+  @Override
+  public Container getContainer() {
     GamblerModel gamblerModel = new GamblerModel(20, Rational.of(4, 10)); // 20, 4/10
     final DiscreteQsa ref = GamblerHelper.getOptimalQsa(gamblerModel); // true q-function, for error measurement
     // ---
@@ -59,12 +65,7 @@ import ch.alpine.tensor.alg.Subdivide;
     }
     // ---
     ImageIcon imageIcon = learningCompetition.doit();
-    jLabel = AwtUtil.iconAsLabel(imageIcon);
-  }
-
-  @Override
-  public Container getContainer() {
-    return jLabel;
+    return AwtUtil.iconAsLabel(imageIcon);
   }
 
   static void main() throws Exception {

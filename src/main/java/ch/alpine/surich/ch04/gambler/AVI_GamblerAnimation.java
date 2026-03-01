@@ -3,8 +3,6 @@ package ch.alpine.surich.ch04.gambler;
 
 import java.awt.Container;
 
-import javax.swing.JLabel;
-
 import ch.alpine.ascony.io.ImageIconRecorder;
 import ch.alpine.bridge.awt.AwtUtil;
 import ch.alpine.bridge.pro.ManipulateProvider;
@@ -21,9 +19,8 @@ import ch.alpine.subare.util.gfx.StateActionRasters;
 enum AVI_GamblerAnimation implements ManipulateProvider {
   INSTANCE;
 
-  private final JLabel jLabel;
-
-  private AVI_GamblerAnimation() {
+  @Override
+  public Container getContainer() {
     GamblerModel gamblerModel = GamblerModel.createDefault();
     final DiscreteQsa ref = GamblerHelper.getOptimalQsa(gamblerModel);
     ActionValueIteration avi = ActionValueIteration.of(gamblerModel);
@@ -35,12 +32,7 @@ enum AVI_GamblerAnimation implements ManipulateProvider {
       avi.step();
     }
     imageIconRecorder.write(StateActionRasters.qsaPolicyRef(new GamblerRaster(gamblerModel), avi.qsa(), ref));
-    jLabel = AwtUtil.iconAsLabel(imageIconRecorder.getIconImage());
-  }
-
-  @Override
-  public Container getContainer() {
-    return jLabel;
+    return AwtUtil.iconAsLabel(imageIconRecorder.getIconImage());
   }
 
   static void main() {

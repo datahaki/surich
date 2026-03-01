@@ -3,8 +3,6 @@ package ch.alpine.surich.ch05.wireloop;
 
 import java.awt.Container;
 
-import javax.swing.JLabel;
-
 import ch.alpine.ascony.io.ImageIconRecorder;
 import ch.alpine.bridge.awt.AwtUtil;
 import ch.alpine.bridge.pro.ManipulateProvider;
@@ -21,9 +19,8 @@ import ch.alpine.tensor.RealScalar;
 enum RSTQP_Wireloop implements ManipulateProvider {
   INSTANCE;
 
-  private final JLabel jLabel;
-
-  RSTQP_Wireloop() {
+  @Override
+  public Container getContainer() {
     String name = "wire5";
     WireloopReward wireloopReward = WireloopReward.freeSteps();
     wireloopReward = WireloopReward.constantCost();
@@ -42,12 +39,7 @@ enum RSTQP_Wireloop implements ManipulateProvider {
       if (infoline.isLossfree())
         break;
     }
-    jLabel = AwtUtil.iconAsLabel(imageIconRecorder.getIconImage());
-  }
-
-  @Override
-  public Container getContainer() {
-    return jLabel;
+    return AwtUtil.iconAsLabel(imageIconRecorder.getIconImage());
   }
 
   static void main() {

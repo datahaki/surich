@@ -4,7 +4,6 @@ package ch.alpine.surich.ch04.gambler;
 import java.awt.Container;
 
 import javax.swing.ImageIcon;
-import javax.swing.JLabel;
 
 import ch.alpine.ascony.io.ImageIconRecorder;
 import ch.alpine.bridge.awt.AwtUtil;
@@ -23,12 +22,11 @@ import ch.alpine.subare.util.gfx.StateActionRasters;
 import ch.alpine.tensor.Tensor;
 import ch.alpine.tensor.sca.Round;
 
-/* package */ enum MCES_Gambler implements ManipulateProvider {
+enum MCES_Gambler implements ManipulateProvider {
   INSTANCE;
 
-  private final JLabel jLabel;
-
-  MCES_Gambler() {
+  @Override
+  public Container getContainer() {
     GamblerModel gambler = GamblerModel.createDefault();
     GamblerRaster gamblerRaster = new GamblerRaster(gambler);
     final DiscreteQsa ref = GamblerHelper.getOptimalQsa(gambler);
@@ -47,12 +45,7 @@ import ch.alpine.tensor.sca.Round;
     System.out.println("done");
     DiscreteVs discreteVs = DiscreteUtils.createVs(gambler, mces.qsa());
     DiscreteUtils.print(discreteVs, Round._2);
-    jLabel = AwtUtil.iconAsLabel(iconImage);
-  }
-
-  @Override
-  public Container getContainer() {
-    return jLabel;
+    return AwtUtil.iconAsLabel(iconImage);
   }
 
   static void main() {

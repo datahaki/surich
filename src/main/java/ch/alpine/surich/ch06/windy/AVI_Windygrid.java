@@ -5,8 +5,6 @@ package ch.alpine.surich.ch06.windy;
 import java.awt.Container;
 import java.io.IOException;
 
-import javax.swing.JLabel;
-
 import ch.alpine.ascony.io.ImageIconRecorder;
 import ch.alpine.bridge.awt.AwtUtil;
 import ch.alpine.bridge.pro.ManipulateProvider;
@@ -26,9 +24,8 @@ import ch.alpine.tensor.io.Export;
 enum AVI_Windygrid implements ManipulateProvider {
   INSANCE;
 
-  private final JLabel jLabel;
-
-  private AVI_Windygrid() {
+  @Override
+  public Container getContainer() {
     Windygrid windygrid = Windygrid.createFour();
     WindygridRaster windygridRaster = new WindygridRaster(windygrid);
     DiscreteQsa ref = WindygridHelper.getOptimalQsa(windygrid);
@@ -48,16 +45,11 @@ enum AVI_Windygrid implements ManipulateProvider {
         break;
     }
     // TODO SUBARE extract code below to other file
-    jLabel = AwtUtil.iconAsLabel(imageIconRecorder.getIconImage());
     DiscreteVs vs = DiscreteUtils.createVs(windygrid, ref);
     DiscreteUtils.print(vs);
     Policy policy = PolicyType.GREEDY.bestEquiprobable(windygrid, ref, null);
     Policies.print(policy, windygrid.states());
-  }
-
-  @Override
-  public Container getContainer() {
-    return jLabel;
+    return AwtUtil.iconAsLabel(imageIconRecorder.getIconImage());
   }
 
   static void main() {

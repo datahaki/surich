@@ -12,11 +12,9 @@ import ch.alpine.bridge.ref.ann.ReflectionMarker;
 enum AVH_Dynamaze implements ManipulateProvider {
   INSTANCE;
 
-  public AVH_Dynamazes dyna = AVH_Dynamazes.START_0;
-
   @Override
   public Container getContainer() {
-    return AwtUtil.iconAsLabel(dyna.iconImage);
+    return AwtUtil.iconAsLabel(AVH_Dynamazes.START_0.iconImage);
   }
 
   static void main() throws Exception {

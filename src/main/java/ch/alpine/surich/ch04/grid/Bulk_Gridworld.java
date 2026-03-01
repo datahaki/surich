@@ -5,7 +5,6 @@ import java.awt.Container;
 import java.awt.Point;
 
 import javax.swing.ImageIcon;
-import javax.swing.JLabel;
 
 import ch.alpine.bridge.awt.AwtUtil;
 import ch.alpine.bridge.pro.ManipulateProvider;
@@ -29,9 +28,16 @@ import ch.alpine.tensor.alg.Subdivide;
 enum Bulk_Gridworld implements ManipulateProvider {
   INSTANCE(SarsaType.QLEARNING, 1);
 
-  private final JLabel jLabel;
+  private final SarsaType sarsaType;
+  private final int nstep;
 
   private Bulk_Gridworld(SarsaType sarsaType, int nstep) {
+    this.sarsaType = sarsaType;
+    this.nstep = nstep;
+  }
+
+  @Override
+  public Container getContainer() {
     Gridworld gambler = new Gridworld(); // 20, 4/10
     final DiscreteQsa ref = GridworldHelper.getOptimalQsa(gambler); // true q-function, for error measurement
     // ---
@@ -60,12 +66,7 @@ enum Bulk_Gridworld implements ManipulateProvider {
     }
     // ---
     ImageIcon imageIcon = learningCompetition.doit();
-    jLabel = AwtUtil.iconAsLabel(imageIcon);
-  }
-
-  @Override
-  public Container getContainer() {
-    return jLabel;
+    return AwtUtil.iconAsLabel(imageIcon);
   }
 
   static void main() throws Exception {
