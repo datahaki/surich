@@ -46,8 +46,8 @@ class GamblerModelTest {
   }
   // @Test
   // void testFailLambda() {
-  // MonteCarloInterface monteCarloInterface = new GamblerModel(10, RationalScalar.HALF);
-  // LearningRate learningRate = ConstantLearningRate.of(RationalScalar.HALF);
+  // MonteCarloInterface monteCarloInterface = new GamblerModel(10, Rational.HALF);
+  // LearningRate learningRate = ConstantLearningRate.of(Rational.HALF);
   // FeatureMapper featureMapper = ExactFeatureMapper.of(monteCarloInterface);
   // FeatureWeight w = new FeatureWeight(featureMapper);
   // assertThrows(Exception.class, () -> SarsaType.ORIGINAL.trueOnline(SimpleTestModel.INSTANCE, RealScalar.of(2), featureMapper, //
