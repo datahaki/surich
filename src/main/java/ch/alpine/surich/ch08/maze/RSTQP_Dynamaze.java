@@ -29,7 +29,7 @@ enum RSTQP_Dynamaze {
         new GifAnimationWriter(HomeDirectory.Pictures.resolve(name + "_qsa_rstqp.gif"), 250, TimeUnit.MILLISECONDS)) {
       int batches = 50;
       for (int index = 0; index < batches; ++index) {
-        Infoline infoline = Infoline.print(dynamaze, index, ref, qsa);
+        Infoline infoline = Infoline.of(dynamaze, ref, qsa);
         TabularSteps.batch(dynamaze, dynamaze, rstqp);
         animationWriter.write(StateRasters.vs_rescale(dynamazeRaster, qsa));
         if (infoline.isLossfree())

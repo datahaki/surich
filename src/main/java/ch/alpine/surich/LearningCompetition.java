@@ -71,7 +71,7 @@ public class LearningCompetition {
     learningContender.stepAndCompare(explorationRate, nstep, ref);
     Infoline infoline = learningContender.infoline(ref);
     {
-      Scalar error = infoline.q_error();
+      Scalar error = infoline.error();
       error = Min.of(error.divide(errorcap), RealScalar.ONE);
       image.set(colorDataFunction.apply(error), point.x, point.y);
     }

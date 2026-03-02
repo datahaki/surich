@@ -47,7 +47,7 @@ import ch.alpine.tensor.ext.HomeDirectory;
       try (AnimationWriter animationWriter2 = new GifAnimationWriter(getGifFileSac(sarsaType), 150, TimeUnit.MILLISECONDS)) {
         Sarsa sarsa = sarsaType.sarsa(gamblerModel, learningRate, qsa, sac, policy);
         for (int index = 0; index < batches; ++index) {
-          Infoline.print(gamblerModel, index, ref, qsa);
+          Infoline.of(gamblerModel, ref, qsa);
           ExploringStarts.batch(gamblerModel, policy, 1, sarsa);
           // ---
           animationWriter1.write(StateActionRasters.qsaPolicyRef(gamblerRaster, qsa, ref));

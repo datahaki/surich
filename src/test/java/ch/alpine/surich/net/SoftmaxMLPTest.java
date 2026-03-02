@@ -23,8 +23,7 @@ class SoftmaxMLPTest {
     for (int attempt = 0; attempt < 3; ++attempt) {
       SoftmaxMLP softmaxMLP = new SoftmaxMLP();
       Network network = softmaxMLP.new Network();
-      network.train(X, y);
-      Scalar error = network.evaluate(X, y);
+      Scalar error = network.train(X, y);
       if (Scalars.isZero(error))
         return;
     }

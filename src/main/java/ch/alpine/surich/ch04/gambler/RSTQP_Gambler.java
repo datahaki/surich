@@ -32,7 +32,7 @@ import ch.alpine.tensor.ext.HomeDirectory;
       try (AnimationWriter animationWriter2 = new GifAnimationWriter(HomeDirectory.Pictures.resolve("gambler_sac_rstqp.gif"), 200, TimeUnit.MILLISECONDS)) {
         int batches = 200;
         for (int index = 0; index < batches; ++index) {
-          Infoline infoline = Infoline.print(gamblerModel, index, ref, qsa);
+          Infoline infoline = Infoline.of(gamblerModel, ref, qsa);
           TabularSteps.batch(gamblerModel, gamblerModel, rstqp, avs);
           animationWriter1.write(StateActionRasters.qsaPolicyRef(gamblerRaster, qsa, ref));
           animationWriter2.write(StateActionRasters.qsa( //

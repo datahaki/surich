@@ -46,7 +46,7 @@ import ch.alpine.tensor.sca.Round;
       LearningRate learningRate = DefaultLearningRate.of(2, 0.51);
       Sarsa stepDigest = SarsaType.QLEARNING.sarsa(gamblerModel, learningRate, qsa, sac, policyEGreedy);
       for (int index = 0; index < batches; ++index) {
-        Infoline.print(gamblerModel, index, ref, qsa);
+        Infoline.of(gamblerModel, ref, qsa);
         for (int count = 0; count < 1; ++count) {
           ExploringStarts.batch(gamblerModel, policy, 1, stepDigest);
         }

@@ -29,7 +29,7 @@ enum MCES_Cliffwalk {
         new GifAnimationWriter(HomeDirectory.Pictures.resolve("cliffwalk_qsa_mces.gif"), 100, TimeUnit.MILLISECONDS)) {
       int batches = 100;
       for (int index = 0; index < batches; ++index) {
-        Infoline.print(cliffwalk, index, ref, mces.qsa());
+        Infoline.of(cliffwalk, ref, mces.qsa());
         for (int count = 0; count < 10; ++count) {
           StateActionCounter sac = new DiscreteStateActionCounter();
           PolicyBase policy = PolicyType.EGREEDY.bestEquiprobable(cliffwalk, mces.qsa(), sac);

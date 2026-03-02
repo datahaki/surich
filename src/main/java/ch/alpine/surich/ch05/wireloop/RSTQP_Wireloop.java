@@ -33,7 +33,7 @@ enum RSTQP_Wireloop implements ManipulateProvider {
     ImageIconRecorder imageIconRecorder = new ImageIconRecorder(250);
     int batches = 50;
     for (int index = 0; index < batches; ++index) {
-      Infoline infoline = Infoline.print(wireloop, index, ref, qsa);
+      Infoline infoline = Infoline.of(wireloop, ref, qsa);
       TabularSteps.batch(wireloop, wireloop, rstqp);
       imageIconRecorder.write(WireloopHelper.render(wireloopRaster, ref, qsa));
       if (infoline.isLossfree())

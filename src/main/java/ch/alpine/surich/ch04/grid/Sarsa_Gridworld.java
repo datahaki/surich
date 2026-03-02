@@ -48,7 +48,7 @@ enum Sarsa_Gridworld {
       Sarsa sarsa = sarsaType.sarsa(gridworld, learningRate, qsa, sac, policy);
       for (int index = 0; index < batches; ++index) {
         animationWriter.write(StateActionRasters.qsaLossRef(new GridworldRaster(gridworld), qsa, ref));
-        Infoline.print(gridworld, index, ref, qsa);
+        Infoline.of(gridworld, ref, qsa);
         // sarsa.supplyPolicy(() -> policy);
         ExploringStarts.batch(gridworld, policy, nstep, sarsa);
       }

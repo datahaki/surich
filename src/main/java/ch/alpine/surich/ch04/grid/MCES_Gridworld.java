@@ -31,7 +31,7 @@ enum MCES_Gridworld {
       EGreedyPolicy policy = (EGreedyPolicy) PolicyType.EGREEDY.bestEquiprobable(gridworld, mces.qsa(), sac);
       policy.setExplorationRate(LinearExplorationRate.of(batches, 0.2, 0.05));
       for (int index = 0; index < batches; ++index) {
-        Infoline.print(gridworld, index, ref, mces.qsa());
+        Infoline.of(gridworld, ref, mces.qsa());
         for (int count = 0; count < 1; ++count) {
           ExploringStarts.batch(gridworld, policy, mces);
         }

@@ -36,7 +36,7 @@ enum Sarsa_Wireloop {
     try (AnimationWriter animationWriter = new GifAnimationWriter( //
         HomeDirectory.Pictures.resolve(name + "L_qsa_" + sarsaType + "" + nstep + ".gif"), 250, TimeUnit.MILLISECONDS)) {
       for (int index = 0; index < batches; ++index) {
-        Infoline infoline = Infoline.print(wireloop, index, ref, qsa);
+        Infoline infoline = Infoline.of(wireloop, ref, qsa);
         ExploringStarts.batch(wireloop, policy, nstep, sarsa);
         animationWriter.write(WireloopHelper.render(wireloopRaster, ref, qsa));
         if (infoline.isLossfree())

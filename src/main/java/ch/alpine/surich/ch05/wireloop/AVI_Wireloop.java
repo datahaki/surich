@@ -24,7 +24,7 @@ enum AVI_Wireloop {
         new GifAnimationWriter(HomeDirectory.Pictures.resolve(name + "L_avi.gif"), 250, TimeUnit.MILLISECONDS)) {
       int batches = 50;
       for (int index = 0; index < batches; ++index) {
-        Infoline infoline = Infoline.print(wireloop, index, ref, avi.qsa());
+        Infoline infoline = Infoline.of(wireloop, ref, avi.qsa());
         animationWriter.write(WireloopHelper.render(wireloopRaster, ref, avi.qsa()));
         avi.step();
         if (infoline.isLossfree())

@@ -29,7 +29,7 @@ enum RSTQP_Cliffwalk {
         new GifAnimationWriter(HomeDirectory.Pictures.resolve("cliffwalk_qsa_rstqp.gif"), 200, TimeUnit.MILLISECONDS)) {
       int batches = 20;
       for (int index = 0; index < batches; ++index) {
-        Infoline infoline = Infoline.print(cliffwalk, index, ref, qsa);
+        Infoline infoline = Infoline.of(cliffwalk, ref, qsa);
         TabularSteps.batch(cliffwalk, cliffwalk, rstqp);
         animationWriter.write(StateActionRasters.qsaLossRef(cliffwalkRaster, qsa, ref));
         if (infoline.isLossfree())

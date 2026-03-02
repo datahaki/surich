@@ -36,7 +36,7 @@ enum MCES_Gambler implements ManipulateProvider {
     ImageIconRecorder imageIconRecorder = new ImageIconRecorder(200);
     int batches = 20;
     for (int index = 0; index < batches; ++index) {
-      Infoline.print(gambler, index, ref, mces.qsa());
+      Infoline.of(gambler, ref, mces.qsa());
       ExploringStarts.batch(gambler, policy, mces);
       Tensor tensor = StateActionRasters.qsaPolicyRef(gamblerRaster, mces.qsa(), ref);
       imageIconRecorder.write(tensor);

@@ -29,7 +29,7 @@ enum RSTQP_Windygrid {
         new GifAnimationWriter(HomeDirectory.Pictures.resolve("windygrid_qsa_rstqp.gif"), 250, TimeUnit.MILLISECONDS)) {
       int batches = 40;
       for (int index = 0; index < batches; ++index) {
-        Infoline infoline = Infoline.print(windygrid, index, ref, qsa);
+        Infoline infoline = Infoline.of(windygrid, ref, qsa);
         TabularSteps.batch(windygrid, windygrid, rstqp);
         animationWriter.write(StateActionRasters.qsaLossRef(windygridRaster, qsa, ref));
         if (infoline.isLossfree())

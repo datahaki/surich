@@ -52,7 +52,7 @@ import ch.alpine.tensor.qty.Timing;
         // DiscreteQsa toQsa = trueOnlineSarsa.getQsa();
         // XYtoSarsa.append(Tensors.vector(RealScalar.of(index).number(), errorAnalysis.getError(monteCarloInterface, optimalQsa, toQsa).number()));
         DiscreteQsa qsaRef = trueOnlineSarsa.qsa();
-        Infoline infoline = Infoline.print(gamblerModel, batch, ref, qsaRef);
+        Infoline infoline = Infoline.of(gamblerModel, ref, qsaRef);
         animationWriter.write(StateActionRasters.qsaLossRef(new GamblerRaster(gamblerModel), qsaRef, ref));
         if (infoline.isLossfree()) {
           animationWriter.write(StateActionRasters.qsaLossRef(new GamblerRaster(gamblerModel), qsaRef, ref));

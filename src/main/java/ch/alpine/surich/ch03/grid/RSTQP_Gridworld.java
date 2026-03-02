@@ -22,7 +22,7 @@ import ch.alpine.tensor.sca.Chop;
     StepDigest stepDigest = Random1StepTabularQPlanning.of( //
         gridworld, qsa, ConstantLearningRate.one());
     for (int index = 0; index < 20; ++index) {
-      Infoline infoline = Infoline.print(gridworld, index, ref, qsa);
+      Infoline infoline = Infoline.of(gridworld, ref, qsa);
       TabularSteps.batch(gridworld, gridworld, stepDigest);
       if (infoline.isLossfree())
         break;

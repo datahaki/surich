@@ -31,7 +31,7 @@ enum MCES_Wireloop {
       EGreedyPolicy policy = (EGreedyPolicy) PolicyType.EGREEDY.bestEquiprobable(wireloop, mces.qsa(), sac);
       policy.setExplorationRate(LinearExplorationRate.of(batches, 0.2, 0.05));
       for (int index = 0; index < batches; ++index) {
-        Infoline infoline = Infoline.print(wireloop, index, ref, mces.qsa());
+        Infoline infoline = Infoline.of(wireloop, ref, mces.qsa());
         for (int count = 0; count < 4; ++count) {
           ExploringStarts.batch(wireloop, policy, mces);
         }

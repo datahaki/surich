@@ -25,7 +25,7 @@ enum AVI_Fishfarm {
     try (AnimationWriter animationWriter = //
         new GifAnimationWriter(HomeDirectory.Pictures.resolve("fishfarm_qsa_avi.gif"), 200, TimeUnit.MILLISECONDS)) {
       for (int index = 0; index < 20; ++index) {
-        Infoline infoline = Infoline.print(fishfarm, index, ref, avi.qsa());
+        Infoline infoline = Infoline.of(fishfarm, ref, avi.qsa());
         animationWriter.write(StateRasters.qsaLossRef(fishfarmRaster, avi.qsa(), ref));
         avi.step();
         if (infoline.isErrorFree())

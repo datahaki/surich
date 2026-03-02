@@ -40,7 +40,7 @@ enum Sarsa_Cliffwalk {
         new GifAnimationWriter(HomeDirectory.Pictures.resolve("cliffwalk_qsa_" + sarsaType + ".gif"), 200, TimeUnit.MILLISECONDS)) {
       for (int index = 0; index < batches; ++index) {
         // if (batches - 10 < index)
-        Infoline infoline = Infoline.print(cliffwalk, index, ref, qsa);
+        Infoline infoline = Infoline.of(cliffwalk, ref, qsa);
         ExploringStarts.batch(cliffwalk, policy, nstep, sarsa);
         animationWriter.write(StateActionRasters.qsaLossRef(cliffwalkRaster, qsa, ref));
         if (infoline.isLossfree())

@@ -18,10 +18,10 @@ import ch.alpine.tensor.sca.Clips;
 class NetChainTest {
   @Test
   void test() {
-    Distribution DISTRIBUTION = UniformDistribution.of(Clips.absolute(0.5));
-    NetChain nc1 = NetChain.of(LinearFLayer.logSig(DISTRIBUTION, new Random(3), 3, 2));
+    Distribution distribution = UniformDistribution.of(Clips.absolute(0.5));
+    NetChain nc1 = NetChain.of(LinearFLayer.logSig(distribution, new Random(3), 3, 2));
     NetChain nc2 = NetChain.of( //
-        LinearLayer.of(DISTRIBUTION, new Random(3), 3, 2), //
+        LinearLayer.of(distribution, new Random(3), 3, 2), //
         ElementwiseLayer.logSig());
     Tolerance.CHOP.requireClose(nc1.parameters(), nc2.parameters());
     Tensor x = Tensors.vector(1, 2);
@@ -31,8 +31,10 @@ class NetChainTest {
     Tensor d = Tensors.vector(0.2, 0.4, 0.6);
     Tensor g1 = nc1.back(d);
     Tensor g2 = nc2.back(d);
-    IO.println(g1);
-    IO.println(g2);
+    g1.length();
+    g2.length();
+    // IO.println(g1);
+    // IO.println(g2);
     nc1.update();
     nc2.update();
     // IO.println(nc1.parameters());

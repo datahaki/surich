@@ -27,7 +27,7 @@ enum RSTQP_Gridworld {
       int batches = 10;
       for (int index = 0; index < batches; ++index) {
         animationWriter.write(StateActionRasters.qsaLossRef(new GridworldRaster(gridworld), qsa, ref));
-        Infoline.print(gridworld, index, ref, qsa);
+        Infoline.of(gridworld, ref, qsa);
         TabularSteps.batch(gridworld, gridworld, rstqp);
       }
     }

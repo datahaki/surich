@@ -17,7 +17,6 @@ import ch.alpine.tensor.Scalar;
 import ch.alpine.tensor.Tensor;
 import ch.alpine.tensor.Tensors;
 import ch.alpine.tensor.Unprotect;
-import ch.alpine.tensor.alg.Dimensions;
 import ch.alpine.tensor.alg.Range;
 import ch.alpine.tensor.io.TableBuilder;
 import ch.alpine.tensor.nrm.FrobeniusNorm;
@@ -62,13 +61,12 @@ public class XORNeuralNetwork implements ManipulateProvider {
     private final NetChain netChain = NetChains.binary(2, hiddenSize, 1);
     private final TableBuilder tableBuilder = new TableBuilder();
 
-    void train(Tensor y) {
+    /** @param Y
+     * @return error */
+    Scalar train(Tensor Y) {
       netChain.setL2(l2);
-      NetTrain.of(netChain, X, y, learningRate, tableBuilder::appendRow, timeout, maxEpoch, SKIP);
-    }
-
-    Scalar evaluate(Tensor Y) {
-      System.out.println("Evaluation after training:");
+      NetTrain.of(netChain, X, Y, learningRate, tableBuilder::appendRow, timeout, maxEpoch, SKIP);
+      // ---
       Tensor errors = Tensors.empty();
       for (int sample = 0; sample < X.length(); ++sample) {
         Tensor x = X.get(sample);
@@ -76,30 +74,23 @@ public class XORNeuralNetwork implements ManipulateProvider {
         Tensor t = Y.get(sample);
         Tensor e = t.subtract(y);
         errors.append(e);
-        System.out.printf("Input: %s -> Error: %s\n", x, e.maps(Round._3));
       }
       return FrobeniusNorm.of(errors);
     }
   }
 
-  public Show getShow() {
+  @Override
+  public Container getContainer() {
     Network network = new Network();
-    network.train(XOR);
-    Scalar error = network.evaluate(XOR);
-    IO.println(error);
+    Scalar error = network.train(XOR);
     Tensor table = network.tableBuilder.getTable();
-    IO.println(Dimensions.of(table));
     int n = Unprotect.dimension1Hint(table);
     Tensor domain = Range.of(0, table.length()).multiply(RealScalar.of(SKIP));
     Show show = new Show();
     for (int i = 0; i < n; ++i)
       show.add(ListLinePlot.of(domain, table.get(Tensor.ALL, i)));
-    return show;
-  }
-
-  @Override
-  public Container getContainer() {
-    return ShowGridComponent.of(getShow());
+    show.setPlotLabel("Error: " + error.maps(Round._3));
+    return ShowGridComponent.of(show);
   }
 
   static void main() {

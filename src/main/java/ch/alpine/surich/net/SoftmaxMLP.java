@@ -23,6 +23,7 @@ import ch.alpine.tensor.nrm.FrobeniusNorm;
 import ch.alpine.tensor.pdf.Distribution;
 import ch.alpine.tensor.pdf.c.NormalDistribution;
 import ch.alpine.tensor.qty.Quantity;
+import ch.alpine.tensor.sca.Round;
 
 @ReflectionMarker
 public class SoftmaxMLP implements ManipulateProvider {
@@ -32,7 +33,7 @@ public class SoftmaxMLP implements ManipulateProvider {
       { 5, 5 }, { 6, 5 }, { 5, 6 }, // Class 1
       { 8, 1 }, { 9, 2 }, { 8, 2 } // Class 2
   }).unmodifiable();
-  public static final Tensor y = Tensors.vectorInt(new int[] { 0, 0, 0, 1, 1, 1, 2, 2, 2 }).unmodifiable();
+  public static final Tensor Y = Tensors.vectorInt(new int[] { 0, 0, 0, 1, 1, 1, 2, 2, 2 }).unmodifiable();
   public static final int SKIP = 10;
   @FieldSelectionArray({ "6", "7", "8", "10" })
   public Integer hiddenSize = 8;
@@ -45,42 +46,34 @@ public class SoftmaxMLP implements ManipulateProvider {
     private final NetChain netChain = NetChains.argMaxMLP(2, hiddenSize, 3);
     private final TableBuilder tableBuilder = new TableBuilder();
 
-    void train(Tensor x, Tensor y) {
+    Scalar train(Tensor X, Tensor Y) {
       netChain.setL2(l2);
-      NetTrain.of(netChain, x, y, learningRate, tableBuilder::appendRow, timeout, maxEpoch, SKIP);
-    }
-
-    Scalar evaluate(Tensor X, Tensor T) {
-      System.out.println("Evaluation:");
+      NetTrain.of(netChain, X, Y, learningRate, tableBuilder::appendRow, timeout, maxEpoch, SKIP);
+      // ---
       Tensor errors = Tensors.empty();
       for (int n = 0; n < X.length(); n++) {
         Tensor x = X.get(n);
         Tensor y = netChain.forward(x);
-        Tensor error = y.subtract(T.get(n));
-        System.out.println("I: " + x + " | " + y + "=" + T.get(n)); // + probs.maps(Round._2)
+        Tensor error = y.subtract(Y.get(n));
+        // System.out.println("I: " + x + " | " + y + "=" + Y.get(n)); // + probs.maps(Round._2)
         errors.append(error);
       }
       return FrobeniusNorm.of(errors);
     }
   }
 
-  public Show getShow() {
+  @Override
+  public Container getContainer() {
     Network network = new Network();
-    network.train(X, y);
-    Scalar error = network.evaluate(X, y);
+    Scalar error = network.train(X, Y);
     Tensor table = network.tableBuilder.getTable();
-    IO.println(error);
     int n = Unprotect.dimension1Hint(table);
     Tensor domain = Range.of(0, table.length()).multiply(RealScalar.of(SKIP));
     Show show = new Show();
     for (int i = 0; i < n; ++i)
       show.add(ListLinePlot.of(domain, table.get(Tensor.ALL, i)));
-    return show;
-  }
-
-  @Override
-  public Container getContainer() {
-    return ShowGridComponent.of(getShow());
+    show.setPlotLabel("Error: " + error.maps(Round._3));
+    return ShowGridComponent.of(show);
   }
 
   static void main() {

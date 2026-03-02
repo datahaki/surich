@@ -42,7 +42,7 @@ enum TDQ_Dynamaze {
         new GifAnimationWriter(HomeDirectory.Pictures.resolve(name + "_tdq_" + sarsaType + ".gif"), 200, TimeUnit.MILLISECONDS)) {
       for (int index = 0; index < batches; ++index) {
         // if (EPISODES - 10 < index)
-        Infoline.print(dynamaze, index, ref, qsa);
+        Infoline.of(dynamaze, ref, qsa);
         // for (int count = 0; count < 5; ++count)
         ExploringStarts.batch(dynamaze, policy, tabularDynaQ);
         animationWriter.write(StateRasters.vs_rescale(dynamazeRaster, qsa));

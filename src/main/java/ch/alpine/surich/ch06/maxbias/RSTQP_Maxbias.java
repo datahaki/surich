@@ -25,7 +25,7 @@ enum RSTQP_Maxbias {
     int batches = 5000;
     for (int index = 0; index < 500; ++index)
       TabularSteps.batch(maxbias, maxbias, rstqp, avs);
-    Infoline.print(maxbias, batches, ref, qsa);
+    Infoline.of(maxbias, ref, qsa);
     System.out.println("---");
     ActionValueIteration avi = ActionValueIteration.of(maxbias, avs);
     avi.untilBelow(Chop._04);

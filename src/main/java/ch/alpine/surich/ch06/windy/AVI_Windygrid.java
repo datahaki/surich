@@ -38,7 +38,7 @@ enum AVI_Windygrid implements ManipulateProvider {
     }
     ImageIconRecorder imageIconRecorder = new ImageIconRecorder(250);
     for (int index = 0; index < 20; ++index) {
-      Infoline infoline = Infoline.print(windygrid, index, ref, avi.qsa());
+      Infoline infoline = Infoline.of(windygrid, ref, avi.qsa());
       imageIconRecorder.write(StateActionRasters.qsaLossRef(windygridRaster, avi.qsa(), ref));
       avi.step();
       if (infoline.isLossfree())

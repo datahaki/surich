@@ -27,7 +27,7 @@ enum AVI_GamblerAnimation implements ManipulateProvider {
     ImageIconRecorder imageIconRecorder = new ImageIconRecorder(500);
     for (int index = 0; index < 13; ++index) {
       DiscreteQsa qsa = avi.qsa();
-      Infoline.print(gamblerModel, index, ref, qsa);
+      Infoline.of(gamblerModel, ref, qsa);
       imageIconRecorder.write(StateActionRasters.qsaPolicyRef(new GamblerRaster(gamblerModel), qsa, ref));
       avi.step();
     }

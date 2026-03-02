@@ -27,7 +27,7 @@ enum AVH_Dynamazes {
     ImageIconRecorder imageIconRecorder = new ImageIconRecorder(500);
     DynamazeRaster dynamazeRaster = new DynamazeRaster(dynamaze);
     for (int index = 0; index < 50; ++index) {
-      Infoline infoline = Infoline.print(dynamaze, index, ref, avi.qsa());
+      Infoline infoline = Infoline.of(dynamaze, ref, avi.qsa());
       imageIconRecorder.write(StateRasters.qsaLossRef(dynamazeRaster, avi.qsa(), ref));
       avi.step();
       if (infoline.isLossfree())

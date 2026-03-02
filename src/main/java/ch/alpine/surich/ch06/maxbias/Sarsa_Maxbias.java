@@ -34,7 +34,7 @@ enum Sarsa_Maxbias {
     ActionValueStatistics avs = new ActionValueStatistics(maxbias);
     for (int index = 0; index < batches; ++index) {
       if (batches - 10 < index)
-        Infoline.print(maxbias, index, ref, qsa);
+        Infoline.of(maxbias, ref, qsa);
       // sarsa.supplyPolicy(() -> policy);
       ExploringStarts.batch(maxbias, policy, nstep, sarsa, avs);
     }

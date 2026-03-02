@@ -43,7 +43,7 @@ enum Double_Maxbias {
         qsa1, qsa2, sac1, sac2, policy1, policy2);
     for (int index = 0; index < batches; ++index) {
       if (batches - 10 < index)
-        Infoline.print(maxbias, index, ref, qsa1);
+        Infoline.of(maxbias, ref, qsa1);
       ExploringStarts.batch(maxbias, doubleSarsa.getPolicy(), n, doubleSarsa);
     }
     // qsa.print(Round.toMultipleOf(DecimalScalar.of(.01)));

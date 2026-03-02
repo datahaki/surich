@@ -48,7 +48,7 @@ enum SES_Gridworld {
       while (exploringStartsStream.batchIndex() < batches) {
         exploringStartsStream.nextEpisode();
         if (episode % 5 == 0) {
-          Infoline infoline = Infoline.print(gridworld, episode, ref, qsa);
+          Infoline infoline = Infoline.of(gridworld, ref, qsa);
           animationWriter.write(StateActionRasters.qsaLossRef(new GridworldRaster(gridworld), qsa, ref));
           if (infoline.isLossfree())
             break;

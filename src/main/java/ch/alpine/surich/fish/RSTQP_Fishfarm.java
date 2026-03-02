@@ -29,7 +29,7 @@ enum RSTQP_Fishfarm {
         new GifAnimationWriter(HomeDirectory.Pictures.resolve("fishfarm_qsa_rstqp.gif"), 200, TimeUnit.MILLISECONDS)) {
       int batches = 20;
       for (int index = 0; index < batches; ++index) {
-        Infoline infoline = Infoline.print(fishfarm, index, ref, qsa);
+        Infoline infoline = Infoline.of(fishfarm, ref, qsa);
         TabularSteps.batch(fishfarm, fishfarm, rstqp);
         animationWriter.write(StateRasters.qsaLossRef(cliffwalkRaster, qsa, ref));
         if (infoline.isLossfree())

@@ -40,7 +40,7 @@ enum Sarsa_Fishfarm {
         new GifAnimationWriter(HomeDirectory.Pictures.resolve("fishfarm_qsa_" + sarsaType + ".gif"), 200, TimeUnit.MILLISECONDS)) {
       for (int index = 0; index < batches; ++index) {
         // if (batches - 10 < index)
-        Infoline infoline = Infoline.print(fishfarm, index, ref, qsa);
+        Infoline infoline = Infoline.of(fishfarm, ref, qsa);
         // sarsa.supplyPolicy(() -> policy);
         ExploringStarts.batch(fishfarm, policy, nstep, sarsa);
         animationWriter.write(StateRasters.qsaLossRef(fishfarmRaster, qsa, ref));

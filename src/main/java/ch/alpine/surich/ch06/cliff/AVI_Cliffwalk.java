@@ -32,7 +32,7 @@ enum AVI_Cliffwalk {
     try (AnimationWriter animationWriter = //
         new GifAnimationWriter(HomeDirectory.Pictures.resolve("cliffwalk_qsa_avi.gif"), 200, TimeUnit.MILLISECONDS)) {
       for (int index = 0; index < 20; ++index) {
-        Infoline infoline = Infoline.print(cliffwalk, index, ref, avi.qsa());
+        Infoline infoline = Infoline.of(cliffwalk, ref, avi.qsa());
         animationWriter.write(StateActionRasters.qsaLossRef(cliffwalkRaster, avi.qsa(), ref));
         avi.step();
         if (infoline.isLossfree())

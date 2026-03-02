@@ -40,7 +40,7 @@ enum Sarsa_Dynamaze {
         new GifAnimationWriter(HomeDirectory.Pictures.resolve(name + "n" + nstep + "_qsa_" + sarsaType + ".gif"), 200, TimeUnit.MILLISECONDS)) {
       for (int index = 0; index < batches; ++index) {
         // if (EPISODES - 10 < index)
-        Infoline infoline = Infoline.print(dynamaze, index, ref, qsa);
+        Infoline infoline = Infoline.of(dynamaze, ref, qsa);
         // sarsa.supplyPolicy(() -> policy);
         // for (int count = 0; count < 5; ++count)
         ExploringStarts.batch(dynamaze, policy, nstep, sarsa);

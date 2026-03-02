@@ -54,7 +54,7 @@ enum Double_Gridworld {
         new GifAnimationWriter(HomeDirectory.Pictures.resolve("gridworld_double_" + sarsaType + "" + nstep + ".gif"), 150, TimeUnit.MILLISECONDS)) {
       for (int index = 0; index < batches; ++index) {
         if (batches - 10 < index)
-          Infoline.print(gridworld, index, ref, qsa1);
+          Infoline.of(gridworld, ref, qsa1);
         policy.setQsa(doubleSarsa.qsa());
         policy.setSac(sac);
         ExploringStarts.batch(gridworld, policy, nstep, doubleSarsa);
