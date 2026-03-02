@@ -1,35 +1,41 @@
 // code by jph
 package ch.alpine.surich.ch04.grid;
 
-import java.util.concurrent.TimeUnit;
+import java.awt.Container;
 
-import ch.alpine.ascony.io.AnimationWriter;
-import ch.alpine.ascony.io.GifAnimationWriter;
+import ch.alpine.ascony.io.ImageIconRecorder;
+import ch.alpine.bridge.awt.AwtUtil;
+import ch.alpine.bridge.pro.ManipulateProvider;
+import ch.alpine.bridge.ref.ann.ReflectionMarker;
 import ch.alpine.subare.alg.Random1StepTabularQPlanning;
 import ch.alpine.subare.util.ConstantLearningRate;
 import ch.alpine.subare.util.DiscreteQsa;
 import ch.alpine.subare.util.Infoline;
 import ch.alpine.subare.util.TabularSteps;
 import ch.alpine.subare.util.gfx.StateActionRasters;
-import ch.alpine.tensor.ext.HomeDirectory;
 
 /** Example 4.1, p.82 */
-enum RSTQP_Gridworld {
-  ;
-  static void main() throws Exception {
+@ReflectionMarker
+class RSTQP_Gridworld implements ManipulateProvider {
+  public Integer batches = 10;
+
+  @Override
+  public Container getContainer() {
     Gridworld gridworld = new Gridworld();
     final DiscreteQsa ref = GridworldHelper.getOptimalQsa(gridworld);
     DiscreteQsa qsa = DiscreteQsa.build(gridworld);
     Random1StepTabularQPlanning rstqp = Random1StepTabularQPlanning.of( //
         gridworld, qsa, ConstantLearningRate.one());
-    try (AnimationWriter animationWriter = //
-        new GifAnimationWriter(HomeDirectory.Pictures.resolve("gridworld_qsa_rstqp.gif"), 250, TimeUnit.MILLISECONDS)) {
-      int batches = 10;
-      for (int index = 0; index < batches; ++index) {
-        animationWriter.write(StateActionRasters.qsaLossRef(new GridworldRaster(gridworld), qsa, ref));
-        Infoline.of(gridworld, ref, qsa);
-        TabularSteps.batch(gridworld, gridworld, rstqp);
-      }
+    ImageIconRecorder imageIconRecorder = new ImageIconRecorder(250);
+    for (int index = 0; index < batches; ++index) {
+      imageIconRecorder.write(StateActionRasters.qsaLossRef(new GridworldRaster(gridworld), qsa, ref));
+      Infoline.of(gridworld, ref, qsa);
+      TabularSteps.batch(gridworld, gridworld, rstqp);
     }
+    return AwtUtil.iconAsLabel(imageIconRecorder.getIconImage());
+  }
+
+  static void main() {
+    new RSTQP_Gridworld().runStandalone();
   }
 }

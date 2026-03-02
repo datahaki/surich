@@ -1,10 +1,12 @@
 // code by jph
 package ch.alpine.surich.ch04.grid;
 
-import java.util.concurrent.TimeUnit;
+import java.awt.Container;
 
-import ch.alpine.ascony.io.AnimationWriter;
-import ch.alpine.ascony.io.GifAnimationWriter;
+import ch.alpine.ascony.io.ImageIconRecorder;
+import ch.alpine.bridge.awt.AwtUtil;
+import ch.alpine.bridge.pro.ManipulateProvider;
+import ch.alpine.bridge.ref.ann.ReflectionMarker;
 import ch.alpine.subare.api.FeatureMapper;
 import ch.alpine.subare.api.LearningRate;
 import ch.alpine.subare.api.StateActionCounter;
@@ -22,15 +24,15 @@ import ch.alpine.subare.util.PolicyType;
 import ch.alpine.subare.util.gfx.StateActionRasters;
 import ch.alpine.tensor.RealScalar;
 import ch.alpine.tensor.Scalar;
-import ch.alpine.tensor.ext.HomeDirectory;
 import ch.alpine.tensor.qty.Timing;
 
-enum TOS_Gridworld {
-  ;
+@ReflectionMarker
+class TOS_Gridworld implements ManipulateProvider {
   private static final Scalar LAMBDA = RealScalar.of(0.5);
+  public SarsaType sarsaType = SarsaType.EXPECTED;
 
-  static void run(SarsaType sarsaType) throws Exception {
-    System.out.println(sarsaType);
+  @Override
+  public Container getContainer() {
     Gridworld gridworld = new Gridworld();
     final DiscreteQsa ref = GridworldHelper.getOptimalQsa(gridworld);
     FeatureMapper mapper = ExactFeatureMapper.of(gridworld);
@@ -44,31 +46,26 @@ enum TOS_Gridworld {
     TrueOnlineSarsa trueOnlineSarsa = sarsaType.trueOnline(gridworld, LAMBDA, mapper, learningRate, w, sac, policy);
     final String name = sarsaType.name().toLowerCase();
     Timing timing = Timing.started();
-    try (AnimationWriter animationWriter = //
-        new GifAnimationWriter(HomeDirectory.Pictures.resolve("gridworld_tos_" + name + ".gif"), 250, TimeUnit.MILLISECONDS)) {
-      for (int batch = 0; batch < 100; ++batch) {
-        // System.out.println("starting batch " + (index + 1) + " of " + batches);
-        policy.setQsa(trueOnlineSarsa.qsaInterface());
-        ExploringStarts.batch(gridworld, policy, trueOnlineSarsa);
-        // DiscreteQsa toQsa = trueOnlineSarsa.getQsa();
-        // XYtoSarsa.append(Tensors.vector(RealScalar.of(index).number(), errorAnalysis.getError(monteCarloInterface, optimalQsa, toQsa).number()));
-        DiscreteQsa qsa = trueOnlineSarsa.qsa();
-        Infoline infoline = Infoline.of(gridworld, ref, qsa);
-        animationWriter.write(StateActionRasters.qsaLossRef(new GridworldRaster(gridworld), qsa, ref));
-        if (infoline.isLossfree()) {
-          animationWriter.write(StateActionRasters.qsaLossRef(new GridworldRaster(gridworld), qsa, ref));
-          animationWriter.write(StateActionRasters.qsaLossRef(new GridworldRaster(gridworld), qsa, ref));
-          animationWriter.write(StateActionRasters.qsaLossRef(new GridworldRaster(gridworld), qsa, ref));
-          break;
-        }
+    ImageIconRecorder imageIconRecorder = new ImageIconRecorder(250);
+    for (int batch = 0; batch < 100; ++batch) {
+      // System.out.println("starting batch " + (index + 1) + " of " + batches);
+      policy.setQsa(trueOnlineSarsa.qsaInterface());
+      ExploringStarts.batch(gridworld, policy, trueOnlineSarsa);
+      // DiscreteQsa toQsa = trueOnlineSarsa.getQsa();
+      // XYtoSarsa.append(Tensors.vector(RealScalar.of(index).number(), errorAnalysis.getError(monteCarloInterface, optimalQsa, toQsa).number()));
+      DiscreteQsa qsa = trueOnlineSarsa.qsa();
+      Infoline infoline = Infoline.of(gridworld, ref, qsa);
+      imageIconRecorder.write(StateActionRasters.qsaLossRef(new GridworldRaster(gridworld), qsa, ref));
+      if (infoline.isLossfree()) {
+        IO.println("lossfree after " + batch);
+        break;
       }
     }
     System.out.println("Time for TrueOnlineSarsa: " + timing.seconds() + "s");
+    return AwtUtil.iconAsLabel(imageIconRecorder.getIconImage());
   }
 
   static void main() throws Exception {
-    run(SarsaType.ORIGINAL);
-    run(SarsaType.EXPECTED);
-    run(SarsaType.QLEARNING);
+    new TOS_Gridworld().runStandalone();
   }
 }

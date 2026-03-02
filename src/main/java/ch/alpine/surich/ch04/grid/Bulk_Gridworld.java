@@ -8,6 +8,7 @@ import javax.swing.ImageIcon;
 
 import ch.alpine.bridge.awt.AwtUtil;
 import ch.alpine.bridge.pro.ManipulateProvider;
+import ch.alpine.bridge.ref.ann.ReflectionMarker;
 import ch.alpine.subare.api.StateActionCounter;
 import ch.alpine.subare.td.Sarsa;
 import ch.alpine.subare.td.SarsaType;
@@ -25,16 +26,10 @@ import ch.alpine.tensor.Tensor;
 import ch.alpine.tensor.alg.Subdivide;
 
 /** Sarsa applied to gambler for different learning rate parameters */
-enum Bulk_Gridworld implements ManipulateProvider {
-  INSTANCE(SarsaType.QLEARNING, 1);
-
-  private final SarsaType sarsaType;
-  private final int nstep;
-
-  private Bulk_Gridworld(SarsaType sarsaType, int nstep) {
-    this.sarsaType = sarsaType;
-    this.nstep = nstep;
-  }
+@ReflectionMarker
+class Bulk_Gridworld implements ManipulateProvider {
+  public SarsaType sarsaType = SarsaType.QLEARNING;
+  public Integer nstep = 1;
 
   @Override
   public Container getContainer() {
@@ -45,7 +40,6 @@ enum Bulk_Gridworld implements ManipulateProvider {
     final Scalar losscap = RealScalar.of(5); // .5
     final Tensor epsilon = Subdivide.of(.1, .01, 100); // .2, .6
     int x = 0;
-    String name = "gridworld_" + sarsaType.name() + "_E" + epsilon.Get(0) + "_N" + nstep;
     LearningCompetition learningCompetition = new LearningCompetition( //
         ref, epsilon, errorcap, losscap);
     learningCompetition.nstep = nstep;
@@ -70,6 +64,6 @@ enum Bulk_Gridworld implements ManipulateProvider {
   }
 
   static void main() throws Exception {
-    INSTANCE.runStandalone();
+    new Bulk_Gridworld().runStandalone();
   }
 }

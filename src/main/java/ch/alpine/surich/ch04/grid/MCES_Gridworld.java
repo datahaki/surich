@@ -1,10 +1,12 @@
 // code by jph
 package ch.alpine.surich.ch04.grid;
 
-import java.util.concurrent.TimeUnit;
+import java.awt.Container;
 
-import ch.alpine.ascony.io.AnimationWriter;
-import ch.alpine.ascony.io.GifAnimationWriter;
+import ch.alpine.ascony.io.ImageIconRecorder;
+import ch.alpine.bridge.awt.AwtUtil;
+import ch.alpine.bridge.pro.ManipulateProvider;
+import ch.alpine.bridge.ref.ann.ReflectionMarker;
 import ch.alpine.subare.api.StateActionCounter;
 import ch.alpine.subare.mc.MonteCarloExploringStarts;
 import ch.alpine.subare.util.DiscreteQsa;
@@ -15,28 +17,32 @@ import ch.alpine.subare.util.Infoline;
 import ch.alpine.subare.util.LinearExplorationRate;
 import ch.alpine.subare.util.PolicyType;
 import ch.alpine.subare.util.gfx.StateActionRasters;
-import ch.alpine.tensor.ext.HomeDirectory;
 
 /** Example 4.1, p.82 */
-enum MCES_Gridworld {
-  ;
-  static void main() throws Exception {
+@ReflectionMarker
+class MCES_Gridworld implements ManipulateProvider {
+  public Integer batches = 20;
+
+  @Override
+  public Container getContainer() {
     Gridworld gridworld = new Gridworld();
     final DiscreteQsa ref = GridworldHelper.getOptimalQsa(gridworld);
     MonteCarloExploringStarts mces = new MonteCarloExploringStarts(gridworld);
-    try (AnimationWriter animationWriter = //
-        new GifAnimationWriter(HomeDirectory.Pictures.resolve("gridworld_qsa_mces.gif"), 250, TimeUnit.MILLISECONDS)) {
-      final int batches = 20;
-      StateActionCounter sac = new DiscreteStateActionCounter();
-      EGreedyPolicy policy = (EGreedyPolicy) PolicyType.EGREEDY.bestEquiprobable(gridworld, mces.qsa(), sac);
-      policy.setExplorationRate(LinearExplorationRate.of(batches, 0.2, 0.05));
-      for (int index = 0; index < batches; ++index) {
-        Infoline.of(gridworld, ref, mces.qsa());
-        for (int count = 0; count < 1; ++count) {
-          ExploringStarts.batch(gridworld, policy, mces);
-        }
-        animationWriter.write(StateActionRasters.qsaLossRef(new GridworldRaster(gridworld), mces.qsa(), ref));
+    ImageIconRecorder imageIconRecorder = new ImageIconRecorder(250);
+    StateActionCounter sac = new DiscreteStateActionCounter();
+    EGreedyPolicy policy = (EGreedyPolicy) PolicyType.EGREEDY.bestEquiprobable(gridworld, mces.qsa(), sac);
+    policy.setExplorationRate(LinearExplorationRate.of(batches, 0.2, 0.05));
+    for (int index = 0; index < batches; ++index) {
+      Infoline.of(gridworld, ref, mces.qsa());
+      for (int count = 0; count < 1; ++count) {
+        ExploringStarts.batch(gridworld, policy, mces);
       }
+      imageIconRecorder.write(StateActionRasters.qsaLossRef(new GridworldRaster(gridworld), mces.qsa(), ref));
     }
+    return AwtUtil.iconAsLabel(imageIconRecorder.getIconImage());
+  }
+
+  static void main() {
+    new MCES_Gridworld().runStandalone();
   }
 }

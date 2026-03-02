@@ -1,10 +1,12 @@
 // code by jph
 package ch.alpine.surich.ch04.grid;
 
-import java.util.concurrent.TimeUnit;
+import java.awt.Container;
 
-import ch.alpine.ascony.io.AnimationWriter;
-import ch.alpine.ascony.io.GifAnimationWriter;
+import ch.alpine.ascony.io.ImageIconRecorder;
+import ch.alpine.bridge.awt.AwtUtil;
+import ch.alpine.bridge.pro.ManipulateProvider;
+import ch.alpine.bridge.ref.ann.ReflectionMarker;
 import ch.alpine.subare.api.EpisodeInterface;
 import ch.alpine.subare.api.Policy;
 import ch.alpine.subare.api.StateActionCounter;
@@ -24,13 +26,15 @@ import ch.alpine.subare.util.LinearExplorationRate;
 import ch.alpine.subare.util.PolicyType;
 import ch.alpine.subare.util.gfx.StateActionRasters;
 import ch.alpine.tensor.Tensor;
-import ch.alpine.tensor.ext.HomeDirectory;
-import ch.alpine.tensor.io.Put;
 
 /** Double Sarsa for gridworld */
-enum Double_Gridworld {
-  ;
-  static void handle(SarsaType sarsaType, int nstep) throws Exception {
+@ReflectionMarker
+class Double_Gridworld implements ManipulateProvider {
+  public SarsaType sarsaType = SarsaType.ORIGINAL;
+  public Integer nstep = 1;
+
+  @Override
+  public Container getContainer() {
     System.out.println("double " + sarsaType);
     Gridworld gridworld = new Gridworld();
     final DiscreteQsa ref = GridworldHelper.getOptimalQsa(gridworld);
@@ -50,21 +54,18 @@ enum Double_Gridworld {
         gridworld, //
         DefaultLearningRate.of(5, .51), //
         qsa1, qsa2, sac1, sac2, policy1, policy2);
-    try (AnimationWriter animationWriter = //
-        new GifAnimationWriter(HomeDirectory.Pictures.resolve("gridworld_double_" + sarsaType + "" + nstep + ".gif"), 150, TimeUnit.MILLISECONDS)) {
-      for (int index = 0; index < batches; ++index) {
-        if (batches - 10 < index)
-          Infoline.of(gridworld, ref, qsa1);
-        policy.setQsa(doubleSarsa.qsa());
-        policy.setSac(sac);
-        ExploringStarts.batch(gridworld, policy, nstep, doubleSarsa);
-        animationWriter.write(StateActionRasters.qsaLossRef(new GridworldRaster(gridworld), qsa1, ref));
-      }
+    ImageIconRecorder imageIconRecorder = new ImageIconRecorder(250);
+    for (int index = 0; index < batches; ++index) {
+      if (batches - 10 < index)
+        Infoline.of(gridworld, ref, qsa1);
+      policy.setQsa(doubleSarsa.qsa());
+      policy.setSac(sac);
+      ExploringStarts.batch(gridworld, policy, nstep, doubleSarsa);
+      imageIconRecorder.write(StateActionRasters.qsaLossRef(new GridworldRaster(gridworld), qsa1, ref));
     }
     // qsa.print(Round.toMultipleOf(DecimalScalar.of(.01)));
     System.out.println("---");
     DiscreteVs vs = DiscreteUtils.createVs(gridworld, doubleSarsa.qsa());
-    Put.of(HomeDirectory.Ephemeral.resolve("gridworld_" + sarsaType), vs.values());
     Policy policyVs = PolicyType.GREEDY.bestEquiprobable(gridworld, vs, null);
     EpisodeInterface ei = EpisodeKickoff.single(gridworld, policyVs);
     while (ei.hasNext()) {
@@ -72,11 +73,10 @@ enum Double_Gridworld {
       Tensor state = stepRecord.prevState();
       System.out.println(state + " then " + stepRecord.action());
     }
+    return AwtUtil.iconAsLabel(imageIconRecorder.getIconImage());
   }
 
   static void main() throws Exception {
-    handle(SarsaType.ORIGINAL, 1);
-    handle(SarsaType.EXPECTED, 1);
-    handle(SarsaType.QLEARNING, 1);
+    new Double_Gridworld().runStandalone();
   }
 }

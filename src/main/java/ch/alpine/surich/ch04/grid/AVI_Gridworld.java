@@ -2,16 +2,14 @@
 // inspired by Shangtong Zhang
 package ch.alpine.surich.ch04.grid;
 
-import java.util.concurrent.TimeUnit;
+import java.awt.Container;
 
-import ch.alpine.ascony.io.AnimationWriter;
-import ch.alpine.ascony.io.GifAnimationWriter;
+import ch.alpine.ascony.io.ImageIconRecorder;
+import ch.alpine.bridge.awt.AwtUtil;
+import ch.alpine.bridge.pro.ManipulateProvider;
 import ch.alpine.subare.alg.ActionValueIteration;
-import ch.alpine.subare.util.DiscreteUtils;
 import ch.alpine.subare.util.DiscreteValueFunctions;
-import ch.alpine.subare.util.DiscreteVs;
 import ch.alpine.subare.util.gfx.StateActionRasters;
-import ch.alpine.tensor.ext.HomeDirectory;
 
 /** solving grid world
  * gives the value function for the optimal policy equivalent to
@@ -35,23 +33,26 @@ import ch.alpine.tensor.ext.HomeDirectory;
  * {3, 1} -2
  * {3, 2} -1
  * {3, 3} 0 */
-enum AVI_Gridworld {
-  ;
-  static void main() throws Exception {
+enum AVI_Gridworld implements ManipulateProvider {
+  INSTANCE;
+
+  @Override
+  public Container getContainer() {
     Gridworld gridworld = new Gridworld();
     GridworldRaster gridworldRaster = new GridworldRaster(gridworld);
     ActionValueIteration avi = ActionValueIteration.of(gridworld);
-    try (AnimationWriter animationWriter = //
-        new GifAnimationWriter(HomeDirectory.Pictures.resolve("gridworld_qsa_avi.gif"), 250, TimeUnit.MILLISECONDS)) {
-      for (int count = 0; count < 7; ++count) {
-        animationWriter.write(StateActionRasters.qsa(gridworldRaster, DiscreteValueFunctions.rescaled(avi.qsa())));
-        avi.step();
-      }
-      animationWriter.write(StateActionRasters.qsa(gridworldRaster, DiscreteValueFunctions.rescaled(avi.qsa())));
+    ImageIconRecorder imageIconRecorder = new ImageIconRecorder(250);
+    for (int count = 0; count < 7; ++count) {
+      imageIconRecorder.write(StateActionRasters.qsa(gridworldRaster, DiscreteValueFunctions.rescaled(avi.qsa())));
+      avi.step();
     }
-    // ---
-    DiscreteUtils.print(avi.qsa());
-    DiscreteVs dvs = DiscreteUtils.createVs(gridworld, avi.qsa());
-    DiscreteUtils.print(dvs);
+    // DiscreteUtils.print(avi.qsa());
+    // DiscreteVs dvs = DiscreteUtils.createVs(gridworld, avi.qsa());
+    // DiscreteUtils.print(dvs);
+    return AwtUtil.iconAsLabel(imageIconRecorder.getIconImage());
+  }
+
+  static void main() {
+    INSTANCE.runStandalone();
   }
 }
