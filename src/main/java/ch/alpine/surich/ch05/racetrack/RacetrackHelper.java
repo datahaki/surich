@@ -9,7 +9,6 @@ import ch.alpine.tensor.Scalars;
 import ch.alpine.tensor.Tensor;
 import ch.alpine.tensor.alg.Rescale;
 import ch.alpine.tensor.img.ColorDataGradients;
-import ch.alpine.tensor.img.ImageResize;
 import ch.alpine.tensor.img.Raster;
 import ch.alpine.tensor.io.Import;
 
@@ -40,7 +39,6 @@ public enum RacetrackHelper {
             // ---
           }
       }
-    Tensor image = Raster.of(tensor, ColorDataGradients.CLASSIC);
-    return ImageResize.nearest(image, 8);
+    return Raster.of(tensor, ColorDataGradients.CLASSIC);
   }
 }

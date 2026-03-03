@@ -16,13 +16,10 @@ import ch.alpine.tensor.alg.Array;
 import ch.alpine.tensor.alg.Dimensions;
 import ch.alpine.tensor.alg.Join;
 import ch.alpine.tensor.img.ColorDataGradients;
-import ch.alpine.tensor.img.ImageResize;
 import ch.alpine.tensor.img.Raster;
 
 /* package */ enum BlackjackHelper {
   ;
-  private static final int MAGNIFY = 5;
-
   // TODO SUBARE magnify irregular
   public static Tensor render(Blackjack blackjack, Policy policy) {
     BlackjackRaster blackjackRaster = new BlackjackRaster(blackjack);
@@ -48,6 +45,6 @@ import ch.alpine.tensor.img.Raster;
     Tensor im2 = render(blackjack, policy);
     List<Integer> list = Dimensions.of(im1);
     list.set(1, 2);
-    return ImageResize.nearest(Join.of(1, im1, Array.zeros(list), im2), MAGNIFY);
+    return Join.of(1, im1, Array.zeros(list), im2);
   }
 }

@@ -35,10 +35,6 @@ class Blackjack implements MonteCarloInterface {
     Tensor v_player = Range.of(12, 22);
     Tensor v_dealer = Range.of(1, 11);
     states = Tuples.of(v_ace, v_player, v_dealer);
-    // for (int ace = 0; ace < 2; ++ace)
-    // for (int player = 12; player <= 21; ++player)
-    // for (int dealer = 1; dealer <= 10; ++dealer)
-    // states.append(Tensors.vector(ace, player, dealer));
     startStates = states.copy().unmodifiable();
     // ---
     states.append(END_WIN);

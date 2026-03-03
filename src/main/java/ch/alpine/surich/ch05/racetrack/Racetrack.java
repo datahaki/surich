@@ -66,7 +66,6 @@ class Racetrack extends DeterministicStandardModel implements MonteCarloInterfac
 
   Racetrack(Tensor image, int maxSpeed) {
     Tensor blue = image.get(Tensor.ALL, Tensor.ALL, 2);
-    System.out.println("grid size=" + Dimensions.of(blue));
     interpolation = NearestInterpolation.of(blue);
     List<Integer> list = Dimensions.of(image);
     Tensor dimensions = Tensors.vector(list.get(0), list.get(1)).maps(s -> s.subtract(RealScalar.ONE));
