@@ -1,3 +1,4 @@
+// code by jph
 package ch.alpine.surich.ch05.blackjack;
 
 import java.awt.Container;
@@ -34,7 +35,7 @@ class BlackjackEpisodeLength implements ManipulateProvider {
         episodeInterface.step();
         ++count;
       }
-      counts.put(count, counts.getOrDefault(count, 0) + 1);
+      counts.merge(count, 1, Integer::sum);
     }
     Tensor xy = Tensor.of(counts.entrySet().stream() //
         .map(e -> Tensors.of(RealScalar.of(e.getKey()), Log.FUNCTION.apply(RealScalar.of(e.getValue())))));

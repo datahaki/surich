@@ -9,6 +9,8 @@ import ch.alpine.tensor.Scalar;
 import ch.alpine.tensor.Scalars;
 import ch.alpine.tensor.Tensor;
 import ch.alpine.tensor.Tensors;
+import ch.alpine.tensor.alg.Range;
+import ch.alpine.tensor.alg.Tuples;
 import ch.alpine.tensor.sca.Sign;
 
 /** Example 5.1 p.101: Blackjack
@@ -23,16 +25,20 @@ class Blackjack implements MonteCarloInterface {
   // dealer showing: 1(=A), 2, 3, 4, 5, 6, 7, 8, 9, {T, J, Q, K} - #=10
   // player sum 12, 13, ..., 21 - #=10
   // player has usable ace {0, 1}
-  private final Tensor states = Tensors.empty();
+  private final Tensor states;
   private final Tensor startStates;
   private final Tensor actions = Tensors.vector(0, 1); // stay, or hit
   private final Tensor actionsTerminal = Tensors.vector(0); // do nothing
 
   public Blackjack() {
-    for (int ace = 0; ace < 2; ++ace)
-      for (int player = 12; player <= 21; ++player)
-        for (int dealer = 1; dealer <= 10; ++dealer)
-          states.append(Tensors.vector(ace, player, dealer));
+    Tensor v_ace = Tensors.vector(0, 1);
+    Tensor v_player = Range.of(12, 22);
+    Tensor v_dealer = Range.of(1, 11);
+    states = Tuples.of(v_ace, v_player, v_dealer);
+    // for (int ace = 0; ace < 2; ++ace)
+    // for (int player = 12; player <= 21; ++player)
+    // for (int dealer = 1; dealer <= 10; ++dealer)
+    // states.append(Tensors.vector(ace, player, dealer));
     startStates = states.copy().unmodifiable();
     // ---
     states.append(END_WIN);

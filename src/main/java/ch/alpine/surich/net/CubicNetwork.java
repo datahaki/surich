@@ -89,7 +89,6 @@ public class CubicNetwork implements ManipulateProvider {
     Network network = new Network();
     network.train();
     Scalar error = network.evaluate();
-    IO.println("Error: " + error);
     Show show1 = new Show();
     {
       TableBuilder tableBuilder = network.tableBuilder;
