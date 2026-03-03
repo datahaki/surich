@@ -1,11 +1,15 @@
 // code by jph
 package ch.alpine.surich.ch04.gambler;
 
-import java.nio.file.Path;
-import java.util.concurrent.TimeUnit;
+import java.awt.Container;
+import java.awt.GridLayout;
 
-import ch.alpine.ascony.io.AnimationWriter;
-import ch.alpine.ascony.io.GifAnimationWriter;
+import javax.swing.JPanel;
+
+import ch.alpine.ascony.io.ImageIconRecorder;
+import ch.alpine.bridge.awt.AwtUtil;
+import ch.alpine.bridge.pro.ManipulateProvider;
+import ch.alpine.bridge.ref.ann.ReflectionMarker;
 import ch.alpine.subare.api.LearningRate;
 import ch.alpine.subare.api.StateActionCounter;
 import ch.alpine.subare.td.Sarsa;
@@ -22,57 +26,44 @@ import ch.alpine.subare.util.PolicyType;
 import ch.alpine.subare.util.gfx.StateActionRasters;
 import ch.alpine.tensor.Rational;
 import ch.alpine.tensor.RealScalar;
-import ch.alpine.tensor.ext.HomeDirectory;
 
 /** Sarsa applied to gambler */
-/* package */ class Sarsa_Gambler {
-  private final GamblerModel gamblerModel;
-  /** true q-function, for error measurement */
-  private final DiscreteQsa ref;
+@ReflectionMarker
+class Sarsa_Gambler implements ManipulateProvider {
+  public SarsaType sarsaType = SarsaType.QLEARNING;
+  public Integer batches = 20;
 
-  public Sarsa_Gambler(GamblerModel gamblerModel) {
-    this.gamblerModel = gamblerModel;
-    ref = GamblerHelper.getOptimalQsa(gamblerModel);
-  }
-
-  DiscreteQsa train(SarsaType sarsaType, int batches, LearningRate learningRate) throws Exception {
-    System.out.println(sarsaType);
+  @Override
+  public Container getContainer() {
+    GamblerModel gamblerModel = new GamblerModel(20, Rational.of(4, 10));
+    /** true q-function, for error measurement */
+    DiscreteQsa ref = GamblerHelper.getOptimalQsa(gamblerModel);
+    LearningRate learningRate = DefaultLearningRate.of(RealScalar.of(3), RealScalar.of(0.81));
     GamblerRaster gamblerRaster = new GamblerRaster(gamblerModel);
     DiscreteQsa qsa = DiscreteQsa.build(gamblerModel); // q-function for training, initialized to 0
     StateActionCounter sac = new DiscreteStateActionCounter();
     EGreedyPolicy policy = (EGreedyPolicy) PolicyType.EGREEDY.bestEquiprobable(gamblerModel, qsa, sac);
     policy.setExplorationRate(LinearExplorationRate.of(batches, 0.2, 0.01));
     // ---
-    try (AnimationWriter animationWriter1 = new GifAnimationWriter(getGifFileQsa(sarsaType), 150, TimeUnit.MILLISECONDS)) {
-      try (AnimationWriter animationWriter2 = new GifAnimationWriter(getGifFileSac(sarsaType), 150, TimeUnit.MILLISECONDS)) {
-        Sarsa sarsa = sarsaType.sarsa(gamblerModel, learningRate, qsa, sac, policy);
-        for (int index = 0; index < batches; ++index) {
-          Infoline.of(gamblerModel, ref, qsa);
-          ExploringStarts.batch(gamblerModel, policy, 1, sarsa);
-          // ---
-          animationWriter1.write(StateActionRasters.qsaPolicyRef(gamblerRaster, qsa, ref));
-          animationWriter2.write(StateActionRasters.qsa( //
-              gamblerRaster, DiscreteValueFunctions.rescaled(((DiscreteStateActionCounter) sarsa.sac()).inQsa(gamblerModel))));
-        }
-      }
+    ImageIconRecorder imageIconRecorder1 = new ImageIconRecorder(250);
+    ImageIconRecorder imageIconRecorder2 = new ImageIconRecorder(250);
+    Sarsa sarsa = sarsaType.sarsa(gamblerModel, learningRate, qsa, sac, policy);
+    for (int index = 0; index < batches; ++index) {
+      Infoline.of(gamblerModel, ref, qsa);
+      ExploringStarts.batch(gamblerModel, policy, 1, sarsa);
+      // ---
+      imageIconRecorder1.write(StateActionRasters.qsaPolicyRef(gamblerRaster, qsa, ref));
+      imageIconRecorder2.write(StateActionRasters.qsa( //
+          gamblerRaster, DiscreteValueFunctions.rescaled(((DiscreteStateActionCounter) sarsa.sac()).inQsa(gamblerModel))));
     }
-    GamblerHelper.play(gamblerModel, qsa);
-    return qsa;
+//    GamblerHelper.play(gamblerModel, qsa);
+    JPanel jPanel = new JPanel(new GridLayout(2, 1));
+    jPanel.add(AwtUtil.iconAsLabel(imageIconRecorder1.getIconImage()));
+    jPanel.add(AwtUtil.iconAsLabel(imageIconRecorder2.getIconImage()));
+    return jPanel;
   }
 
-  public static Path getGifFileQsa(SarsaType sarsaType) {
-    return HomeDirectory.Pictures.resolve("gambler_qsa_" + sarsaType + ".gif");
-  }
-
-  public static Path getGifFileSac(SarsaType sarsaType) {
-    return HomeDirectory.Pictures.resolve("gambler_sac_" + sarsaType + ".gif");
-  }
-
-  static void main() throws Exception {
-    GamblerModel gambler = new GamblerModel(20, Rational.of(4, 10));
-    Sarsa_Gambler sarsa_Gambler = new Sarsa_Gambler(gambler);
-    LearningRate learningRate = DefaultLearningRate.of(RealScalar.of(3), RealScalar.of(0.81));
-    DiscreteQsa qsa = sarsa_Gambler.train(SarsaType.QLEARNING, 20, learningRate);
-    qsa.copy();
+  static void main() {
+    new Sarsa_Gambler().runStandalone();
   }
 }

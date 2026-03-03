@@ -42,6 +42,10 @@ public class GamblerModel implements StandardModel, MonteCarloInterface {
     coinflip = Coinflip.of(P_win);
   }
 
+  public GamblerModel(int max, Number P_win) {
+    this(max, RealScalar.of(P_win));
+  }
+
   @Override
   public Tensor states() {
     return states;

@@ -1,8 +1,6 @@
 // code by jph
 package ch.alpine.surich.ch04.gambler;
 
-import java.nio.file.Path;
-
 import javax.swing.JComponent;
 
 import ch.alpine.bridge.fig.ArrayPlot;
@@ -17,7 +15,6 @@ import ch.alpine.subare.util.gfx.StateActionRasters;
 import ch.alpine.tensor.Rational;
 import ch.alpine.tensor.Scalar;
 import ch.alpine.tensor.Tensor;
-import ch.alpine.tensor.ext.HomeDirectory;
 import ch.alpine.tensor.img.ColorDataGradients;
 
 /** action value iteration for gambler's dilemma
@@ -25,7 +22,6 @@ import ch.alpine.tensor.img.ColorDataGradients;
  * visualizes the exact optimal policy */
 @ReflectionMarker
 public class AVI_Gambler implements ManipulateProvider {
-  Path path = HomeDirectory.Ephemeral.mk_dirs(AVI_Gambler.class.getSimpleName());
   public Integer max = 100;
   public Scalar P_win = Rational.THIRD;
   public ColorDataGradients cdg = ColorDataGradients.CLASSIC;
@@ -42,11 +38,6 @@ public class AVI_Gambler implements ManipulateProvider {
     Show show2 = new Show();
     show2.add(ArrayPlot.of(qsaPolicy, cdg));
     DiscreteVs vs = DiscreteUtils.createVs(gamblerModel, ref);
-    // try {
-    // Put.of(path.resolve("ex403_vs_values"), vs.values());
-    // } catch (IOException e) {
-    // e.printStackTrace();
-    // }
     return ShowGridComponent.of(show1, show2);
   }
 

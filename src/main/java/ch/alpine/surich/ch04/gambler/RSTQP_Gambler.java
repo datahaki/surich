@@ -1,10 +1,15 @@
 // code by jph
 package ch.alpine.surich.ch04.gambler;
 
-import java.util.concurrent.TimeUnit;
+import java.awt.Container;
+import java.awt.GridLayout;
 
-import ch.alpine.ascony.io.AnimationWriter;
-import ch.alpine.ascony.io.GifAnimationWriter;
+import javax.swing.JPanel;
+
+import ch.alpine.ascony.io.ImageIconRecorder;
+import ch.alpine.bridge.awt.AwtUtil;
+import ch.alpine.bridge.pro.ManipulateProvider;
+import ch.alpine.bridge.ref.ann.ReflectionMarker;
 import ch.alpine.subare.alg.Random1StepTabularQPlanning;
 import ch.alpine.subare.util.ActionValueStatistics;
 import ch.alpine.subare.util.DefaultLearningRate;
@@ -15,12 +20,14 @@ import ch.alpine.subare.util.Infoline;
 import ch.alpine.subare.util.TabularSteps;
 import ch.alpine.subare.util.gfx.StateActionRasters;
 import ch.alpine.tensor.Rational;
-import ch.alpine.tensor.ext.HomeDirectory;
 
 // R1STQP algorithm is not suited for gambler's dilemma
-/* package */ enum RSTQP_Gambler {
-  ;
-  static void main() throws Exception {
+@ReflectionMarker
+class RSTQP_Gambler implements ManipulateProvider {
+  public Integer batches = 200;
+
+  @Override
+  public Container getContainer() {
     GamblerModel gamblerModel = new GamblerModel(20, Rational.of(4, 10));
     GamblerRaster gamblerRaster = new GamblerRaster(gamblerModel);
     final DiscreteQsa ref = GamblerHelper.getOptimalQsa(gamblerModel);
@@ -28,19 +35,16 @@ import ch.alpine.tensor.ext.HomeDirectory;
     Random1StepTabularQPlanning rstqp = Random1StepTabularQPlanning.of(gamblerModel, qsa, //
         DefaultLearningRate.of(4, 0.71));
     ActionValueStatistics avs = new ActionValueStatistics(gamblerModel);
-    try (AnimationWriter animationWriter1 = new GifAnimationWriter(HomeDirectory.Pictures.resolve("gambler_qsa_rstqp.gif"), 100, TimeUnit.MILLISECONDS)) {
-      try (AnimationWriter animationWriter2 = new GifAnimationWriter(HomeDirectory.Pictures.resolve("gambler_sac_rstqp.gif"), 200, TimeUnit.MILLISECONDS)) {
-        int batches = 200;
-        for (int index = 0; index < batches; ++index) {
-          Infoline infoline = Infoline.of(gamblerModel, ref, qsa);
-          TabularSteps.batch(gamblerModel, gamblerModel, rstqp, avs);
-          animationWriter1.write(StateActionRasters.qsaPolicyRef(gamblerRaster, qsa, ref));
-          animationWriter2.write(StateActionRasters.qsa( //
-              gamblerRaster, DiscreteValueFunctions.rescaled(((DiscreteStateActionCounter) rstqp.sac()).inQsa(gamblerModel))));
-          if (infoline.isLossfree())
-            break;
-        }
-      }
+    ImageIconRecorder imageIconRecorder1 = new ImageIconRecorder(250);
+    ImageIconRecorder imageIconRecorder2 = new ImageIconRecorder(250);
+    for (int index = 0; index < batches; ++index) {
+      Infoline infoline = Infoline.of(gamblerModel, ref, qsa);
+      TabularSteps.batch(gamblerModel, gamblerModel, rstqp, avs);
+      imageIconRecorder1.write(StateActionRasters.qsaPolicyRef(gamblerRaster, qsa, ref));
+      imageIconRecorder2.write(StateActionRasters.qsa( //
+          gamblerRaster, DiscreteValueFunctions.rescaled(((DiscreteStateActionCounter) rstqp.sac()).inQsa(gamblerModel))));
+      if (infoline.isLossfree())
+        break;
     }
     // ---
     // ActionValueIteration avi = new ActionValueIteration(gambler, avs);
@@ -51,5 +55,13 @@ import ch.alpine.tensor.ext.HomeDirectory;
     // Export.of(UserHome.Pictures("gambler_avs.png"),
     // // GamblerHelper.qsaPolicyRef(gambler, avi.qsa(), ref)
     // StateActionRasters.qsaPolicyRef(new GamblerRaster(gambler), qsa, ref));
+    JPanel jPanel = new JPanel(new GridLayout(2, 1));
+    jPanel.add(AwtUtil.iconAsLabel(imageIconRecorder1.getIconImage()));
+    jPanel.add(AwtUtil.iconAsLabel(imageIconRecorder2.getIconImage()));
+    return jPanel;
+  }
+
+  static void main() {
+    new RSTQP_Gambler().runStandalone();
   }
 }
