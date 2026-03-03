@@ -16,7 +16,7 @@ import ch.alpine.subare.util.EGreedyPolicy;
 import ch.alpine.subare.util.LearningContender;
 import ch.alpine.subare.util.LinearExplorationRate;
 import ch.alpine.subare.util.PolicyType;
-import ch.alpine.subare.util.gfx.D2Point;
+import ch.alpine.subare.util.gfx.IntPoint;
 import ch.alpine.surich.LearningCompetition;
 import ch.alpine.tensor.RealScalar;
 import ch.alpine.tensor.Scalar;
@@ -51,7 +51,7 @@ class Bulk_Gridworld implements ManipulateProvider {
         policy.setExplorationRate(LinearExplorationRate.of(100, 0.1, 0.01));
         Sarsa sarsa = sarsaType.sarsa(gambler, DefaultLearningRate.of((Scalar) factor, (Scalar) exponent), qsa, sac, policy);
         LearningContender learningContender = LearningContender.sarsa(gambler, sarsa);
-        learningCompetition.put(new D2Point(x, y), learningContender);
+        learningCompetition.put(new IntPoint(x, y), learningContender);
         ++y;
       }
       ++x;

@@ -6,7 +6,7 @@ import java.util.List;
 
 import ch.alpine.subare.api.DiscreteModel;
 import ch.alpine.subare.math.Index;
-import ch.alpine.subare.util.gfx.D2Point;
+import ch.alpine.subare.util.gfx.IntPoint;
 import ch.alpine.subare.util.gfx.StateActionRaster;
 import ch.alpine.subare.util.gfx.StateRaster;
 import ch.alpine.subare.util.gfx.StateRasters;
@@ -45,11 +45,11 @@ class CliffwalkRaster implements StateRaster, StateActionRaster {
   }
 
   @Override
-  public D2Point point(Tensor state, Tensor action) {
+  public IntPoint point(Tensor state, Tensor action) {
     int sx = Scalars.intValueExact(state.Get(0));
     int sy = Scalars.intValueExact(state.Get(1));
     int a = indexActions.of(action);
-    return new D2Point(sx, sy + (cliffwalk.NY + 1) * a);
+    return new IntPoint(sx, sy + (cliffwalk.NY + 1) * a);
   }
 
   @Override

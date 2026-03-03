@@ -12,7 +12,7 @@ import ch.alpine.subare.util.ConstantExplorationRate;
 import ch.alpine.subare.util.DiscreteQsa;
 import ch.alpine.subare.util.Infoline;
 import ch.alpine.subare.util.LearningContender;
-import ch.alpine.subare.util.gfx.D2Point;
+import ch.alpine.subare.util.gfx.IntPoint;
 import ch.alpine.tensor.RealScalar;
 import ch.alpine.tensor.Scalar;
 import ch.alpine.tensor.Tensor;
@@ -24,7 +24,7 @@ import ch.alpine.tensor.red.Min;
 import ch.alpine.tensor.sca.Round;
 
 public class LearningCompetition {
-  private final Map<D2Point, LearningContender> map = new HashMap<>();
+  private final Map<IntPoint, LearningContender> map = new HashMap<>();
   private final ScalarTensorFunction colorDataFunction = ColorDataGradients.CLASSIC;
   // ---
   private final DiscreteQsa ref;
@@ -43,7 +43,7 @@ public class LearningCompetition {
     this.errorcap2 = errorcap2;
   }
 
-  public void put(D2Point point, LearningContender learningContender) {
+  public void put(IntPoint point, LearningContender learningContender) {
     map.put(point, learningContender);
   }
 
@@ -66,7 +66,7 @@ public class LearningCompetition {
     return imageIconRecorder.getIconImage();
   }
 
-  private void processEntry(Tensor image, D2Point point, LearningContender learningContender, int index) {
+  private void processEntry(Tensor image, IntPoint point, LearningContender learningContender, int index) {
     ExplorationRate explorationRate = ConstantExplorationRate.of(epsilon.Get(index));
     learningContender.stepAndCompare(explorationRate, nstep, ref);
     Infoline infoline = learningContender.infoline(ref);

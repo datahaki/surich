@@ -16,8 +16,6 @@ import ch.alpine.tensor.RealScalar;
 import ch.alpine.tensor.Scalar;
 import ch.alpine.tensor.Tensor;
 import ch.alpine.tensor.Tensors;
-import ch.alpine.tensor.Unprotect;
-import ch.alpine.tensor.alg.Range;
 import ch.alpine.tensor.io.TableBuilder;
 import ch.alpine.tensor.nrm.FrobeniusNorm;
 import ch.alpine.tensor.pdf.Distribution;
@@ -66,12 +64,11 @@ public class SoftmaxMLP implements ManipulateProvider {
   public Container getContainer() {
     Network network = new Network();
     Scalar error = network.train(X, Y);
-    Tensor table = network.tableBuilder.getTable();
-    int n = Unprotect.dimension1Hint(table);
-    Tensor domain = Range.of(0, table.length()).multiply(RealScalar.of(SKIP));
     Show show = new Show();
-    for (int i = 0; i < n; ++i)
-      show.add(ListLinePlot.of(domain, table.get(Tensor.ALL, i)));
+    TableBuilder tableBuilder = network.tableBuilder;
+    int n = tableBuilder.getRow(0).length();
+    for (int i = 1; i < n; ++i)
+      show.add(ListLinePlot.of(tableBuilder.getColumns(0, i)));
     show.setPlotLabel("Error: " + error.maps(Round._3));
     return ShowGridComponent.of(show);
   }

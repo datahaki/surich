@@ -18,8 +18,7 @@ import ch.alpine.tensor.Scalar;
 import ch.alpine.tensor.Scalars;
 import ch.alpine.tensor.Tensor;
 import ch.alpine.tensor.Tensors;
-import ch.alpine.tensor.Unprotect;
-import ch.alpine.tensor.alg.Range;
+import ch.alpine.tensor.alg.Join;
 import ch.alpine.tensor.alg.Subdivide;
 import ch.alpine.tensor.api.ScalarUnaryOperator;
 import ch.alpine.tensor.io.TableBuilder;
@@ -36,8 +35,7 @@ import ch.alpine.tensor.sca.pow.Power;
 
 @ReflectionMarker
 public class CubicNetwork implements ManipulateProvider {
-  public static final Clip clip = Clips.absolute(1);
-  public static final int SKIP = 10;
+  public static final Clip CLIP = Clips.absolute(1);
   public Scalar scale = RealScalar.of(2);
   @FieldSelectionArray({ "2", "3", "4", "6", "7", "8", "10", "12" })
   public Integer hiddenSize = 4;
@@ -47,6 +45,7 @@ public class CubicNetwork implements ManipulateProvider {
   public Scalar timeout = Quantity.of(1, "s");
 
   public class Network {
+    private static final int SKIP = 10;
     private final ScalarUnaryOperator power = s -> Power.function(3).apply(s.multiply(scale));
     private final NetChain netChain = NetChains.linTanhLin(1, hiddenSize, 1);
     private final TableBuilder tableBuilder = new TableBuilder();
@@ -68,14 +67,14 @@ public class CubicNetwork implements ManipulateProvider {
         netChain.back(d);
         netChain.update();
         if (epoch % SKIP == 0)
-          consumer.accept(netChain.parameters());
+          consumer.accept(Join.of(Tensors.of(RealScalar.of(epoch)), netChain.parameters()));
         ++epoch;
       }
     }
 
     Scalar evaluate() {
       Tensor errors = Tensors.empty();
-      for (Tensor x : Subdivide.increasing(clip, 20).maps(Tensors::of)) {
+      for (Tensor x : Subdivide.increasing(CLIP, 20).maps(Tensors::of)) {
         Tensor y = netChain.forward(x);
         Tensor t = x.maps(power);
         Tensor e = t.subtract(y).Get(0);
@@ -90,17 +89,18 @@ public class CubicNetwork implements ManipulateProvider {
     Network network = new Network();
     network.train();
     Scalar error = network.evaluate();
-    Tensor table = network.tableBuilder.getTable();
     IO.println("Error: " + error);
-    int n = Unprotect.dimension1Hint(table);
-    Tensor domain = Range.of(0, table.length()).multiply(RealScalar.of(SKIP));
     Show show1 = new Show();
-    for (int i = 0; i < n; ++i)
-      show1.add(ListLinePlot.of(domain, table.get(Tensor.ALL, i)));
+    {
+      TableBuilder tableBuilder = network.tableBuilder;
+      int n = tableBuilder.getRow(0).length();
+      for (int i = 1; i < n; ++i)
+        show1.add(ListLinePlot.of(tableBuilder.getColumns(0, i)));
+    }
     Show show2 = new Show();
     show2.setPlotLabel("Infty error: " + error.maps(Round._3));
-    show2.add(Plot.of(network.power, clip)).setLabel("cubic");
-    show2.add(Plot.of(x -> network.netChain.forward(Tensors.of(x)).Get(0), clip)).setLabel("network");
+    show2.add(Plot.of(network.power, CLIP)).setLabel("cubic");
+    show2.add(Plot.of(x -> network.netChain.forward(Tensors.of(x)).Get(0), CLIP)).setLabel("network");
     return ShowGridComponent.of(show1, show2);
   }
 

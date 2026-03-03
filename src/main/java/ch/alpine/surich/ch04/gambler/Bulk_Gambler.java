@@ -17,7 +17,7 @@ import ch.alpine.subare.util.EGreedyPolicy;
 import ch.alpine.subare.util.LearningContender;
 import ch.alpine.subare.util.LinearExplorationRate;
 import ch.alpine.subare.util.PolicyType;
-import ch.alpine.subare.util.gfx.D2Point;
+import ch.alpine.subare.util.gfx.IntPoint;
 import ch.alpine.surich.LearningCompetition;
 import ch.alpine.tensor.Rational;
 import ch.alpine.tensor.RealScalar;
@@ -58,7 +58,7 @@ enum Bulk_Gambler implements ManipulateProvider {
         policy.setExplorationRate(LinearExplorationRate.of(100, 0.2, 0.01));
         Sarsa sarsa = sarsaType.sarsa(gamblerModel, DefaultLearningRate.of((Scalar) factor, (Scalar) exponent), qsa, sac, policy);
         LearningContender learningContender = LearningContender.sarsa(gamblerModel, sarsa);
-        learningCompetition.put(new D2Point(x, y), learningContender);
+        learningCompetition.put(new IntPoint(x, y), learningContender);
         ++y;
       }
       ++x;

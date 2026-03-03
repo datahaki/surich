@@ -40,15 +40,13 @@ import ch.alpine.tensor.sca.Round;
  * {4, 2} 14.4
  * {4, 3} 13.0
  * {4, 4} 11.7 */
-enum VI_Gridworld implements VoidProvider {
-  INSTANCE;
-
+class VI_Gridworld implements VoidProvider {
   @Override
   public Void runStandalone() {
     Gridworld gridworld = new Gridworld();
     ValueIteration vi = new ValueIteration(gridworld, gridworld);
-    vi.untilBelow(Chop._04);
-    System.out.println("iterations=" + vi.iterations());
+    int iterations = vi.untilBelow(Chop._04);
+    System.out.println("iterations=" + iterations);
     DiscreteUtils.print(vi.vs(), Round._1);
     Policy policy = PolicyType.GREEDY.bestEquiprobable(gridworld, vi.vs(), null);
     Policies.print(policy, gridworld.states());
@@ -56,6 +54,6 @@ enum VI_Gridworld implements VoidProvider {
   }
 
   static void main() {
-    INSTANCE.runStandalone();
+    new VI_Gridworld().runStandalone();
   }
 }
