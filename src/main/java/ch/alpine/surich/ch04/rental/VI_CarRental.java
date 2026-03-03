@@ -1,30 +1,37 @@
 // code by jph
 package ch.alpine.surich.ch04.rental;
 
-import java.util.concurrent.TimeUnit;
+import java.awt.Container;
 
-import ch.alpine.ascony.io.AnimationWriter;
-import ch.alpine.ascony.io.GifAnimationWriter;
+import ch.alpine.ascony.io.ImageIconRecorder;
+import ch.alpine.bridge.awt.AwtUtil;
+import ch.alpine.bridge.pro.ManipulateProvider;
+import ch.alpine.bridge.ref.ann.ReflectionMarker;
 import ch.alpine.subare.alg.ValueIteration;
-import ch.alpine.tensor.ext.HomeDirectory;
 
 /** Example 4.2: Jack's Car Rental
  * Figure 4.2
  * 
  * p.87-88 */
-/* package */ enum VI_CarRental {
-  ;
-  static void main() throws Exception {
-    CarRental carRental = new CarRental(20);
+@ReflectionMarker
+class VI_CarRental implements ManipulateProvider {
+  public Integer maxCars = 5;
+  public Integer batches = 25;
+
+  @Override
+  public Container getContainer() {
+    CarRental carRental = new CarRental(maxCars);
     ValueIteration vi = new ValueIteration(carRental);
-    try (AnimationWriter animationWriter = //
-        new GifAnimationWriter(HomeDirectory.Pictures.resolve("carrental_vi.gif"), 250, TimeUnit.MILLISECONDS)) {
-      for (int count = 0; count <= 25; ++count) {
-        System.out.println(count);
-        animationWriter.write(CarRentalHelper.joinAll(carRental, vi.vs()));
-        vi.step();
-      }
-      animationWriter.write(CarRentalHelper.joinAll(carRental, vi.vs()));
+    ImageIconRecorder imageIconRecorder = new ImageIconRecorder(250);
+    for (int count = 0; count <= batches; ++count) {
+      System.out.println(count);
+      imageIconRecorder.write(CarRentalHelper.joinAll(carRental, vi.vs()));
+      vi.step();
     }
+    return AwtUtil.iconAsLabel(imageIconRecorder.getIconImage());
+  }
+
+  static void main() {
+    new VI_CarRental().runStandalone();
   }
 }

@@ -33,7 +33,6 @@ class SES_Gridworld implements ManipulateProvider {
 
   @Override
   public Container getContainer() {
-    System.out.println(sarsaType);
     Gridworld gridworld = new Gridworld();
     final DiscreteQsa ref = GridworldHelper.getOptimalQsa(gridworld);
     DiscreteQsa qsa = DiscreteQsa.build(gridworld);

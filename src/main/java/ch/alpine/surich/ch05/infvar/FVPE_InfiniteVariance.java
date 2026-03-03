@@ -1,15 +1,16 @@
 // code by jph
 package ch.alpine.surich.ch05.infvar;
 
+import ch.alpine.bridge.pro.VoidProvider;
 import ch.alpine.subare.api.Policy;
 import ch.alpine.subare.mc.FirstVisitPolicyEvaluation;
 import ch.alpine.subare.util.ExploringStarts;
 import ch.alpine.tensor.Rational;
 import ch.alpine.tensor.sca.N;
 
-/* package */ enum FVPE_InfiniteVariance {
-  ;
-  static void main() {
+class FVPE_InfiniteVariance implements VoidProvider {
+  @Override
+  public Void runStandalone() {
     InfiniteVariance infiniteVariance = new InfiniteVariance();
     FirstVisitPolicyEvaluation fvpe = new FirstVisitPolicyEvaluation( //
         infiniteVariance, null);
@@ -17,5 +18,10 @@ import ch.alpine.tensor.sca.N;
     for (int count = 0; count < 100; ++count)
       ExploringStarts.batch(infiniteVariance, policy, fvpe);
     System.out.println(fvpe.vs().values().maps(N.DOUBLE));
+    return null;
+  }
+
+  static void main() {
+    new FVPE_InfiniteVariance().runStandalone();
   }
 }

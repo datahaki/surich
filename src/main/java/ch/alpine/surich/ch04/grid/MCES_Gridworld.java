@@ -28,10 +28,10 @@ class MCES_Gridworld implements ManipulateProvider {
     Gridworld gridworld = new Gridworld();
     final DiscreteQsa ref = GridworldHelper.getOptimalQsa(gridworld);
     MonteCarloExploringStarts mces = new MonteCarloExploringStarts(gridworld);
-    ImageIconRecorder imageIconRecorder = new ImageIconRecorder(250);
     StateActionCounter sac = new DiscreteStateActionCounter();
     EGreedyPolicy policy = (EGreedyPolicy) PolicyType.EGREEDY.bestEquiprobable(gridworld, mces.qsa(), sac);
     policy.setExplorationRate(LinearExplorationRate.of(batches, 0.2, 0.05));
+    ImageIconRecorder imageIconRecorder = new ImageIconRecorder(250);
     for (int index = 0; index < batches; ++index) {
       Infoline.of(gridworld, ref, mces.qsa());
       for (int count = 0; count < 1; ++count) {

@@ -1,6 +1,7 @@
 // code by jph
 package ch.alpine.surich.ch05.infvar;
 
+import ch.alpine.bridge.pro.VoidProvider;
 import ch.alpine.subare.api.Policy;
 import ch.alpine.subare.mc.MonteCarloExploringStarts;
 import ch.alpine.subare.util.DiscreteQsa;
@@ -8,9 +9,9 @@ import ch.alpine.subare.util.DiscreteUtils;
 import ch.alpine.subare.util.EquiprobablePolicy;
 import ch.alpine.subare.util.ExploringStarts;
 
-enum MCES_InfiniteVariance {
-  ;
-  static void main() {
+class MCES_InfiniteVariance implements VoidProvider {
+  @Override
+  public Void runStandalone() {
     InfiniteVariance infiniteVariance = new InfiniteVariance();
     MonteCarloExploringStarts mces = new MonteCarloExploringStarts(infiniteVariance);
     Policy policy = EquiprobablePolicy.create(infiniteVariance);
@@ -18,5 +19,10 @@ enum MCES_InfiniteVariance {
       ExploringStarts.batch(infiniteVariance, policy, mces);
     DiscreteQsa qsa = mces.qsa();
     DiscreteUtils.print(qsa);
+    return null;
+  }
+
+  static void main() {
+    new MCES_InfiniteVariance().runStandalone();
   }
 }

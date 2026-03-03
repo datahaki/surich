@@ -38,7 +38,6 @@ class Sarsa_Gridworld implements ManipulateProvider {
 
   @Override
   public Container getContainer() {
-    System.out.println(sarsaType);
     Gridworld gridworld = new Gridworld();
     final DiscreteQsa ref = GridworldHelper.getOptimalQsa(gridworld);
     int batches = 10;

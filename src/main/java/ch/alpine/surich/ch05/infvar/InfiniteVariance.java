@@ -16,10 +16,12 @@ public class InfiniteVariance implements StandardModel, MonteCarloInterface {
   static final Scalar BACK = RealScalar.ZERO;
   static final Scalar END = RealScalar.ONE;
   static final Scalar PROB = RealScalar.of(0.1);
-  private final Tensor states = Tensors.vector(0, 1).unmodifiable();
-  private final Tensor actions = Tensors.of(BACK, END).unmodifiable(); // increment
-  private final Coinflip coinflip = Coinflip.of(PROB);
+  private static final Tensor states = Tensors.vector(0, 1).unmodifiable();
+  private static final Tensor actions = Tensors.of(BACK, END).unmodifiable(); // increment
+  private static final Coinflip coinflip = Coinflip.of(PROB);
 
+  public static final InfiniteVariance INSTANCE = new InfiniteVariance();
+  
   @Override
   public Tensor states() {
     return states;

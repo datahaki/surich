@@ -28,8 +28,8 @@ import ch.alpine.tensor.qty.Timing;
 
 @ReflectionMarker
 class TOS_Gridworld implements ManipulateProvider {
-  private static final Scalar LAMBDA = RealScalar.of(0.5);
   public SarsaType sarsaType = SarsaType.EXPECTED;
+  public Scalar LAMBDA = RealScalar.of(0.5);
 
   @Override
   public Container getContainer() {
@@ -44,7 +44,6 @@ class TOS_Gridworld implements ManipulateProvider {
     PolicyBase policy = PolicyType.EGREEDY.bestEquiprobable(gridworld, DiscreteQsa.build(gridworld), sac);
     // LearningRate learningRate = ConstantLearningRate.of(RealScalar.of(0.3), false); // the case without warmStart
     TrueOnlineSarsa trueOnlineSarsa = sarsaType.trueOnline(gridworld, LAMBDA, mapper, learningRate, w, sac, policy);
-    final String name = sarsaType.name().toLowerCase();
     Timing timing = Timing.started();
     ImageIconRecorder imageIconRecorder = new ImageIconRecorder(250);
     for (int batch = 0; batch < 100; ++batch) {
