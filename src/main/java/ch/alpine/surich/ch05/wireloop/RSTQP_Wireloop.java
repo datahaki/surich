@@ -16,8 +16,8 @@ import ch.alpine.tensor.RealScalar;
 
 /** Example 4.1, p.82 */
 @ReflectionMarker
-enum RSTQP_Wireloop implements ManipulateProvider {
-  INSTANCE;
+class RSTQP_Wireloop implements ManipulateProvider {
+  public Integer batches = 20;
 
   @Override
   public Container getContainer() {
@@ -31,7 +31,6 @@ enum RSTQP_Wireloop implements ManipulateProvider {
     Random1StepTabularQPlanning rstqp = Random1StepTabularQPlanning.of( //
         wireloop, qsa, ConstantLearningRate.of(RealScalar.ONE));
     ImageIconRecorder imageIconRecorder = new ImageIconRecorder(250);
-    int batches = 50;
     for (int index = 0; index < batches; ++index) {
       Infoline infoline = Infoline.of(wireloop, ref, qsa);
       TabularSteps.batch(wireloop, wireloop, rstqp);
@@ -43,6 +42,6 @@ enum RSTQP_Wireloop implements ManipulateProvider {
   }
 
   static void main() {
-    INSTANCE.runStandalone();
+    new RSTQP_Wireloop().runStandalone();
   }
 }

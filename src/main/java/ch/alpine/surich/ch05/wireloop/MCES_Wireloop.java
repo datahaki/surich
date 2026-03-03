@@ -1,10 +1,12 @@
 // code by jph
 package ch.alpine.surich.ch05.wireloop;
 
-import java.util.concurrent.TimeUnit;
+import java.awt.Container;
 
-import ch.alpine.ascony.io.AnimationWriter;
-import ch.alpine.ascony.io.GifAnimationWriter;
+import ch.alpine.ascony.io.ImageIconRecorder;
+import ch.alpine.bridge.awt.AwtUtil;
+import ch.alpine.bridge.pro.ManipulateProvider;
+import ch.alpine.bridge.ref.ann.ReflectionMarker;
 import ch.alpine.subare.api.StateActionCounter;
 import ch.alpine.subare.mc.MonteCarloExploringStarts;
 import ch.alpine.subare.util.DiscreteQsa;
@@ -14,31 +16,34 @@ import ch.alpine.subare.util.ExploringStarts;
 import ch.alpine.subare.util.Infoline;
 import ch.alpine.subare.util.LinearExplorationRate;
 import ch.alpine.subare.util.PolicyType;
-import ch.alpine.tensor.ext.HomeDirectory;
 
-enum MCES_Wireloop {
-  ;
-  static void main() throws Exception {
+@ReflectionMarker
+class MCES_Wireloop implements ManipulateProvider {
+  public Integer batches = 1;
+
+  @Override
+  public Container getContainer() {
     String name = "wire5";
     Wireloop wireloop = WireloopHelper.create(name, WireloopReward::id_x);
     WireloopRaster wireloopRaster = new WireloopRaster(wireloop);
     DiscreteQsa ref = WireloopHelper.getOptimalQsa(wireloop);
     MonteCarloExploringStarts mces = new MonteCarloExploringStarts(wireloop);
-    try (AnimationWriter animationWriter = //
-        new GifAnimationWriter(HomeDirectory.Pictures.resolve(name + "L_mces.gif"), 100, TimeUnit.MILLISECONDS)) {
-      int batches = 10;
-      StateActionCounter sac = new DiscreteStateActionCounter();
-      EGreedyPolicy policy = (EGreedyPolicy) PolicyType.EGREEDY.bestEquiprobable(wireloop, mces.qsa(), sac);
-      policy.setExplorationRate(LinearExplorationRate.of(batches, 0.2, 0.05));
-      for (int index = 0; index < batches; ++index) {
-        Infoline infoline = Infoline.of(wireloop, ref, mces.qsa());
-        for (int count = 0; count < 4; ++count) {
-          ExploringStarts.batch(wireloop, policy, mces);
-        }
-        animationWriter.write(WireloopHelper.render(wireloopRaster, ref, mces.qsa()));
-        if (infoline.isLossfree())
-          break;
-      }
+    ImageIconRecorder imageIconRecorder = new ImageIconRecorder(200);
+    StateActionCounter sac = new DiscreteStateActionCounter();
+    EGreedyPolicy policy = (EGreedyPolicy) PolicyType.EGREEDY.bestEquiprobable(wireloop, mces.qsa(), sac);
+    policy.setExplorationRate(LinearExplorationRate.of(batches, 0.2, 0.05));
+    for (int index = 0; index < batches; ++index) {
+      Infoline infoline = Infoline.of(wireloop, ref, mces.qsa());
+      for (int count = 0; count < 4; ++count)
+        ExploringStarts.batch(wireloop, policy, mces);
+      imageIconRecorder.write(WireloopHelper.render(wireloopRaster, ref, mces.qsa()));
+      if (infoline.isLossfree())
+        break;
     }
+    return AwtUtil.iconAsLabel(imageIconRecorder.getIconImage());
+  }
+
+  static void main() throws Exception {
+    new MCES_Wireloop().runStandalone();
   }
 }

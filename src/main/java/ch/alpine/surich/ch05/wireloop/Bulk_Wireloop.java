@@ -7,6 +7,7 @@ import javax.swing.ImageIcon;
 
 import ch.alpine.bridge.awt.AwtUtil;
 import ch.alpine.bridge.pro.ManipulateProvider;
+import ch.alpine.bridge.ref.ann.ReflectionMarker;
 import ch.alpine.subare.api.StateActionCounter;
 import ch.alpine.subare.td.Sarsa;
 import ch.alpine.subare.td.SarsaType;
@@ -25,16 +26,10 @@ import ch.alpine.tensor.Tensor;
 import ch.alpine.tensor.alg.Subdivide;
 
 /** Sarsa applied to gambler for different learning rate parameters */
-enum Bulk_Wireloop implements ManipulateProvider {
-  INSTANCE(SarsaType.QLEARNING, 1);
-
-  private final SarsaType sarsaType;
-  private final int nstep;
-
-  Bulk_Wireloop(SarsaType sarsaType, int nstep) {
-    this.sarsaType = sarsaType;
-    this.nstep = nstep;
-  }
+@ReflectionMarker
+class Bulk_Wireloop implements ManipulateProvider {
+  public SarsaType sarsaType = SarsaType.QLEARNING;
+  public Integer nstep = 1;
 
   @Override
   public Container getContainer() {
@@ -50,9 +45,10 @@ enum Bulk_Wireloop implements ManipulateProvider {
     LearningCompetition learningCompetition = new LearningCompetition( //
         ref, epsilon, errorcap, losscap);
     learningCompetition.nstep = 1;
-    for (Tensor factor : Subdivide.of(.1, 10, 20)) { // .5 16
+    // TODO resolution is low: 5 x 5
+    for (Tensor factor : Subdivide.of(.1, 10, 5)) { // .5 16
       int y = 0;
-      for (Tensor exponent : Subdivide.of(.51, 1.5, 20)) { // .51 2
+      for (Tensor exponent : Subdivide.of(.51, 1.5, 5)) { // .51 2
         DiscreteQsa qsa = DiscreteQsa.build(wireloop);
         StateActionCounter sac = new DiscreteStateActionCounter();
         EGreedyPolicy policy = (EGreedyPolicy) PolicyType.EGREEDY.bestEquiprobable(wireloop, qsa, sac);
@@ -70,6 +66,6 @@ enum Bulk_Wireloop implements ManipulateProvider {
   }
 
   static void main() throws Exception {
-    INSTANCE.runStandalone();
+    new Bulk_Wireloop().runStandalone();
   }
 }

@@ -21,7 +21,6 @@ import ch.alpine.tensor.api.ScalarTensorFunction;
 import ch.alpine.tensor.img.ColorDataGradients;
 import ch.alpine.tensor.qty.Timing;
 import ch.alpine.tensor.red.Min;
-import ch.alpine.tensor.sca.Round;
 
 public class LearningCompetition {
   private final Map<IntPoint, LearningContender> map = new HashMap<>();
@@ -49,6 +48,7 @@ public class LearningCompetition {
 
   private int RESX = 0;
 
+  // TODO this should be shown in plots!?
   public ImageIcon doit() {
     RESX = map.keySet().stream().mapToInt(point -> point.x()).reduce(Math::max).orElseThrow() + 1;
     int RESY = map.keySet().stream().mapToInt(point -> point.y()).reduce(Math::max).orElseThrow() + 1;
@@ -59,8 +59,7 @@ public class LearningCompetition {
       Timing timing = Timing.started();
       map.entrySet().stream().parallel().forEach(entry -> //
       processEntry(image, entry.getKey(), entry.getValue(), findex));
-      //
-      System.out.printf("%3d %s sec%n", index, timing.seconds().maps(Round._1));
+      // System.out.printf("%3d %s %n", index, timing.seconds().maps(Round._1));
       imageIconRecorder.write(image);
     }
     return imageIconRecorder.getIconImage();

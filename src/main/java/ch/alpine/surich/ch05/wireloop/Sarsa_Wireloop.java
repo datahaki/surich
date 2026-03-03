@@ -1,10 +1,12 @@
 // code by jph
 package ch.alpine.surich.ch05.wireloop;
 
-import java.util.concurrent.TimeUnit;
+import java.awt.Container;
 
-import ch.alpine.ascony.io.AnimationWriter;
-import ch.alpine.ascony.io.GifAnimationWriter;
+import ch.alpine.ascony.io.ImageIconRecorder;
+import ch.alpine.bridge.awt.AwtUtil;
+import ch.alpine.bridge.pro.ManipulateProvider;
+import ch.alpine.bridge.ref.ann.ReflectionMarker;
 import ch.alpine.subare.api.StateActionCounter;
 import ch.alpine.subare.td.Sarsa;
 import ch.alpine.subare.td.SarsaType;
@@ -16,12 +18,15 @@ import ch.alpine.subare.util.ExploringStarts;
 import ch.alpine.subare.util.Infoline;
 import ch.alpine.subare.util.LinearExplorationRate;
 import ch.alpine.subare.util.PolicyType;
-import ch.alpine.tensor.ext.HomeDirectory;
 
-enum Sarsa_Wireloop {
-  ;
-  static void handle(SarsaType sarsaType, int nstep, int batches) throws Exception {
-    System.out.println(sarsaType);
+@ReflectionMarker
+class Sarsa_Wireloop implements ManipulateProvider {
+  public SarsaType sarsaType = SarsaType.QLEARNING;
+  public Integer nstep = 1;
+  public Integer batches = 20;
+
+  @Override
+  public Container getContainer() {
     String name = "wire5";
     WireloopReward wireloopReward = WireloopReward.freeSteps();
     wireloopReward = WireloopReward.constantCost();
@@ -33,21 +38,18 @@ enum Sarsa_Wireloop {
     EGreedyPolicy policy = (EGreedyPolicy) PolicyType.EGREEDY.bestEquiprobable(wireloop, qsa, sac);
     policy.setExplorationRate(LinearExplorationRate.of(batches, 0.2, 0.01));
     Sarsa sarsa = sarsaType.sarsa(wireloop, DefaultLearningRate.of(3, 0.51), qsa, sac, policy);
-    try (AnimationWriter animationWriter = new GifAnimationWriter( //
-        HomeDirectory.Pictures.resolve(name + "L_qsa_" + sarsaType + "" + nstep + ".gif"), 250, TimeUnit.MILLISECONDS)) {
-      for (int index = 0; index < batches; ++index) {
-        Infoline infoline = Infoline.of(wireloop, ref, qsa);
-        ExploringStarts.batch(wireloop, policy, nstep, sarsa);
-        animationWriter.write(WireloopHelper.render(wireloopRaster, ref, qsa));
-        if (infoline.isLossfree())
-          break;
-      }
+    ImageIconRecorder imageIconRecorder = new ImageIconRecorder(250);
+    for (int index = 0; index < batches; ++index) {
+      Infoline infoline = Infoline.of(wireloop, ref, qsa);
+      ExploringStarts.batch(wireloop, policy, nstep, sarsa);
+      imageIconRecorder.write(WireloopHelper.render(wireloopRaster, ref, qsa));
+      if (infoline.isLossfree())
+        break;
     }
-    System.out.println("---");
+    return AwtUtil.iconAsLabel(imageIconRecorder.getIconImage());
   }
 
   static void main() throws Exception {
-    handle(SarsaType.QLEARNING, 1, 20);
-    handle(SarsaType.EXPECTED, 1, 20);
+    new Sarsa_Wireloop().runStandalone();
   }
 }

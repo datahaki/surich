@@ -3,6 +3,7 @@ package ch.alpine.surich.ch04.gambler;
 
 import java.util.List;
 
+import ch.alpine.bridge.pro.VoidProvider;
 import ch.alpine.subare.alg.OnPolicyStateDistribution;
 import ch.alpine.subare.api.Policy;
 import ch.alpine.subare.util.DiscreteVs;
@@ -16,9 +17,9 @@ import ch.alpine.tensor.nrm.NormalizeTotal;
 import ch.alpine.tensor.red.Total;
 import ch.alpine.tensor.sca.Sign;
 
-/* package */ enum EtaGambler {
-  ;
-  static void main() {
+class EtaGambler implements VoidProvider {
+  @Override
+  public Void runStandalone() {
     GamblerModel gamblerModel = new GamblerModel(10, Rational.of(4, 10));
     // Policy policy = EquiprobablePolicy.create(gambler);
     Policy policy = GamblerHelper.getOptimalPolicy(gamblerModel);
@@ -35,5 +36,10 @@ import ch.alpine.tensor.sca.Sign;
       System.out.println(vs.values());
       System.out.println("total=" + Total.of(vs.values()));
     }
+    return null;
+  }
+
+  static void main() {
+    new EtaGambler().runStandalone();
   }
 }

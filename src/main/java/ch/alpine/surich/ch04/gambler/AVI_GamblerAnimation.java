@@ -16,9 +16,7 @@ import ch.alpine.subare.util.gfx.StateActionRasters;
  * 
  * visualizes each pass of the action value iteration */
 @ReflectionMarker
-enum AVI_GamblerAnimation implements ManipulateProvider {
-  INSTANCE;
-
+class AVI_GamblerAnimation implements ManipulateProvider {
   @Override
   public Container getContainer() {
     GamblerModel gamblerModel = GamblerModel.createDefault();
@@ -36,6 +34,6 @@ enum AVI_GamblerAnimation implements ManipulateProvider {
   }
 
   static void main() {
-    INSTANCE.runStandalone();
+    new AVI_GamblerAnimation().runStandalone();
   }
 }
