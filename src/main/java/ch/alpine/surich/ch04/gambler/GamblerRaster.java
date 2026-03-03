@@ -2,9 +2,9 @@
 package ch.alpine.surich.ch04.gambler;
 
 import java.awt.Dimension;
-import java.awt.Point;
 
 import ch.alpine.subare.api.DiscreteModel;
+import ch.alpine.subare.util.gfx.D2Point;
 import ch.alpine.subare.util.gfx.StateActionRaster;
 import ch.alpine.tensor.RealScalar;
 import ch.alpine.tensor.Scalar;
@@ -32,8 +32,8 @@ import ch.alpine.tensor.Tensor;
   }
 
   @Override
-  public Point point(Tensor state, Tensor action) {
-    return new Point( //
+  public D2Point point(Tensor state, Tensor action) {
+    return new D2Point( //
         Scalars.intValueExact((Scalar) state), //
         offset - Scalars.intValueExact((Scalar) action));
   }

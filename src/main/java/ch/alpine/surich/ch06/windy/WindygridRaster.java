@@ -2,10 +2,10 @@
 package ch.alpine.surich.ch06.windy;
 
 import java.awt.Dimension;
-import java.awt.Point;
 
 import ch.alpine.subare.api.DiscreteModel;
 import ch.alpine.subare.math.Index;
+import ch.alpine.subare.util.gfx.D2Point;
 import ch.alpine.subare.util.gfx.StateActionRaster;
 import ch.alpine.tensor.RealScalar;
 import ch.alpine.tensor.Scalar;
@@ -32,11 +32,11 @@ class WindygridRaster implements StateActionRaster {
   }
 
   @Override
-  public Point point(Tensor state, Tensor action) {
+  public D2Point point(Tensor state, Tensor action) {
     int sx = Scalars.intValueExact(state.Get(0));
     int sy = Scalars.intValueExact(state.Get(1));
     int a = indexActions.of(action);
-    return new Point(sx, sy + (Windygrid.NY + 1) * a);
+    return new D2Point(sx, sy + (Windygrid.NY + 1) * a);
   }
 
   @Override

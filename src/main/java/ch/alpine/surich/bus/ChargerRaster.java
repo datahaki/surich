@@ -2,9 +2,9 @@
 package ch.alpine.surich.bus;
 
 import java.awt.Dimension;
-import java.awt.Point;
 
 import ch.alpine.subare.api.DiscreteModel;
+import ch.alpine.subare.util.gfx.D2Point;
 import ch.alpine.subare.util.gfx.StateActionRaster;
 import ch.alpine.tensor.RealScalar;
 import ch.alpine.tensor.Scalar;
@@ -49,11 +49,11 @@ import ch.alpine.tensor.Tensor;
   }
 
   @Override
-  public Point point(Tensor state, Tensor action) {
+  public D2Point point(Tensor state, Tensor action) {
     int x = Scalars.intValueExact(state.Get(0));
     int y = SPACE_Y - Scalars.intValueExact(state.Get(1)) - 2;
     int load = 4 - Scalars.intValueExact((Scalar) action);
     load *= SPACE_Y;
-    return new Point(x, y + load);
+    return new D2Point(x, y + load);
   }
 }

@@ -7,6 +7,7 @@ import java.awt.Container;
 import ch.alpine.ascony.io.ImageIconRecorder;
 import ch.alpine.bridge.awt.AwtUtil;
 import ch.alpine.bridge.pro.ManipulateProvider;
+import ch.alpine.bridge.ref.ann.ReflectionMarker;
 import ch.alpine.subare.alg.ActionValueIteration;
 import ch.alpine.subare.util.DiscreteValueFunctions;
 import ch.alpine.subare.util.gfx.StateActionRasters;
@@ -33,9 +34,8 @@ import ch.alpine.subare.util.gfx.StateActionRasters;
  * {3, 1} -2
  * {3, 2} -1
  * {3, 3} 0 */
-enum AVI_Gridworld implements ManipulateProvider {
-  INSTANCE;
-
+@ReflectionMarker
+class AVI_Gridworld implements ManipulateProvider {
   @Override
   public Container getContainer() {
     Gridworld gridworld = new Gridworld();
@@ -53,6 +53,6 @@ enum AVI_Gridworld implements ManipulateProvider {
   }
 
   static void main() {
-    INSTANCE.runStandalone();
+    new AVI_Gridworld().runStandalone();
   }
 }

@@ -2,11 +2,11 @@
 package ch.alpine.surich.ch04.grid;
 
 import java.awt.Dimension;
-import java.awt.Point;
 import java.util.List;
 
 import ch.alpine.subare.api.DiscreteModel;
 import ch.alpine.subare.math.Index;
+import ch.alpine.subare.util.gfx.D2Point;
 import ch.alpine.subare.util.gfx.StateActionRaster;
 import ch.alpine.subare.util.gfx.StateRaster;
 import ch.alpine.subare.util.gfx.StateRasters;
@@ -45,11 +45,11 @@ class GridworldRaster implements StateRaster, StateActionRaster {
   }
 
   @Override
-  public Point point(Tensor state, Tensor action) {
+  public D2Point point(Tensor state, Tensor action) {
     int sx = Scalars.intValueExact(state.Get(0));
     int sy = Scalars.intValueExact(state.Get(1));
     int a = indexActions.of(action);
-    return new Point(sx + (Gridworld.NX + 1) * a, sy);
+    return new D2Point(sx + (Gridworld.NX + 1) * a, sy);
   }
 
   @Override

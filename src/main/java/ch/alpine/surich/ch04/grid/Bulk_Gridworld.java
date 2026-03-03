@@ -2,9 +2,6 @@
 package ch.alpine.surich.ch04.grid;
 
 import java.awt.Container;
-import java.awt.Point;
-
-import javax.swing.ImageIcon;
 
 import ch.alpine.bridge.awt.AwtUtil;
 import ch.alpine.bridge.pro.ManipulateProvider;
@@ -19,6 +16,7 @@ import ch.alpine.subare.util.EGreedyPolicy;
 import ch.alpine.subare.util.LearningContender;
 import ch.alpine.subare.util.LinearExplorationRate;
 import ch.alpine.subare.util.PolicyType;
+import ch.alpine.subare.util.gfx.D2Point;
 import ch.alpine.surich.LearningCompetition;
 import ch.alpine.tensor.RealScalar;
 import ch.alpine.tensor.Scalar;
@@ -53,14 +51,13 @@ class Bulk_Gridworld implements ManipulateProvider {
         policy.setExplorationRate(LinearExplorationRate.of(100, 0.1, 0.01));
         Sarsa sarsa = sarsaType.sarsa(gambler, DefaultLearningRate.of((Scalar) factor, (Scalar) exponent), qsa, sac, policy);
         LearningContender learningContender = LearningContender.sarsa(gambler, sarsa);
-        learningCompetition.put(new Point(x, y), learningContender);
+        learningCompetition.put(new D2Point(x, y), learningContender);
         ++y;
       }
       ++x;
     }
     // ---
-    ImageIcon imageIcon = learningCompetition.doit();
-    return AwtUtil.iconAsLabel(imageIcon);
+    return AwtUtil.iconAsLabel(learningCompetition.doit());
   }
 
   static void main() throws Exception {

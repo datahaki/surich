@@ -1,7 +1,6 @@
 // code by jph
 package ch.alpine.surich;
 
-import java.awt.Point;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -13,6 +12,7 @@ import ch.alpine.subare.util.ConstantExplorationRate;
 import ch.alpine.subare.util.DiscreteQsa;
 import ch.alpine.subare.util.Infoline;
 import ch.alpine.subare.util.LearningContender;
+import ch.alpine.subare.util.gfx.D2Point;
 import ch.alpine.tensor.RealScalar;
 import ch.alpine.tensor.Scalar;
 import ch.alpine.tensor.Tensor;
@@ -24,7 +24,7 @@ import ch.alpine.tensor.red.Min;
 import ch.alpine.tensor.sca.Round;
 
 public class LearningCompetition {
-  private final Map<Point, LearningContender> map = new HashMap<>();
+  private final Map<D2Point, LearningContender> map = new HashMap<>();
   private final ScalarTensorFunction colorDataFunction = ColorDataGradients.CLASSIC;
   // ---
   private final DiscreteQsa ref;
@@ -43,15 +43,15 @@ public class LearningCompetition {
     this.errorcap2 = errorcap2;
   }
 
-  public void put(Point point, LearningContender learningContender) {
+  public void put(D2Point point, LearningContender learningContender) {
     map.put(point, learningContender);
   }
 
   private int RESX = 0;
 
   public ImageIcon doit() {
-    RESX = map.keySet().stream().mapToInt(point -> point.x).reduce(Math::max).orElseThrow() + 1;
-    int RESY = map.keySet().stream().mapToInt(point -> point.y).reduce(Math::max).orElseThrow() + 1;
+    RESX = map.keySet().stream().mapToInt(point -> point.x()).reduce(Math::max).orElseThrow() + 1;
+    int RESY = map.keySet().stream().mapToInt(point -> point.y()).reduce(Math::max).orElseThrow() + 1;
     Tensor image = Array.zeros(RESX + 1 + RESX, RESY, 4);
     ImageIconRecorder imageIconRecorder = new ImageIconRecorder(period);
     for (int index = 0; index < epsilon.length(); ++index) {
@@ -66,19 +66,19 @@ public class LearningCompetition {
     return imageIconRecorder.getIconImage();
   }
 
-  private void processEntry(Tensor image, Point point, LearningContender learningContender, int index) {
+  private void processEntry(Tensor image, D2Point point, LearningContender learningContender, int index) {
     ExplorationRate explorationRate = ConstantExplorationRate.of(epsilon.Get(index));
     learningContender.stepAndCompare(explorationRate, nstep, ref);
     Infoline infoline = learningContender.infoline(ref);
     {
       Scalar error = infoline.error();
       error = Min.of(error.divide(errorcap), RealScalar.ONE);
-      image.set(colorDataFunction.apply(error), point.x, point.y);
+      image.set(colorDataFunction.apply(error), point.x(), point.y());
     }
     {
       Scalar error = infoline.loss();
       error = Min.of(error.divide(errorcap2), RealScalar.ONE);
-      image.set(colorDataFunction.apply(error), RESX + 1 + point.x, point.y);
+      image.set(colorDataFunction.apply(error), RESX + 1 + point.x(), point.y());
     }
   }
 }
