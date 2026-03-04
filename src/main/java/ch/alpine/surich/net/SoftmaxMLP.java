@@ -24,7 +24,7 @@ import ch.alpine.tensor.qty.Quantity;
 import ch.alpine.tensor.sca.Round;
 
 @ReflectionMarker
-public class SoftmaxMLP implements ManipulateProvider {
+class SoftmaxMLP implements ManipulateProvider {
   static final Distribution DISTRIBUTION = NormalDistribution.of(0.0, 0.1);
   public static final Tensor X = Tensors.matrixDouble(new double[][] { //
       { 1, 1 }, { 1.5, 2 }, { 2, 1 }, // Class 0

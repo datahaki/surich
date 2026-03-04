@@ -2,8 +2,12 @@
 // inspired by Shangtong Zhang
 package ch.alpine.surich.fish;
 
+import java.awt.Container;
+
 import ch.alpine.bridge.awt.AwtUtil;
 import ch.alpine.bridge.io.ImageIconRecorder;
+import ch.alpine.bridge.pro.ManipulateProvider;
+import ch.alpine.bridge.ref.ann.ReflectionMarker;
 import ch.alpine.subare.api.StateActionCounter;
 import ch.alpine.subare.td.Sarsa;
 import ch.alpine.subare.td.SarsaType;
@@ -21,11 +25,17 @@ import ch.alpine.tensor.DoubleScalar;
 import ch.alpine.tensor.sca.Round;
 
 /** StepDigest qsa methods applied to cliff walk */
-enum Sarsa_Fishfarm {
-  ;
-  static void handle(SarsaType sarsaType, int nstep, int batches) throws Exception {
-    System.out.println(sarsaType);
-    Fishfarm fishfarm = new Fishfarm(20, 20);
+@ReflectionMarker
+class Sarsa_Fishfarm implements ManipulateProvider {
+  public Integer period = 10;
+  public Integer max_fish = 10;
+  public SarsaType sarsaType = SarsaType.EXPECTED;
+  public Integer nstep = 1;
+  public Integer batches = 20;
+
+  @Override
+  public Container getContainer() {
+    Fishfarm fishfarm = new Fishfarm(period, max_fish);
     FishfarmRaster fishfarmRaster = new FishfarmRaster(fishfarm);
     final DiscreteQsa ref = FishfarmHelper.getOptimalQsa(fishfarm);
     DiscreteQsa qsa = DiscreteQsa.build(fishfarm, DoubleScalar.POSITIVE_INFINITY);
@@ -52,12 +62,10 @@ enum Sarsa_Fishfarm {
     // Tensor state = stepInterface.prevState();
     // System.out.println(state + " then " + stepInterface.action());
     // }
-    AwtUtil.iconAsLabel(imageIconRecorder.getIconImage());
+    return AwtUtil.iconAsLabel(imageIconRecorder.getIconImage());
   }
 
   static void main() throws Exception {
-    // handle(SarsaType.original, 1, 30);
-    handle(SarsaType.EXPECTED, 1, 30);
-    // handle(SarsaType.qlearning, 1, 10);
+    new Sarsa_Fishfarm().runStandalone();
   }
 }

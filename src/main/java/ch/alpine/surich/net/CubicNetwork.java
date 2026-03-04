@@ -34,7 +34,7 @@ import ch.alpine.tensor.sca.Round;
 import ch.alpine.tensor.sca.pow.Power;
 
 @ReflectionMarker
-public class CubicNetwork implements ManipulateProvider {
+class CubicNetwork implements ManipulateProvider {
   public static final Clip CLIP = Clips.absolute(1);
   public Scalar scale = RealScalar.of(2);
   @FieldSelectionArray({ "2", "3", "4", "6", "7", "8", "10", "12" })

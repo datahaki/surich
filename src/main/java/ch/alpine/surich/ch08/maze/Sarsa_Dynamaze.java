@@ -2,8 +2,12 @@
 // inspired by Shangtong Zhang
 package ch.alpine.surich.ch08.maze;
 
+import java.awt.Container;
+
 import ch.alpine.bridge.awt.AwtUtil;
 import ch.alpine.bridge.io.ImageIconRecorder;
+import ch.alpine.bridge.pro.ManipulateProvider;
+import ch.alpine.bridge.ref.ann.ReflectionMarker;
 import ch.alpine.subare.api.LearningRate;
 import ch.alpine.subare.api.StateActionCounter;
 import ch.alpine.subare.td.Sarsa;
@@ -19,12 +23,16 @@ import ch.alpine.subare.util.PolicyType;
 import ch.alpine.subare.util.gfx.StateRasters;
 
 /** determines q(s, a) function for equiprobable "random" policy */
-enum Sarsa_Dynamaze {
-  ;
-  static void handle(SarsaType sarsaType, int nstep, int batches) throws Exception {
-    System.out.println(sarsaType);
-    String name = "maze5";
-    Dynamaze dynamaze = DynamazeHelper.create5(3);
+@ReflectionMarker
+class Sarsa_Dynamaze implements ManipulateProvider {
+  public AVH_Dynamazes maze = AVH_Dynamazes.START_0;
+  public SarsaType sarsaType = SarsaType.QLEARNING;
+  public Integer nstep = 1;
+  public Integer batches = 50;
+
+  @Override
+  public Container getContainer() {
+    Dynamaze dynamaze = maze.dynamaze;
     DynamazeRaster dynamazeRaster = new DynamazeRaster(dynamaze);
     final DiscreteQsa ref = DynamazeHelper.getOptimalQsa(dynamaze);
     DiscreteQsa qsa = DiscreteQsa.build(dynamaze);
@@ -44,12 +52,10 @@ enum Sarsa_Dynamaze {
       if (infoline.isLossfree())
         break;
     }
-    AwtUtil.iconAsLabel(imageIconRecorder.getIconImage());
+    return AwtUtil.iconAsLabel(imageIconRecorder.getIconImage());
   }
 
   static void main() throws Exception {
-    // handle(SarsaType.original, 3, 50);
-    // handle(SarsaType.expected, 2, 50);
-    handle(SarsaType.QLEARNING, 1, 50);
+    new Sarsa_Dynamaze().runStandalone();
   }
 }

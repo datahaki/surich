@@ -2,8 +2,12 @@
 // inspired by Shangtong Zhang
 package ch.alpine.surich.ch08.maze;
 
+import java.awt.Container;
+
 import ch.alpine.bridge.awt.AwtUtil;
 import ch.alpine.bridge.io.ImageIconRecorder;
+import ch.alpine.bridge.pro.ManipulateProvider;
+import ch.alpine.bridge.ref.ann.ReflectionMarker;
 import ch.alpine.subare.api.LearningRate;
 import ch.alpine.subare.api.Policy;
 import ch.alpine.subare.api.StateActionCounter;
@@ -22,14 +26,15 @@ import ch.alpine.subare.util.gfx.StateRasters;
 import ch.alpine.tensor.RealScalar;
 
 /** determines q(s, a) function for equiprobable "random" policy */
-enum PS_Dynamaze {
-  ;
-  static void handle(SarsaType sarsaType, int batches) throws Exception {
-    System.out.println(sarsaType);
-    String name = "maze2";
-    Dynamaze dynamaze;
-    // dynamaze = DynamazeHelper.original(name);
-    dynamaze = DynamazeHelper.create5(3);
+@ReflectionMarker
+class PS_Dynamaze implements ManipulateProvider {
+  public AVH_Dynamazes maze = AVH_Dynamazes.START_0;
+  public SarsaType sarsaType = SarsaType.QLEARNING;
+  public Integer batches = 10;
+
+  @Override
+  public Container getContainer() {
+    Dynamaze dynamaze = DynamazeHelper.create5(3);
     DynamazeRaster dynamazeRaster = new DynamazeRaster(dynamaze);
     final DiscreteQsa ref = DynamazeHelper.getOptimalQsa(dynamaze);
     DiscreteQsa qsa = DiscreteQsa.build(dynamaze);
@@ -38,8 +43,7 @@ enum PS_Dynamaze {
     EGreedyPolicy policy = (EGreedyPolicy) PolicyType.EGREEDY.bestEquiprobable(dynamaze, qsa, sac);
     policy.setExplorationRate(LinearExplorationRate.of(batches, 0.1, 0.01));
     Sarsa sarsa = sarsaType.sarsa(dynamaze, learningRate, qsa, sac, policy);
-    PrioritizedSweeping prioritizedSweeping = new PrioritizedSweeping( //
-        sarsa, 10, RealScalar.ZERO);
+    PrioritizedSweeping prioritizedSweeping = new PrioritizedSweeping(sarsa, 10, RealScalar.ZERO);
     StepExploringStarts stepExploringStarts = //
         new StepExploringStarts(dynamaze, prioritizedSweeping) {
           @Override
@@ -55,12 +59,10 @@ enum PS_Dynamaze {
       if (infoline.isLossfree())
         break;
     }
-    AwtUtil.iconAsLabel(imageIconRecorder.getIconImage());
+    return AwtUtil.iconAsLabel(imageIconRecorder.getIconImage());
   }
 
   static void main() throws Exception {
-    // handle(SarsaType.original, 10);
-    // handle(SarsaType.expected, 50);
-    handle(SarsaType.QLEARNING, 10);
+    new PS_Dynamaze().runStandalone();
   }
 }

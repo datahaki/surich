@@ -1,8 +1,12 @@
 // code by jph
 package ch.alpine.surich.ch08.maze;
 
+import java.awt.Container;
+
 import ch.alpine.bridge.awt.AwtUtil;
 import ch.alpine.bridge.io.ImageIconRecorder;
+import ch.alpine.bridge.pro.ManipulateProvider;
+import ch.alpine.bridge.ref.ann.ReflectionMarker;
 import ch.alpine.subare.alg.Random1StepTabularQPlanning;
 import ch.alpine.subare.util.ConstantLearningRate;
 import ch.alpine.subare.util.DiscreteQsa;
@@ -12,17 +16,19 @@ import ch.alpine.subare.util.gfx.StateRasters;
 import ch.alpine.tensor.RealScalar;
 
 /**  */
-enum RSTQP_Dynamaze {
-  ;
-  static void main() throws Exception {
-    String name = "maze5";
+@ReflectionMarker
+class RSTQP_Dynamaze implements ManipulateProvider {
+  public AVH_Dynamazes maze = AVH_Dynamazes.START_0;
+  public Integer batches = 50;
+
+  @Override
+  public Container getContainer() {
     Dynamaze dynamaze = DynamazeHelper.create5(3);
     DynamazeRaster dynamazeRaster = new DynamazeRaster(dynamaze);
     DiscreteQsa ref = DynamazeHelper.getOptimalQsa(dynamaze);
     DiscreteQsa qsa = DiscreteQsa.build(dynamaze);
     Random1StepTabularQPlanning rstqp = Random1StepTabularQPlanning.of( //
         dynamaze, qsa, ConstantLearningRate.of(RealScalar.ONE));
-    int batches = 50;
     ImageIconRecorder imageIconRecorder = new ImageIconRecorder(250);
     for (int index = 0; index < batches; ++index) {
       Infoline infoline = Infoline.of(dynamaze, ref, qsa);
@@ -31,6 +37,10 @@ enum RSTQP_Dynamaze {
       if (infoline.isLossfree())
         break;
     }
-    AwtUtil.iconAsLabel(imageIconRecorder.getIconImage());
+    return AwtUtil.iconAsLabel(imageIconRecorder.getIconImage());
+  }
+
+  static void main() {
+    new RSTQP_Dynamaze().runStandalone();
   }
 }

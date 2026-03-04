@@ -21,6 +21,7 @@ import ch.alpine.tensor.img.Raster;
 import ch.alpine.tensor.io.Export;
 import ch.alpine.tensor.io.Put;
 
+// FIXME crashes
 /* package */ class UCBsExact extends AbstractExact {
   public UCBsExact(Supplier<Agent> sup1, Supplier<Agent> sup2) {
     super(sup1, sup2);

@@ -42,7 +42,7 @@ import ch.alpine.tensor.sca.Round;
  * Produces the XOR result
  * Also uses sigmoid activation */
 @ReflectionMarker
-public class XORNeuralNetwork implements ManipulateProvider {
+class XORNeuralNetwork implements ManipulateProvider {
   static final Distribution DISTRIBUTION = UniformDistribution.of(Clips.absolute(0.5));
   public static final Tensor X = Tensors.matrixInt(new int[][] { { 0, 0 }, { 0, 1 }, { 1, 0 }, { 1, 1 } }).unmodifiable();
   public static final Tensor XOR = Tensors.matrixInt(new int[][] { { 0 }, { 1 }, { 1 }, { 0 } }).unmodifiable();

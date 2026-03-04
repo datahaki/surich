@@ -2,18 +2,27 @@
 // inspired by Shangtong Zhang
 package ch.alpine.surich.fish;
 
+import java.awt.Container;
+
 import ch.alpine.bridge.awt.AwtUtil;
 import ch.alpine.bridge.io.ImageIconRecorder;
+import ch.alpine.bridge.pro.ManipulateProvider;
+import ch.alpine.bridge.ref.ann.ReflectionMarker;
 import ch.alpine.subare.alg.ActionValueIteration;
 import ch.alpine.subare.util.DiscreteQsa;
 import ch.alpine.subare.util.Infoline;
 import ch.alpine.subare.util.gfx.StateRasters;
 
 /** action value iteration for cliff walk */
-enum AVI_Fishfarm {
-  ;
-  static void main() throws Exception {
-    Fishfarm fishfarm = new Fishfarm(20, 20);
+@ReflectionMarker
+class AVI_Fishfarm implements ManipulateProvider {
+  public Integer period = 10;
+  public Integer max_fish = 10;
+  public Integer batches = 20;
+
+  @Override
+  public Container getContainer() {
+    Fishfarm fishfarm = new Fishfarm(period, max_fish);
     FishfarmRaster fishfarmRaster = new FishfarmRaster(fishfarm);
     DiscreteQsa ref = FishfarmHelper.getOptimalQsa(fishfarm);
     // Export.of(UserHome.Pictures("cliffwalk_qsa_avi.png"), //
@@ -31,6 +40,10 @@ enum AVI_Fishfarm {
     // vs.print();
     // Policy policy = GreedyPolicy.bestEquiprobable(cliffwalk, ref);
     // Policies.print(policy, cliffwalk.states());
-    AwtUtil.iconAsLabel(imageIconRecorder.getIconImage());
+    return AwtUtil.iconAsLabel(imageIconRecorder.getIconImage());
+  }
+
+  static void main() {
+    new AVI_Fishfarm().runStandalone();
   }
 }
