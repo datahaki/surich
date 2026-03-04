@@ -2,10 +2,8 @@
 // inspired by Shangtong Zhang
 package ch.alpine.surich.ch06.cliff;
 
-import java.util.concurrent.TimeUnit;
-
-import ch.alpine.bridge.io.AnimationWriter;
-import ch.alpine.bridge.io.GifAnimationWriter;
+import ch.alpine.bridge.awt.AwtUtil;
+import ch.alpine.bridge.io.ImageIconRecorder;
 import ch.alpine.subare.alg.ActionValueIteration;
 import ch.alpine.subare.api.Policy;
 import ch.alpine.subare.util.DiscreteQsa;
@@ -29,20 +27,18 @@ enum AVI_Cliffwalk {
     Export.of(HomeDirectory.Pictures.resolve("cliffwalk_qsa_avi.png"), //
         StateActionRasters.qsa(new CliffwalkRaster(cliffwalk), DiscreteValueFunctions.rescaled(ref)));
     ActionValueIteration avi = ActionValueIteration.of(cliffwalk);
-    try (AnimationWriter animationWriter = //
-        new GifAnimationWriter(HomeDirectory.Pictures.resolve("cliffwalk_qsa_avi.gif"), 200, TimeUnit.MILLISECONDS)) {
-      for (int index = 0; index < 20; ++index) {
-        Infoline infoline = Infoline.of(cliffwalk, ref, avi.qsa());
-        animationWriter.write(StateActionRasters.qsaLossRef(cliffwalkRaster, avi.qsa(), ref));
-        avi.step();
-        if (infoline.isLossfree())
-          break;
-      }
-      animationWriter.write(StateActionRasters.qsaLossRef(cliffwalkRaster, avi.qsa(), ref));
+    ImageIconRecorder imageIconRecorder = new ImageIconRecorder(250);
+    for (int index = 0; index < 20; ++index) {
+      Infoline infoline = Infoline.of(cliffwalk, ref, avi.qsa());
+      imageIconRecorder.write(StateActionRasters.qsaLossRef(cliffwalkRaster, avi.qsa(), ref));
+      avi.step();
+      if (infoline.isLossfree())
+        break;
     }
     DiscreteVs vs = DiscreteUtils.createVs(cliffwalk, ref);
     DiscreteUtils.print(vs);
     Policy policy = PolicyType.GREEDY.bestEquiprobable(cliffwalk, ref, null);
     Policies.print(policy, cliffwalk.states());
+    AwtUtil.iconAsLabel(imageIconRecorder.getIconImage());
   }
 }

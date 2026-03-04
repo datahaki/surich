@@ -1,14 +1,11 @@
 // code by jph
 package ch.alpine.surich.ch05.wireloop;
 
-import java.util.concurrent.TimeUnit;
-
-import ch.alpine.bridge.io.AnimationWriter;
-import ch.alpine.bridge.io.GifAnimationWriter;
+import ch.alpine.bridge.awt.AwtUtil;
+import ch.alpine.bridge.io.ImageIconRecorder;
 import ch.alpine.subare.alg.ActionValueIteration;
 import ch.alpine.subare.util.DiscreteQsa;
 import ch.alpine.subare.util.Infoline;
-import ch.alpine.tensor.ext.HomeDirectory;
 
 enum AVI_Wireloop {
   ;
@@ -20,17 +17,15 @@ enum AVI_Wireloop {
     WireloopRaster wireloopRaster = new WireloopRaster(wireloop);
     DiscreteQsa ref = WireloopHelper.getOptimalQsa(wireloop);
     ActionValueIteration avi = ActionValueIteration.of(wireloop);
-    try (AnimationWriter animationWriter = //
-        new GifAnimationWriter(HomeDirectory.Pictures.resolve(name + "L_avi.gif"), 250, TimeUnit.MILLISECONDS)) {
-      int batches = 50;
-      for (int index = 0; index < batches; ++index) {
-        Infoline infoline = Infoline.of(wireloop, ref, avi.qsa());
-        animationWriter.write(WireloopHelper.render(wireloopRaster, ref, avi.qsa()));
-        avi.step();
-        if (infoline.isLossfree())
-          break;
-      }
-      animationWriter.write(WireloopHelper.render(wireloopRaster, ref, avi.qsa()));
+    ImageIconRecorder imageIconRecorder = new ImageIconRecorder(250);
+    int batches = 50;
+    for (int index = 0; index < batches; ++index) {
+      Infoline infoline = Infoline.of(wireloop, ref, avi.qsa());
+      imageIconRecorder.write(WireloopHelper.render(wireloopRaster, ref, avi.qsa()));
+      avi.step();
+      if (infoline.isLossfree())
+        break;
     }
+    AwtUtil.iconAsLabel(imageIconRecorder.getIconImage());
   }
 }

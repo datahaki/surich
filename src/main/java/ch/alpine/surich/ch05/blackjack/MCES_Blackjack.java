@@ -1,10 +1,8 @@
 // code by jph
 package ch.alpine.surich.ch05.blackjack;
 
-import java.util.concurrent.TimeUnit;
-
-import ch.alpine.bridge.io.AnimationWriter;
-import ch.alpine.bridge.io.GifAnimationWriter;
+import ch.alpine.bridge.awt.AwtUtil;
+import ch.alpine.bridge.io.ImageIconRecorder;
 import ch.alpine.subare.api.StateActionCounter;
 import ch.alpine.subare.mc.MonteCarloExploringStarts;
 import ch.alpine.subare.util.DiscreteStateActionCounter;
@@ -14,7 +12,6 @@ import ch.alpine.subare.util.LinearExplorationRate;
 import ch.alpine.subare.util.PolicyType;
 import ch.alpine.tensor.Tensor;
 import ch.alpine.tensor.alg.Subdivide;
-import ch.alpine.tensor.ext.HomeDirectory;
 
 /** Example 5.3 p.108: Solving Blackjack
  * Figure 5.3 p.108
@@ -25,22 +22,21 @@ enum MCES_Blackjack {
   static void main() throws Exception {
     Blackjack blackjack = new Blackjack();
     MonteCarloExploringStarts mces = new MonteCarloExploringStarts(blackjack);
-    try (AnimationWriter animationWriter = //
-        new GifAnimationWriter(HomeDirectory.Pictures.resolve("blackjack_mces.gif"), 250, TimeUnit.MILLISECONDS)) {
-      int batches = 10; // 40
-      Tensor epsilon = Subdivide.of(.2, .05, batches);
-      StateActionCounter sac = new DiscreteStateActionCounter();
-      EGreedyPolicy policy = (EGreedyPolicy) PolicyType.EGREEDY.bestEquiprobable(blackjack, mces.qsa(), sac);
-      policy.setExplorationRate(LinearExplorationRate.of(batches, 0.1, 0.01));
-      int episodes = 0;
-      for (int index = 0; index < batches; ++index) {
-        System.out.println(index + " " + epsilon.Get(index));
-        for (int count = 0; count < batches; ++count) {
-          episodes += ExploringStarts.batchWithReplay(blackjack, policy, mces);
-        }
-        animationWriter.write(BlackjackHelper.joinAll(blackjack, mces.qsa()));
-        System.out.println(episodes);
+    ImageIconRecorder imageIconRecorder = new ImageIconRecorder(250);
+    int batches = 10; // 40
+    Tensor epsilon = Subdivide.of(.2, .05, batches);
+    StateActionCounter sac = new DiscreteStateActionCounter();
+    EGreedyPolicy policy = (EGreedyPolicy) PolicyType.EGREEDY.bestEquiprobable(blackjack, mces.qsa(), sac);
+    policy.setExplorationRate(LinearExplorationRate.of(batches, 0.1, 0.01));
+    int episodes = 0;
+    for (int index = 0; index < batches; ++index) {
+      System.out.println(index + " " + epsilon.Get(index));
+      for (int count = 0; count < batches; ++count) {
+        episodes += ExploringStarts.batchWithReplay(blackjack, policy, mces);
       }
+      imageIconRecorder.write(BlackjackHelper.joinAll(blackjack, mces.qsa()));
+      System.out.println(episodes);
     }
+    AwtUtil.iconAsLabel(imageIconRecorder.getIconImage());
   }
 }

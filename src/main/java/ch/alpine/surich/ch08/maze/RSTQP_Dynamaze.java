@@ -1,10 +1,8 @@
 // code by jph
 package ch.alpine.surich.ch08.maze;
 
-import java.util.concurrent.TimeUnit;
-
-import ch.alpine.bridge.io.AnimationWriter;
-import ch.alpine.bridge.io.GifAnimationWriter;
+import ch.alpine.bridge.awt.AwtUtil;
+import ch.alpine.bridge.io.ImageIconRecorder;
 import ch.alpine.subare.alg.Random1StepTabularQPlanning;
 import ch.alpine.subare.util.ConstantLearningRate;
 import ch.alpine.subare.util.DiscreteQsa;
@@ -12,7 +10,6 @@ import ch.alpine.subare.util.Infoline;
 import ch.alpine.subare.util.TabularSteps;
 import ch.alpine.subare.util.gfx.StateRasters;
 import ch.alpine.tensor.RealScalar;
-import ch.alpine.tensor.ext.HomeDirectory;
 
 /**  */
 enum RSTQP_Dynamaze {
@@ -25,16 +22,15 @@ enum RSTQP_Dynamaze {
     DiscreteQsa qsa = DiscreteQsa.build(dynamaze);
     Random1StepTabularQPlanning rstqp = Random1StepTabularQPlanning.of( //
         dynamaze, qsa, ConstantLearningRate.of(RealScalar.ONE));
-    try (AnimationWriter animationWriter = //
-        new GifAnimationWriter(HomeDirectory.Pictures.resolve(name + "_qsa_rstqp.gif"), 250, TimeUnit.MILLISECONDS)) {
-      int batches = 50;
-      for (int index = 0; index < batches; ++index) {
-        Infoline infoline = Infoline.of(dynamaze, ref, qsa);
-        TabularSteps.batch(dynamaze, dynamaze, rstqp);
-        animationWriter.write(StateRasters.vs_rescale(dynamazeRaster, qsa));
-        if (infoline.isLossfree())
-          break;
-      }
+    int batches = 50;
+    ImageIconRecorder imageIconRecorder = new ImageIconRecorder(250);
+    for (int index = 0; index < batches; ++index) {
+      Infoline infoline = Infoline.of(dynamaze, ref, qsa);
+      TabularSteps.batch(dynamaze, dynamaze, rstqp);
+      imageIconRecorder.write(StateRasters.vs_rescale(dynamazeRaster, qsa));
+      if (infoline.isLossfree())
+        break;
     }
+    AwtUtil.iconAsLabel(imageIconRecorder.getIconImage());
   }
 }

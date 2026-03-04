@@ -2,10 +2,8 @@
 // inspired by Shangtong Zhang
 package ch.alpine.surich.ch08.maze;
 
-import java.util.concurrent.TimeUnit;
-
-import ch.alpine.bridge.io.AnimationWriter;
-import ch.alpine.bridge.io.GifAnimationWriter;
+import ch.alpine.bridge.awt.AwtUtil;
+import ch.alpine.bridge.io.ImageIconRecorder;
 import ch.alpine.subare.api.LearningRate;
 import ch.alpine.subare.api.StateActionCounter;
 import ch.alpine.subare.td.Sarsa;
@@ -19,7 +17,6 @@ import ch.alpine.subare.util.Infoline;
 import ch.alpine.subare.util.LinearExplorationRate;
 import ch.alpine.subare.util.PolicyType;
 import ch.alpine.subare.util.gfx.StateRasters;
-import ch.alpine.tensor.ext.HomeDirectory;
 
 /** determines q(s, a) function for equiprobable "random" policy */
 enum Sarsa_Dynamaze {
@@ -36,19 +33,18 @@ enum Sarsa_Dynamaze {
     policy.setExplorationRate(LinearExplorationRate.of(batches, 0.3, 0.01));
     LearningRate learningRate = DefaultLearningRate.of(15, 0.51);
     Sarsa sarsa = sarsaType.sarsa(dynamaze, learningRate, qsa, sac, policy);
-    try (AnimationWriter animationWriter = //
-        new GifAnimationWriter(HomeDirectory.Pictures.resolve(name + "n" + nstep + "_qsa_" + sarsaType + ".gif"), 200, TimeUnit.MILLISECONDS)) {
-      for (int index = 0; index < batches; ++index) {
-        // if (EPISODES - 10 < index)
-        Infoline infoline = Infoline.of(dynamaze, ref, qsa);
-        // sarsa.supplyPolicy(() -> policy);
-        // for (int count = 0; count < 5; ++count)
-        ExploringStarts.batch(dynamaze, policy, nstep, sarsa);
-        animationWriter.write(StateRasters.vs_rescale(dynamazeRaster, qsa));
-        if (infoline.isLossfree())
-          break;
-      }
+    ImageIconRecorder imageIconRecorder = new ImageIconRecorder(250);
+    for (int index = 0; index < batches; ++index) {
+      // if (EPISODES - 10 < index)
+      Infoline infoline = Infoline.of(dynamaze, ref, qsa);
+      // sarsa.supplyPolicy(() -> policy);
+      // for (int count = 0; count < 5; ++count)
+      ExploringStarts.batch(dynamaze, policy, nstep, sarsa);
+      imageIconRecorder.write(StateRasters.vs_rescale(dynamazeRaster, qsa));
+      if (infoline.isLossfree())
+        break;
     }
+    AwtUtil.iconAsLabel(imageIconRecorder.getIconImage());
   }
 
   static void main() throws Exception {

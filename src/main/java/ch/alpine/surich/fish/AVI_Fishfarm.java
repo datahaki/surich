@@ -2,15 +2,12 @@
 // inspired by Shangtong Zhang
 package ch.alpine.surich.fish;
 
-import java.util.concurrent.TimeUnit;
-
-import ch.alpine.bridge.io.AnimationWriter;
-import ch.alpine.bridge.io.GifAnimationWriter;
+import ch.alpine.bridge.awt.AwtUtil;
+import ch.alpine.bridge.io.ImageIconRecorder;
 import ch.alpine.subare.alg.ActionValueIteration;
 import ch.alpine.subare.util.DiscreteQsa;
 import ch.alpine.subare.util.Infoline;
 import ch.alpine.subare.util.gfx.StateRasters;
-import ch.alpine.tensor.ext.HomeDirectory;
 
 /** action value iteration for cliff walk */
 enum AVI_Fishfarm {
@@ -22,22 +19,18 @@ enum AVI_Fishfarm {
     // Export.of(UserHome.Pictures("cliffwalk_qsa_avi.png"), //
     // StateActionRasters.qsa(new CliffwalkRaster(cliffwalk), DiscreteValueFunctions.rescaled(ref)));
     ActionValueIteration avi = ActionValueIteration.of(fishfarm);
-    try (AnimationWriter animationWriter = //
-        new GifAnimationWriter(HomeDirectory.Pictures.resolve("fishfarm_qsa_avi.gif"), 200, TimeUnit.MILLISECONDS)) {
-      for (int index = 0; index < 20; ++index) {
-        Infoline infoline = Infoline.of(fishfarm, ref, avi.qsa());
-        animationWriter.write(StateRasters.qsaLossRef(fishfarmRaster, avi.qsa(), ref));
-        avi.step();
-        if (infoline.isErrorFree())
-          break;
-      }
-      animationWriter.write(StateRasters.qsaLossRef(fishfarmRaster, avi.qsa(), ref));
-      animationWriter.write(StateRasters.qsaLossRef(fishfarmRaster, avi.qsa(), ref));
-      animationWriter.write(StateRasters.qsaLossRef(fishfarmRaster, avi.qsa(), ref));
+    ImageIconRecorder imageIconRecorder = new ImageIconRecorder(250);
+    for (int index = 0; index < 20; ++index) {
+      Infoline infoline = Infoline.of(fishfarm, ref, avi.qsa());
+      imageIconRecorder.write(StateRasters.qsaLossRef(fishfarmRaster, avi.qsa(), ref));
+      avi.step();
+      if (infoline.isErrorFree())
+        break;
     }
     // DiscreteVs vs = DiscreteUtils.createVs(cliffwalk, ref);
     // vs.print();
     // Policy policy = GreedyPolicy.bestEquiprobable(cliffwalk, ref);
     // Policies.print(policy, cliffwalk.states());
+    AwtUtil.iconAsLabel(imageIconRecorder.getIconImage());
   }
 }

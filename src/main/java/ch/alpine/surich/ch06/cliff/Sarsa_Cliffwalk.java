@@ -2,10 +2,8 @@
 // inspired by Shangtong Zhang
 package ch.alpine.surich.ch06.cliff;
 
-import java.util.concurrent.TimeUnit;
-
-import ch.alpine.bridge.io.AnimationWriter;
-import ch.alpine.bridge.io.GifAnimationWriter;
+import ch.alpine.bridge.awt.AwtUtil;
+import ch.alpine.bridge.io.ImageIconRecorder;
 import ch.alpine.subare.api.StateActionCounter;
 import ch.alpine.subare.td.Sarsa;
 import ch.alpine.subare.td.SarsaType;
@@ -20,7 +18,6 @@ import ch.alpine.subare.util.LinearExplorationRate;
 import ch.alpine.subare.util.PolicyType;
 import ch.alpine.subare.util.gfx.StateActionRasters;
 import ch.alpine.tensor.DoubleScalar;
-import ch.alpine.tensor.ext.HomeDirectory;
 import ch.alpine.tensor.sca.Round;
 
 /** StepDigest qsa methods applied to cliff walk */
@@ -36,16 +33,14 @@ enum Sarsa_Cliffwalk {
     EGreedyPolicy policy = (EGreedyPolicy) PolicyType.EGREEDY.bestEquiprobable(cliffwalk, qsa, sac);
     policy.setExplorationRate(LinearExplorationRate.of(batches, 0.2, 0.01));
     Sarsa sarsa = sarsaType.sarsa(cliffwalk, DefaultLearningRate.of(7, 0.61), qsa, sac, policy);
-    try (AnimationWriter animationWriter = //
-        new GifAnimationWriter(HomeDirectory.Pictures.resolve("cliffwalk_qsa_" + sarsaType + ".gif"), 200, TimeUnit.MILLISECONDS)) {
-      for (int index = 0; index < batches; ++index) {
-        // if (batches - 10 < index)
-        Infoline infoline = Infoline.of(cliffwalk, ref, qsa);
-        ExploringStarts.batch(cliffwalk, policy, nstep, sarsa);
-        animationWriter.write(StateActionRasters.qsaLossRef(cliffwalkRaster, qsa, ref));
-        if (infoline.isLossfree())
-          break;
-      }
+    ImageIconRecorder imageIconRecorder = new ImageIconRecorder(250);
+    for (int index = 0; index < batches; ++index) {
+      // if (batches - 10 < index)
+      Infoline infoline = Infoline.of(cliffwalk, ref, qsa);
+      ExploringStarts.batch(cliffwalk, policy, nstep, sarsa);
+      imageIconRecorder.write(StateActionRasters.qsaLossRef(cliffwalkRaster, qsa, ref));
+      if (infoline.isLossfree())
+        break;
     }
     DiscreteUtils.print(qsa, Round._2);
     // System.out.println("---");
@@ -56,6 +51,7 @@ enum Sarsa_Cliffwalk {
     // Tensor state = stepInterface.prevState();
     // System.out.println(state + " then " + stepInterface.action());
     // }
+    AwtUtil.iconAsLabel(imageIconRecorder.getIconImage());
   }
 
   static void main() throws Exception {

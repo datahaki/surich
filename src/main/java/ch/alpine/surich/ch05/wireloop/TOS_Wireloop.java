@@ -1,10 +1,8 @@
 // code by jph
 package ch.alpine.surich.ch05.wireloop;
 
-import java.util.concurrent.TimeUnit;
-
-import ch.alpine.bridge.io.AnimationWriter;
-import ch.alpine.bridge.io.GifAnimationWriter;
+import ch.alpine.bridge.awt.AwtUtil;
+import ch.alpine.bridge.io.ImageIconRecorder;
 import ch.alpine.subare.api.FeatureMapper;
 import ch.alpine.subare.api.LearningRate;
 import ch.alpine.subare.api.StateActionCounter;
@@ -22,7 +20,6 @@ import ch.alpine.subare.util.PolicyType;
 import ch.alpine.subare.util.gfx.StateRasters;
 import ch.alpine.tensor.RealScalar;
 import ch.alpine.tensor.Scalar;
-import ch.alpine.tensor.ext.HomeDirectory;
 import ch.alpine.tensor.qty.Timing;
 
 enum TOS_Wireloop {
@@ -48,26 +45,22 @@ enum TOS_Wireloop {
     TrueOnlineSarsa trueOnlineSarsa = sarsaType.trueOnline(wireloop, LAMBDA, mapper, learningRate, w, sac, policy);
     final String algo = sarsaType.name().toLowerCase();
     Timing timing = Timing.started();
-    try (AnimationWriter animationWriter = //
-        new GifAnimationWriter(HomeDirectory.Pictures.resolve(name + "_tos_" + algo + ".gif"), 250, TimeUnit.MILLISECONDS)) {
-      for (int batch = 0; batch < 20; ++batch) {
-        // System.out.println("batch " + batch);
-        policy.setQsa(trueOnlineSarsa.qsaInterface());
-        ExploringStarts.batch(wireloop, policy, trueOnlineSarsa);
-        // DiscreteQsa toQsa = trueOnlineSarsa.getQsa();
-        // XYtoSarsa.append(Tensors.vector(RealScalar.of(index).number(), errorAnalysis.getError(monteCarloInterface, optimalQsa, toQsa).number()));
-        DiscreteQsa qsa = trueOnlineSarsa.qsa();
-        Infoline infoline = Infoline.of(wireloop, ref, qsa);
-        animationWriter.write(StateRasters.qsaLossRef(new WireloopRaster(wireloop), qsa, ref));
-        if (infoline.isLossfree()) {
-          animationWriter.write(StateRasters.qsaLossRef(new WireloopRaster(wireloop), qsa, ref));
-          animationWriter.write(StateRasters.qsaLossRef(new WireloopRaster(wireloop), qsa, ref));
-          animationWriter.write(StateRasters.qsaLossRef(new WireloopRaster(wireloop), qsa, ref));
-          break;
-        }
+    ImageIconRecorder imageIconRecorder = new ImageIconRecorder(250);
+    for (int batch = 0; batch < 20; ++batch) {
+      // System.out.println("batch " + batch);
+      policy.setQsa(trueOnlineSarsa.qsaInterface());
+      ExploringStarts.batch(wireloop, policy, trueOnlineSarsa);
+      // DiscreteQsa toQsa = trueOnlineSarsa.getQsa();
+      // XYtoSarsa.append(Tensors.vector(RealScalar.of(index).number(), errorAnalysis.getError(monteCarloInterface, optimalQsa, toQsa).number()));
+      DiscreteQsa qsa = trueOnlineSarsa.qsa();
+      Infoline infoline = Infoline.of(wireloop, ref, qsa);
+      imageIconRecorder.write(StateRasters.qsaLossRef(new WireloopRaster(wireloop), qsa, ref));
+      if (infoline.isLossfree()) {
+        break;
       }
     }
     System.out.println("Time for TrueOnlineSarsa: " + timing.seconds() + "s");
+    AwtUtil.iconAsLabel(imageIconRecorder.getIconImage());
   }
 
   static void main() throws Exception {

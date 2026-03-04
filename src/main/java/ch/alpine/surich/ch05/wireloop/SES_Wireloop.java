@@ -1,10 +1,8 @@
 // code by jph
 package ch.alpine.surich.ch05.wireloop;
 
-import java.util.concurrent.TimeUnit;
-
-import ch.alpine.bridge.io.AnimationWriter;
-import ch.alpine.bridge.io.GifAnimationWriter;
+import ch.alpine.bridge.awt.AwtUtil;
+import ch.alpine.bridge.io.ImageIconRecorder;
 import ch.alpine.subare.api.Policy;
 import ch.alpine.subare.api.StateActionCounter;
 import ch.alpine.subare.td.Sarsa;
@@ -17,7 +15,6 @@ import ch.alpine.subare.util.EGreedyPolicy;
 import ch.alpine.subare.util.Infoline;
 import ch.alpine.subare.util.LinearExplorationRate;
 import ch.alpine.subare.util.PolicyType;
-import ch.alpine.tensor.ext.HomeDirectory;
 
 enum SES_Wireloop {
   ;
@@ -41,20 +38,19 @@ enum SES_Wireloop {
         return policy;
       }
     };
-    try (AnimationWriter animationWriter = new GifAnimationWriter( //
-        HomeDirectory.Pictures.resolve(name + "L_qsa_" + sarsaType + "" + nstep + ".gif"), 100, TimeUnit.MILLISECONDS)) {
-      int index = 0;
-      while (exploringStartsStream.batchIndex() < batches) {
-        exploringStartsStream.nextEpisode();
-        if (index % 50 == 0) {
-          Infoline infoline = Infoline.of(wireloop, ref, qsa);
-          animationWriter.write(WireloopHelper.render(wireloopRaster, ref, qsa));
-          if (infoline.isLossfree())
-            break;
-        }
-        ++index;
+    ImageIconRecorder imageIconRecorder = new ImageIconRecorder(250);
+    int index = 0;
+    while (exploringStartsStream.batchIndex() < batches) {
+      exploringStartsStream.nextEpisode();
+      if (index % 50 == 0) {
+        Infoline infoline = Infoline.of(wireloop, ref, qsa);
+        imageIconRecorder.write(WireloopHelper.render(wireloopRaster, ref, qsa));
+        if (infoline.isLossfree())
+          break;
       }
+      ++index;
     }
+    AwtUtil.iconAsLabel(imageIconRecorder.getIconImage());
   }
 
   static void main() throws Exception {

@@ -1,15 +1,12 @@
 // code by jph
 package ch.alpine.surich.ch05.blackjack;
 
-import java.util.concurrent.TimeUnit;
-
-import ch.alpine.bridge.io.AnimationWriter;
-import ch.alpine.bridge.io.GifAnimationWriter;
+import ch.alpine.bridge.awt.AwtUtil;
+import ch.alpine.bridge.io.ImageIconRecorder;
 import ch.alpine.subare.alg.Random1StepTabularQPlanning;
 import ch.alpine.subare.util.DefaultLearningRate;
 import ch.alpine.subare.util.DiscreteQsa;
 import ch.alpine.subare.util.TabularSteps;
-import ch.alpine.tensor.ext.HomeDirectory;
 
 /** finding optimal policy to stay or hit
  * 
@@ -21,14 +18,13 @@ enum RSTQP_Blackjack {
     DiscreteQsa qsa = DiscreteQsa.build(blackjack);
     Random1StepTabularQPlanning rstqp = Random1StepTabularQPlanning.of( //
         blackjack, qsa, DefaultLearningRate.of(5, 0.51));
-    try (AnimationWriter animationWriter = //
-        new GifAnimationWriter(HomeDirectory.Pictures.resolve("blackjack_rstqp.gif"), 250, TimeUnit.MILLISECONDS)) {
-      int batches = 60;
-      for (int index = 0; index < batches; ++index) {
-        for (int count = 0; count < 100; ++count)
-          TabularSteps.batch(blackjack, blackjack, rstqp);
-        animationWriter.write(BlackjackHelper.joinAll(blackjack, qsa));
-      }
+    ImageIconRecorder imageIconRecorder = new ImageIconRecorder(250);
+    int batches = 60;
+    for (int index = 0; index < batches; ++index) {
+      for (int count = 0; count < 100; ++count)
+        TabularSteps.batch(blackjack, blackjack, rstqp);
+      imageIconRecorder.write(BlackjackHelper.joinAll(blackjack, qsa));
     }
+    AwtUtil.iconAsLabel(imageIconRecorder.getIconImage());
   }
 }

@@ -1,10 +1,8 @@
 // code by jph
 package ch.alpine.surich.ch06.cliff;
 
-import java.util.concurrent.TimeUnit;
-
-import ch.alpine.bridge.io.AnimationWriter;
-import ch.alpine.bridge.io.GifAnimationWriter;
+import ch.alpine.bridge.awt.AwtUtil;
+import ch.alpine.bridge.io.ImageIconRecorder;
 import ch.alpine.subare.api.LearningRate;
 import ch.alpine.subare.api.Policy;
 import ch.alpine.subare.api.StateActionCounter;
@@ -19,7 +17,6 @@ import ch.alpine.subare.util.Infoline;
 import ch.alpine.subare.util.LinearExplorationRate;
 import ch.alpine.subare.util.PolicyType;
 import ch.alpine.subare.util.gfx.StateActionRasters;
-import ch.alpine.tensor.ext.HomeDirectory;
 
 /** 1, or N-step Original/Expected Sarsa, and QLearning for gridworld
  * 
@@ -33,33 +30,32 @@ enum SES_Cliffwalk {
     // Gridworld gridworld = new Gridworld();
     final DiscreteQsa ref = CliffwalkHelper.getOptimalQsa(cliffwalk);
     DiscreteQsa qsa = DiscreteQsa.build(cliffwalk);
-    try (AnimationWriter animationWriter = new GifAnimationWriter( //
-        HomeDirectory.Pictures.resolve("gridworld_ses_" + sarsaType + "" + nstep + ".gif"), 250, TimeUnit.MILLISECONDS)) {
-      LearningRate learningRate = DefaultLearningRate.of(7, 0.61);
-      StateActionCounter sac = new DiscreteStateActionCounter();
-      EGreedyPolicy policy = (EGreedyPolicy) PolicyType.EGREEDY.bestEquiprobable(cliffwalk, qsa, sac);
-      policy.setExplorationRate(LinearExplorationRate.of(batches, 0.2, 0.01));
-      Sarsa sarsa = sarsaType.sarsa(cliffwalk, learningRate, qsa, sac, policy);
-      DequeExploringStarts exploringStartsStream = new DequeExploringStarts(cliffwalk, nstep, sarsa) {
-        @Override
-        public Policy batchPolicy(int batch) {
-          System.out.println("batch " + batch);
-          return policy;
-        }
-      };
-      int episode = 0;
-      while (exploringStartsStream.batchIndex() < batches) {
-        exploringStartsStream.nextEpisode();
-        // if (episode % 5 == 0)
-        {
-          Infoline infoline = Infoline.of(cliffwalk, ref, qsa);
-          animationWriter.write(StateActionRasters.qsaLossRef(new CliffwalkRaster(cliffwalk), qsa, ref));
-          if (infoline.isLossfree())
-            break;
-        }
-        ++episode;
+    LearningRate learningRate = DefaultLearningRate.of(7, 0.61);
+    StateActionCounter sac = new DiscreteStateActionCounter();
+    EGreedyPolicy policy = (EGreedyPolicy) PolicyType.EGREEDY.bestEquiprobable(cliffwalk, qsa, sac);
+    policy.setExplorationRate(LinearExplorationRate.of(batches, 0.2, 0.01));
+    Sarsa sarsa = sarsaType.sarsa(cliffwalk, learningRate, qsa, sac, policy);
+    DequeExploringStarts exploringStartsStream = new DequeExploringStarts(cliffwalk, nstep, sarsa) {
+      @Override
+      public Policy batchPolicy(int batch) {
+        System.out.println("batch " + batch);
+        return policy;
       }
+    };
+    int episode = 0;
+    ImageIconRecorder imageIconRecorder = new ImageIconRecorder(250);
+    while (exploringStartsStream.batchIndex() < batches) {
+      exploringStartsStream.nextEpisode();
+      // if (episode % 5 == 0)
+      {
+        Infoline infoline = Infoline.of(cliffwalk, ref, qsa);
+        imageIconRecorder.write(StateActionRasters.qsaLossRef(new CliffwalkRaster(cliffwalk), qsa, ref));
+        if (infoline.isLossfree())
+          break;
+      }
+      ++episode;
     }
+    AwtUtil.iconAsLabel(imageIconRecorder.getIconImage());
   }
 
   static void main() throws Exception {

@@ -2,10 +2,8 @@
 // inspired by Shangtong Zhang
 package ch.alpine.surich.ch08.maze;
 
-import java.util.concurrent.TimeUnit;
-
-import ch.alpine.bridge.io.AnimationWriter;
-import ch.alpine.bridge.io.GifAnimationWriter;
+import ch.alpine.bridge.awt.AwtUtil;
+import ch.alpine.bridge.io.ImageIconRecorder;
 import ch.alpine.subare.api.LearningRate;
 import ch.alpine.subare.api.Policy;
 import ch.alpine.subare.api.StateActionCounter;
@@ -22,7 +20,6 @@ import ch.alpine.subare.util.PolicyType;
 import ch.alpine.subare.util.StepExploringStarts;
 import ch.alpine.subare.util.gfx.StateRasters;
 import ch.alpine.tensor.RealScalar;
-import ch.alpine.tensor.ext.HomeDirectory;
 
 /** determines q(s, a) function for equiprobable "random" policy */
 enum PS_Dynamaze {
@@ -43,23 +40,22 @@ enum PS_Dynamaze {
     Sarsa sarsa = sarsaType.sarsa(dynamaze, learningRate, qsa, sac, policy);
     PrioritizedSweeping prioritizedSweeping = new PrioritizedSweeping( //
         sarsa, 10, RealScalar.ZERO);
-    try (AnimationWriter animationWriter = //
-        new GifAnimationWriter(HomeDirectory.Pictures.resolve(name + "_ps_" + sarsaType + ".gif"), 250, TimeUnit.MILLISECONDS)) {
-      StepExploringStarts stepExploringStarts = //
-          new StepExploringStarts(dynamaze, prioritizedSweeping) {
-            @Override
-            public Policy batchPolicy(int batch) {
-              return policy;
-            }
-          };
-      while (stepExploringStarts.batchIndex() < batches) {
-        Infoline infoline = Infoline.of(dynamaze, ref, qsa);
-        stepExploringStarts.nextEpisode();
-        animationWriter.write(StateRasters.qsaLossRef(dynamazeRaster, qsa, ref));
-        if (infoline.isLossfree())
-          break;
-      }
+    StepExploringStarts stepExploringStarts = //
+        new StepExploringStarts(dynamaze, prioritizedSweeping) {
+          @Override
+          public Policy batchPolicy(int batch) {
+            return policy;
+          }
+        };
+    ImageIconRecorder imageIconRecorder = new ImageIconRecorder(250);
+    while (stepExploringStarts.batchIndex() < batches) {
+      Infoline infoline = Infoline.of(dynamaze, ref, qsa);
+      stepExploringStarts.nextEpisode();
+      imageIconRecorder.write(StateRasters.qsaLossRef(dynamazeRaster, qsa, ref));
+      if (infoline.isLossfree())
+        break;
     }
+    AwtUtil.iconAsLabel(imageIconRecorder.getIconImage());
   }
 
   static void main() throws Exception {
