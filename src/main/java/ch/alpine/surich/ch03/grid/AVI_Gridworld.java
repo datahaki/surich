@@ -2,7 +2,9 @@
 // inspired by Shangtong Zhang
 package ch.alpine.surich.ch03.grid;
 
-import ch.alpine.bridge.pro.VoidProvider;
+import ch.alpine.bridge.fig.ListLinePlot;
+import ch.alpine.bridge.fig.Show;
+import ch.alpine.bridge.pro.ShowProvider;
 import ch.alpine.subare.alg.ActionValueIteration;
 import ch.alpine.subare.util.DiscreteUtils;
 import ch.alpine.subare.util.DiscreteVs;
@@ -38,22 +40,21 @@ import ch.alpine.tensor.sca.Round;
  * {4, 2} 14.4
  * {4, 3} 13.0
  * {4, 4} 11.7 */
-/* package */ enum AVI_Gridworld implements VoidProvider {
-  INSTANCE;
-
+class AVI_Gridworld implements ShowProvider {
   @Override
-  public Void runStandalone() {
+  public Show getShow() {
     Gridworld gridworld = new Gridworld();
     ActionValueIteration avi = ActionValueIteration.of(gridworld);
     avi.untilBelow(Chop._04);
-    System.out.println("iterations=" + avi.iterations());
     DiscreteUtils.print(avi.qsa(), Round._1);
     DiscreteVs dvs = DiscreteUtils.createVs(gridworld, avi.qsa());
     DiscreteUtils.print(dvs, Round._1);
-    return null;
+    Show show = new Show();
+    show.add(ListLinePlot.of(avi.tableBuilder().getTable()));
+    return show;
   }
 
   static void main() {
-    INSTANCE.runStandalone();
+    new AVI_Gridworld().runStandalone();
   }
 }

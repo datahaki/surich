@@ -59,7 +59,7 @@ class QL_Gambler implements ManipulateProvider {
     while (mce.hasNext()) {
       StepRecord stepRecord = mce.step();
       Tensor state = stepRecord.prevState();
-       System.out.println(state + " then " + stepRecord.action());
+      System.out.println(state + " then " + stepRecord.action());
     }
     return AwtUtil.iconAsLabel(imageIconRecorder.getIconImage());
   }

@@ -25,7 +25,7 @@ class BlackjackRaster implements StateRaster {
 
   @Override
   public Dimension dimensionStateRaster() {
-    return new Dimension(20 + 2, 20+2); // TODO comment
+    return new Dimension(20 + 2, 20 + 2); // TODO comment
   }
 
   @Override

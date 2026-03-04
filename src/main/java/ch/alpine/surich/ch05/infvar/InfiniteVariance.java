@@ -19,9 +19,8 @@ public class InfiniteVariance implements StandardModel, MonteCarloInterface {
   private static final Tensor states = Tensors.vector(0, 1).unmodifiable();
   private static final Tensor actions = Tensors.of(BACK, END).unmodifiable(); // increment
   private static final Coinflip coinflip = Coinflip.of(PROB);
-
   public static final InfiniteVariance INSTANCE = new InfiniteVariance();
-  
+
   @Override
   public Tensor states() {
     return states;

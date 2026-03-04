@@ -17,7 +17,6 @@ enum VI_Windygrid {
     ValueIteration vi = new ValueIteration(windygrid, windygrid);
     vi.untilBelow(Chop._03);
     final Tensor values = vi.vs().values();
-    System.out.println("iterations=" + vi.iterations());
     System.out.println(values);
     Policy policy = PolicyType.GREEDY.bestEquiprobable(windygrid, vi.vs(), null);
     EpisodeInterface episodeInterface = EpisodeKickoff.single(windygrid, policy);

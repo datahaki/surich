@@ -8,9 +8,9 @@ import ch.alpine.subare.alg.IterativePolicyEvaluation;
 import ch.alpine.subare.api.Policy;
 import ch.alpine.subare.util.DiscreteUtils;
 import ch.alpine.subare.util.EquiprobablePolicy;
-import ch.alpine.tensor.RealScalar;
 import ch.alpine.tensor.Unprotect;
 import ch.alpine.tensor.io.Import;
+import ch.alpine.tensor.sca.Chop;
 import ch.alpine.tensor.sca.Round;
 
 enum IPE_RaceTrack {
@@ -20,7 +20,7 @@ enum IPE_RaceTrack {
     Racetrack racetrack = new Racetrack(Import.of(path), 3);
     Policy policy = EquiprobablePolicy.create(racetrack);
     IterativePolicyEvaluation ipe = new IterativePolicyEvaluation(racetrack, policy);
-    ipe.until(RealScalar.of(.1));
+    ipe.until(Chop._01);
     DiscreteUtils.print(ipe.vs(), Round._1);
   }
 }

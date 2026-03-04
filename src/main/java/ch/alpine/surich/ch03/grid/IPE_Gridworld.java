@@ -2,11 +2,13 @@
 // inspired by Shangtong Zhang
 package ch.alpine.surich.ch03.grid;
 
-import ch.alpine.bridge.pro.VoidProvider;
+import ch.alpine.bridge.fig.ListLinePlot;
+import ch.alpine.bridge.fig.Show;
+import ch.alpine.bridge.pro.ShowProvider;
 import ch.alpine.subare.alg.IterativePolicyEvaluation;
 import ch.alpine.subare.util.DiscreteUtils;
 import ch.alpine.subare.util.EquiprobablePolicy;
-import ch.alpine.tensor.RealScalar;
+import ch.alpine.tensor.sca.Chop;
 import ch.alpine.tensor.sca.Round;
 
 /** produces results on p.64-65:
@@ -36,20 +38,20 @@ import ch.alpine.tensor.sca.Round;
  * {4, 2} -1.2
  * {4, 3} -1.4
  * {4, 4} -2.0 */
-/* package */ enum IPE_Gridworld implements VoidProvider {
-  INSTANCE;
-
+class IPE_Gridworld implements ShowProvider {
   @Override
-  public Void runStandalone() {
+  public Show getShow() {
     Gridworld gridworld = new Gridworld();
     IterativePolicyEvaluation ipe = new IterativePolicyEvaluation( //
         gridworld, EquiprobablePolicy.create(gridworld));
-    ipe.until(RealScalar.of(.0001));
+    ipe.until(Chop._04);
     DiscreteUtils.print(ipe.vs(), Round._1);
-    return null;
+    Show show = new Show();
+    show.add(ListLinePlot.of(ipe.tableBuilder().getTable()));
+    return show;
   }
 
   static void main() {
-    INSTANCE.runStandalone();
+    new IPE_Gridworld().runStandalone();
   }
 }

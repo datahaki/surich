@@ -5,7 +5,7 @@ package ch.alpine.surich.ch04.grid;
 import ch.alpine.subare.alg.IterativePolicyEvaluation;
 import ch.alpine.subare.util.DiscreteUtils;
 import ch.alpine.subare.util.EquiprobablePolicy;
-import ch.alpine.tensor.RealScalar;
+import ch.alpine.tensor.sca.Chop;
 import ch.alpine.tensor.sca.Round;
 
 /** determines value function for equiprobable "random" policy
@@ -35,7 +35,7 @@ enum IPE_Gridworld {
     Gridworld gridworld = new Gridworld();
     IterativePolicyEvaluation ipe = new IterativePolicyEvaluation( //
         gridworld, EquiprobablePolicy.create(gridworld));
-    ipe.until(RealScalar.of(.0001));
+    ipe.until(Chop._04);
     DiscreteUtils.print(ipe.vs(), Round._1);
   }
 }

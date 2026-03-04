@@ -56,7 +56,7 @@ class Sarsa_Gambler implements ManipulateProvider {
       imageIconRecorder2.write(StateActionRasters.qsa( //
           gamblerRaster, DiscreteValueFunctions.rescaled(((DiscreteStateActionCounter) sarsa.sac()).inQsa(gamblerModel))));
     }
-//    GamblerHelper.play(gamblerModel, qsa);
+    // GamblerHelper.play(gamblerModel, qsa);
     JPanel jPanel = new JPanel(new GridLayout(2, 1));
     jPanel.add(AwtUtil.iconAsLabel(imageIconRecorder1.getIconImage()));
     jPanel.add(AwtUtil.iconAsLabel(imageIconRecorder2.getIconImage()));
