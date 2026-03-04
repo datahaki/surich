@@ -19,8 +19,8 @@
 	<dependencies>
 		<dependency>
 			<groupId>io.github.datahaki</groupId>
-			<artifactId>ascony</artifactId>
-			<version>0.0.1</version>
+			<artifactId>bridge</artifactId>
+			<version>0.3.6</version>
 		</dependency>
 		<dependency>
 			<groupId>io.github.datahaki</groupId>

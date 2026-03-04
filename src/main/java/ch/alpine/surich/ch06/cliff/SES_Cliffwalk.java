@@ -3,8 +3,8 @@ package ch.alpine.surich.ch06.cliff;
 
 import java.util.concurrent.TimeUnit;
 
-import ch.alpine.ascony.io.AnimationWriter;
-import ch.alpine.ascony.io.GifAnimationWriter;
+import ch.alpine.bridge.io.AnimationWriter;
+import ch.alpine.bridge.io.GifAnimationWriter;
 import ch.alpine.subare.api.LearningRate;
 import ch.alpine.subare.api.Policy;
 import ch.alpine.subare.api.StateActionCounter;

@@ -4,8 +4,8 @@ package ch.alpine.surich.ch05.racetrack;
 import java.awt.Container;
 import java.util.LinkedList;
 
-import ch.alpine.ascony.io.ImageIconRecorder;
 import ch.alpine.bridge.awt.AwtUtil;
+import ch.alpine.bridge.io.ImageIconRecorder;
 import ch.alpine.bridge.pro.ManipulateProvider;
 import ch.alpine.bridge.ref.ann.ReflectionMarker;
 import ch.alpine.subare.alg.ValueIteration;

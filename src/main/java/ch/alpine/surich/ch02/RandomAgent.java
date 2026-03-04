@@ -1,9 +1,9 @@
 // code by jph
 package ch.alpine.surich.ch02;
 
-import ch.alpine.sophus.math.AveragingWeights;
 import ch.alpine.tensor.Scalar;
 import ch.alpine.tensor.Tensor;
+import ch.alpine.tensor.nrm.AveragingWeights;
 
 /** the random agent picks any action equally likely
  * the policy is a constant vector of pi(a)=1/n */

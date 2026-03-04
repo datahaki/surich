@@ -5,8 +5,8 @@ package ch.alpine.surich.ch06.windy;
 import java.awt.Container;
 import java.io.IOException;
 
-import ch.alpine.ascony.io.ImageIconRecorder;
 import ch.alpine.bridge.awt.AwtUtil;
+import ch.alpine.bridge.io.ImageIconRecorder;
 import ch.alpine.bridge.pro.ManipulateProvider;
 import ch.alpine.subare.alg.ActionValueIteration;
 import ch.alpine.subare.api.Policy;

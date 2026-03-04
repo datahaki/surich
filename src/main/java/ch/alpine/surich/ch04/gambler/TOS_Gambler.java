@@ -6,11 +6,11 @@ import java.awt.GridLayout;
 
 import javax.swing.JPanel;
 
-import ch.alpine.ascony.io.ImageIconRecorder;
 import ch.alpine.bridge.awt.AwtUtil;
 import ch.alpine.bridge.fig.ListLinePlot;
 import ch.alpine.bridge.fig.Show;
 import ch.alpine.bridge.fig.ShowComponent;
+import ch.alpine.bridge.io.ImageIconRecorder;
 import ch.alpine.bridge.pro.ManipulateProvider;
 import ch.alpine.bridge.ref.ann.ReflectionMarker;
 import ch.alpine.subare.api.FeatureMapper;

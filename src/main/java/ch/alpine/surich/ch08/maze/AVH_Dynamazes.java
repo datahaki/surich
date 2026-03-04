@@ -4,7 +4,7 @@ package ch.alpine.surich.ch08.maze;
 
 import javax.swing.ImageIcon;
 
-import ch.alpine.ascony.io.ImageIconRecorder;
+import ch.alpine.bridge.io.ImageIconRecorder;
 import ch.alpine.subare.alg.ActionValueIteration;
 import ch.alpine.subare.util.DiscreteQsa;
 import ch.alpine.subare.util.Infoline;

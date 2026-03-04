@@ -6,7 +6,7 @@ import java.util.Map;
 
 import javax.swing.ImageIcon;
 
-import ch.alpine.ascony.io.ImageIconRecorder;
+import ch.alpine.bridge.io.ImageIconRecorder;
 import ch.alpine.subare.api.ExplorationRate;
 import ch.alpine.subare.util.ConstantExplorationRate;
 import ch.alpine.subare.util.DiscreteQsa;
