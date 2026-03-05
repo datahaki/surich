@@ -8,6 +8,7 @@ import java.io.IOException;
 import ch.alpine.bridge.awt.AwtUtil;
 import ch.alpine.bridge.io.ImageIconRecorder;
 import ch.alpine.bridge.pro.ManipulateProvider;
+import ch.alpine.bridge.ref.ann.ReflectionMarker;
 import ch.alpine.subare.alg.ActionValueIteration;
 import ch.alpine.subare.api.Policy;
 import ch.alpine.subare.util.DiscreteQsa;
@@ -21,8 +22,9 @@ import ch.alpine.tensor.ext.HomeDirectory;
 import ch.alpine.tensor.io.Export;
 
 /** action value iteration for cliff walk */
-enum AVI_Windygrid implements ManipulateProvider {
-  INSANCE;
+@ReflectionMarker
+class AVI_Windygrid implements ManipulateProvider {
+  public Integer batches = 20;
 
   @Override
   public Container getContainer() {
@@ -37,7 +39,7 @@ enum AVI_Windygrid implements ManipulateProvider {
       e.printStackTrace();
     }
     ImageIconRecorder imageIconRecorder = new ImageIconRecorder(250);
-    for (int index = 0; index < 20; ++index) {
+    for (int index = 0; index < batches; ++index) {
       Infoline infoline = Infoline.of(windygrid, ref, avi.qsa());
       imageIconRecorder.write(StateActionRasters.qsaLossRef(windygridRaster, avi.qsa(), ref));
       avi.step();
@@ -53,6 +55,6 @@ enum AVI_Windygrid implements ManipulateProvider {
   }
 
   static void main() {
-    INSANCE.runStandalone();
+    new AVI_Windygrid().runStandalone();
   }
 }

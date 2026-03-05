@@ -2,6 +2,9 @@
 // inspired by Shangtong Zhang
 package ch.alpine.surich.ch04.gambler;
 
+import ch.alpine.bridge.fig.ListLinePlot;
+import ch.alpine.bridge.fig.Show;
+import ch.alpine.bridge.pro.ShowProvider;
 import ch.alpine.subare.alg.ValueIteration;
 import ch.alpine.subare.api.Policy;
 import ch.alpine.subare.util.DiscreteQsa;
@@ -22,9 +25,9 @@ import ch.alpine.tensor.sca.N;
  * all other optimal actions
  * 
  * chapter 4, example 3 */
-/* package */ enum VI_Gambler {
-  ;
-  static void main() {
+class VI_Gambler implements ShowProvider {
+  @Override
+  public Show getShow() {
     GamblerModel gamblerModel = GamblerModel.createDefault();
     DiscreteQsa ref = GamblerHelper.getOptimalQsa(gamblerModel);
     ValueIteration vi = new ValueIteration(gamblerModel, gamblerModel);
@@ -35,5 +38,12 @@ import ch.alpine.tensor.sca.N;
     System.out.println("error=" + N.DOUBLE.apply(diff));
     Policy policy = PolicyType.GREEDY.bestEquiprobable(gamblerModel, ref, null);
     Policies.print(policy, gamblerModel.states());
+    Show show = new Show();
+    show.add(ListLinePlot.of(vi.tableBuilder().getColumns(0, 1)));
+    return show;
+  }
+
+  static void main() {
+    new VI_Gambler().runStandalone();
   }
 }

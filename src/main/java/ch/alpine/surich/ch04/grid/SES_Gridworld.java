@@ -4,6 +4,10 @@ package ch.alpine.surich.ch04.grid;
 import java.awt.Container;
 
 import ch.alpine.bridge.awt.AwtUtil;
+import ch.alpine.bridge.awt.ColumnPanel;
+import ch.alpine.bridge.fig.ListLinePlot;
+import ch.alpine.bridge.fig.Show;
+import ch.alpine.bridge.fig.ShowGridComponent;
 import ch.alpine.bridge.io.ImageIconRecorder;
 import ch.alpine.bridge.pro.ManipulateProvider;
 import ch.alpine.bridge.ref.ann.ReflectionMarker;
@@ -21,6 +25,7 @@ import ch.alpine.subare.util.Infoline;
 import ch.alpine.subare.util.LinearExplorationRate;
 import ch.alpine.subare.util.PolicyType;
 import ch.alpine.subare.util.gfx.StateActionRasters;
+import ch.alpine.tensor.io.TableBuilder;
 
 /** 1, or N-step Original/Expected Sarsa, and QLearning for gridworld
  * 
@@ -49,17 +54,25 @@ class SES_Gridworld implements ManipulateProvider {
       }
     };
     int episode = 0;
+    TableBuilder tableBuilder = new TableBuilder();
     while (exploringStartsStream.batchIndex() < batches) {
       exploringStartsStream.nextEpisode();
-      if (episode % 5 == 0) {
-        Infoline infoline = Infoline.of(gridworld, ref, qsa);
-        imageIconRecorder.write(StateActionRasters.qsaLossRef(new GridworldRaster(gridworld), qsa, ref));
-        if (infoline.isLossfree())
-          break;
-      }
+      Infoline infoline = Infoline.of(gridworld, ref, qsa);
+      tableBuilder.appendRow(infoline.indexedVector(episode));
+      imageIconRecorder.write(StateActionRasters.qsaLossRef(new GridworldRaster(gridworld), qsa, ref));
+      if (infoline.isLossfree())
+        break;
       ++episode;
     }
-    return AwtUtil.iconAsLabel(imageIconRecorder.getIconImage());
+    ColumnPanel columnPanel = new ColumnPanel();
+    columnPanel.add(AwtUtil.iconAsLabel(imageIconRecorder.getIconImage()));
+    {
+      Show show = new Show();
+      show.add(ListLinePlot.of(tableBuilder.getColumns(0, 1)));
+      show.add(ListLinePlot.of(tableBuilder.getColumns(0, 2)));
+      columnPanel.add(ShowGridComponent.of(show));
+    }
+    return columnPanel;
   }
 
   static void main() throws Exception {

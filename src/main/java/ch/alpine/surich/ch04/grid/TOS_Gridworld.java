@@ -4,6 +4,10 @@ package ch.alpine.surich.ch04.grid;
 import java.awt.Container;
 
 import ch.alpine.bridge.awt.AwtUtil;
+import ch.alpine.bridge.awt.ColumnPanel;
+import ch.alpine.bridge.fig.ListLinePlot;
+import ch.alpine.bridge.fig.Show;
+import ch.alpine.bridge.fig.ShowGridComponent;
 import ch.alpine.bridge.io.ImageIconRecorder;
 import ch.alpine.bridge.pro.ManipulateProvider;
 import ch.alpine.bridge.ref.ann.ReflectionMarker;
@@ -24,6 +28,7 @@ import ch.alpine.subare.util.PolicyType;
 import ch.alpine.subare.util.gfx.StateActionRasters;
 import ch.alpine.tensor.RealScalar;
 import ch.alpine.tensor.Scalar;
+import ch.alpine.tensor.io.TableBuilder;
 import ch.alpine.tensor.qty.Timing;
 
 @ReflectionMarker
@@ -46,6 +51,7 @@ class TOS_Gridworld implements ManipulateProvider {
     TrueOnlineSarsa trueOnlineSarsa = sarsaType.trueOnline(gridworld, LAMBDA, mapper, learningRate, w, sac, policy);
     Timing timing = Timing.started();
     ImageIconRecorder imageIconRecorder = new ImageIconRecorder(250);
+    TableBuilder tableBuilder = new TableBuilder();
     for (int batch = 0; batch < 100; ++batch) {
       // System.out.println("starting batch " + (index + 1) + " of " + batches);
       policy.setQsa(trueOnlineSarsa.qsaInterface());
@@ -54,6 +60,7 @@ class TOS_Gridworld implements ManipulateProvider {
       // XYtoSarsa.append(Tensors.vector(RealScalar.of(index).number(), errorAnalysis.getError(monteCarloInterface, optimalQsa, toQsa).number()));
       DiscreteQsa qsa = trueOnlineSarsa.qsa();
       Infoline infoline = Infoline.of(gridworld, ref, qsa);
+      tableBuilder.appendRow(infoline.indexedVector(batch));
       imageIconRecorder.write(StateActionRasters.qsaLossRef(new GridworldRaster(gridworld), qsa, ref));
       if (infoline.isLossfree()) {
         IO.println("lossfree after " + batch);
@@ -61,7 +68,15 @@ class TOS_Gridworld implements ManipulateProvider {
       }
     }
     System.out.println("Time for TrueOnlineSarsa: " + timing.seconds() + "s");
-    return AwtUtil.iconAsLabel(imageIconRecorder.getIconImage());
+    ColumnPanel columnPanel = new ColumnPanel();
+    columnPanel.add(AwtUtil.iconAsLabel(imageIconRecorder.getIconImage()));
+    {
+      Show show = new Show();
+      show.add(ListLinePlot.of(tableBuilder.getColumns(0, 1)));
+      show.add(ListLinePlot.of(tableBuilder.getColumns(0, 2)));
+      columnPanel.add(ShowGridComponent.of(show));
+    }
+    return columnPanel;
   }
 
   static void main() throws Exception {

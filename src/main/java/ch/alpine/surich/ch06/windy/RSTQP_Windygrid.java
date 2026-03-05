@@ -18,8 +18,8 @@ import ch.alpine.subare.util.gfx.StateActionRasters;
  * because TabularSteps starts in every state-action pair
  * instead of only the 1 start state of Windygrid */
 @ReflectionMarker
-enum RSTQP_Windygrid implements ManipulateProvider {
-  INSTANCE;
+class RSTQP_Windygrid implements ManipulateProvider {
+  public Integer batches = 40;
 
   @Override
   public Container getContainer() {
@@ -30,7 +30,6 @@ enum RSTQP_Windygrid implements ManipulateProvider {
     Random1StepTabularQPlanning rstqp = Random1StepTabularQPlanning.of( //
         windygrid, qsa, ConstantLearningRate.one());
     ImageIconRecorder imageIconRecorder = new ImageIconRecorder(250);
-    int batches = 40;
     for (int index = 0; index < batches; ++index) {
       Infoline infoline = Infoline.of(windygrid, ref, qsa);
       TabularSteps.batch(windygrid, windygrid, rstqp);
@@ -42,6 +41,6 @@ enum RSTQP_Windygrid implements ManipulateProvider {
   }
 
   static void main() {
-    INSTANCE.runStandalone();
+    new RSTQP_Windygrid().runStandalone();
   }
 }

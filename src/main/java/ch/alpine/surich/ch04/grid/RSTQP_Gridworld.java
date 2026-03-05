@@ -24,8 +24,8 @@ class RSTQP_Gridworld implements ManipulateProvider {
     Gridworld gridworld = new Gridworld();
     final DiscreteQsa ref = GridworldHelper.getOptimalQsa(gridworld);
     DiscreteQsa qsa = DiscreteQsa.build(gridworld);
-    Random1StepTabularQPlanning rstqp = Random1StepTabularQPlanning.of( //
-        gridworld, qsa, ConstantLearningRate.one());
+    Random1StepTabularQPlanning rstqp = //
+        Random1StepTabularQPlanning.of(gridworld, qsa, ConstantLearningRate.one());
     ImageIconRecorder imageIconRecorder = new ImageIconRecorder(250);
     for (int index = 0; index < batches; ++index) {
       imageIconRecorder.write(StateActionRasters.qsaLossRef(new GridworldRaster(gridworld), qsa, ref));

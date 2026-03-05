@@ -23,10 +23,9 @@ import ch.alpine.subare.util.gfx.StateActionRasters;
 
 /** determines q(s, a) function for equiprobable "random" policy */
 @ReflectionMarker
-record Sarsa_Windygrid(SarsaType sarsaType, int batches) implements ManipulateProvider {
-  public static final ManipulateProvider S1 = new Sarsa_Windygrid(SarsaType.ORIGINAL, 20);
-  public static final ManipulateProvider S2 = new Sarsa_Windygrid(SarsaType.EXPECTED, 20);
-  public static final ManipulateProvider S3 = new Sarsa_Windygrid(SarsaType.QLEARNING, 20);
+class Sarsa_Windygrid implements ManipulateProvider {
+  public SarsaType sarsaType = SarsaType.QLEARNING;
+  public Integer batches = 20;
 
   @Override
   public Container getContainer() {
@@ -52,6 +51,6 @@ record Sarsa_Windygrid(SarsaType sarsaType, int batches) implements ManipulatePr
   }
 
   static void main() throws Exception {
-    S1.runStandalone();
+    new Sarsa_Windygrid().runStandalone();
   }
 }
