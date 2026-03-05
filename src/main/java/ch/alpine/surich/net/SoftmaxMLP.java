@@ -42,35 +42,39 @@ class SoftmaxMLP implements ManipulateProvider {
 
   public class Network {
     private final NetChain netChain = NetChains.argMaxMLP(2, hiddenSize, 3);
-    private final TableBuilder tableBuilder = new TableBuilder();
+    private final NetTrain netTrain;
+    Scalar error;
 
-    Scalar train(Tensor X, Tensor Y) {
+    Network(Tensor X, Tensor Y) {
       netChain.setL2(l2);
-      NetTrain.of(netChain, X, Y, learningRate, tableBuilder::appendRow, timeout, maxEpoch, SKIP);
+      netTrain = new NetTrain(netChain, X, Y);
+      netTrain.run(learningRate, timeout, maxEpoch, SKIP);
       // ---
-      Tensor errors = Tensors.empty();
-      for (int n = 0; n < X.length(); n++) {
-        Tensor x = X.get(n);
-        Tensor y = netChain.forward(x);
-        Tensor error = y.subtract(Y.get(n));
-        // System.out.println("I: " + x + " | " + y + "=" + Y.get(n)); // + probs.maps(Round._2)
-        errors.append(error);
-      }
-      return FrobeniusNorm.of(errors);
+      error = FrobeniusNorm.of(netTrain.error());
     }
   }
 
   @Override
   public Container getContainer() {
-    Network network = new Network();
-    Scalar error = network.train(X, Y);
-    Show show = new Show();
-    TableBuilder tableBuilder = network.tableBuilder;
-    int n = tableBuilder.getRow(0).length();
-    for (int i = 1; i < n; ++i)
-      show.add(ListLinePlot.of(tableBuilder.getColumns(0, i)));
-    show.setPlotLabel("Error: " + error.maps(Round._3));
-    return ShowGridComponent.of(show);
+    Network network = new Network(X, Y);
+    Scalar error = network.error;
+    Show show1 = new Show();
+    {
+      TableBuilder tableBuilder = network.netTrain.tparam;
+      int n = tableBuilder.getRow(0).length();
+      for (int i = 1; i < n; ++i)
+        show1.add(ListLinePlot.of(tableBuilder.getColumns(0, i)));
+      show1.setPlotLabel("Error: " + error.maps(Round._3));
+    }
+    Show show2 = new Show();
+    {
+      TableBuilder tableBuilder = network.netTrain.tloss;
+      int n = tableBuilder.getRow(0).length();
+      for (int i = 1; i < n; ++i)
+        show2.add(ListLinePlot.of(tableBuilder.getColumns(0, i)));
+      show2.setPlotLabel("Error: " + error.maps(Round._3));
+    }
+    return ShowGridComponent.of(show1, show2);
   }
 
   static void main() {

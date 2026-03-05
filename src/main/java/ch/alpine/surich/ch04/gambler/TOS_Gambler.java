@@ -2,11 +2,11 @@
 package ch.alpine.surich.ch04.gambler;
 
 import java.awt.Container;
-import java.awt.GridLayout;
 
 import javax.swing.JPanel;
 
 import ch.alpine.bridge.awt.AwtUtil;
+import ch.alpine.bridge.awt.ColumnPanel;
 import ch.alpine.bridge.fig.ListLinePlot;
 import ch.alpine.bridge.fig.Show;
 import ch.alpine.bridge.fig.ShowComponent;
@@ -69,7 +69,7 @@ class TOS_Gambler implements ManipulateProvider {
       }
     }
     System.out.println("Time for TrueOnlineSarsa: " + timing.seconds() + "s");
-    JPanel jPanel = new JPanel(new GridLayout(2, 1));
+    JPanel jPanel = new ColumnPanel();
     jPanel.add(AwtUtil.iconAsLabel(imageIconRecorder.getIconImage()));
     Show show = new Show();
     show.add(ListLinePlot.of(tableBuilder.getColumns(0, 1)));
