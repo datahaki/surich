@@ -1,3 +1,4 @@
+// code by jph
 package ch.alpine.surich.net;
 
 import ch.alpine.subare.net.Conv1DLayer;
