@@ -42,7 +42,7 @@ public enum DynamazeHelper {
   }
 
   /* package */ static Tensor load(String name) {
-    Path file = Unprotect.resourcePath("/ch/alpine/subare/ch08/" + name + ".png");
+    Path file = Unprotect.resourcePath("ch/alpine/subare/ch08/" + name + ".png");
     try {
       return Import.of(file);
     } catch (Exception exception) {

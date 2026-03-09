@@ -20,7 +20,7 @@ public enum RacetrackHelper {
    * @throws Exception if resource associated to trackName does not exist */
   public static Racetrack create(String trackName, int maxSpeed) {
     // use Resource
-    return new Racetrack(Import.of("/ch/alpine/subare/ch05/" + trackName + ".png"), maxSpeed);
+    return new Racetrack(Import.of("ch/alpine/subare/ch05/" + trackName + ".png"), maxSpeed);
   }
 
   static Tensor render(Racetrack racetrack, DiscreteQsa qsa, Tensor speed, Tensor action) {

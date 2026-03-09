@@ -19,7 +19,7 @@ import ch.alpine.tensor.sca.Round;
 enum FVPE_RaceTrack {
   ;
   static void main() throws IOException {
-    Path path = Unprotect.resourcePath("/ch/alpine/subare/ch05/track0.png");
+    Path path = Unprotect.resourcePath("ch/alpine/subare/ch05/track0.png");
     Throw.unless(Files.exists(path));
     Racetrack racetrack = new Racetrack(Import.of(path), 3);
     FirstVisitPolicyEvaluation fvpe = new FirstVisitPolicyEvaluation( //

@@ -16,7 +16,7 @@ import ch.alpine.tensor.sca.Round;
 enum IPE_RaceTrack {
   ;
   static void main() throws IOException {
-    Path path = Unprotect.resourcePath("/ch/alpine/subare/ch05/track0.png");
+    Path path = Unprotect.resourcePath("ch/alpine/subare/ch05/track0.png");
     Racetrack racetrack = new Racetrack(Import.of(path), 3);
     Policy policy = EquiprobablePolicy.create(racetrack);
     IterativePolicyEvaluation ipe = new IterativePolicyEvaluation(racetrack, policy);
