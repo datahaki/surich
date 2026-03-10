@@ -26,9 +26,7 @@ import ch.alpine.subare.util.DiscreteVs;
  * 1 -0.1
  * 2 0
  * 3 0 */
-enum AVI_Maxbias implements VoidProvider {
-  INSTANCE;
-
+class AVI_Maxbias implements VoidProvider {
   @Override
   public Void runStandalone() {
     Maxbias maxbias = new Maxbias(5);
@@ -41,6 +39,6 @@ enum AVI_Maxbias implements VoidProvider {
   }
 
   static void main() {
-    INSTANCE.runStandalone();
+    new AVI_Maxbias().runStandalone();
   }
 }

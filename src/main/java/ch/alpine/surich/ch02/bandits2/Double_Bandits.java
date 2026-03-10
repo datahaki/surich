@@ -5,9 +5,7 @@ import ch.alpine.bridge.pro.VoidProvider;
 import ch.alpine.subare.td.SarsaType;
 
 /** Double Sarsa for maximization bias */
-/* package */ enum Double_Bandits implements VoidProvider {
-  INSTANCE;
-
+class Double_Bandits implements VoidProvider {
   @Override
   public Void runStandalone() {
     BanditsModel banditsModel = new BanditsModel(20);
@@ -19,6 +17,6 @@ import ch.alpine.subare.td.SarsaType;
   }
 
   static void main() {
-    INSTANCE.runStandalone();
+    new Double_Bandits().runStandalone();
   }
 }

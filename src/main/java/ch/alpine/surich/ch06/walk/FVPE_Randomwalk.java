@@ -21,9 +21,7 @@ import ch.alpine.tensor.sca.Round;
  * 5 0.84
  * 6 0
  * </pre> */
-enum FVPE_Randomwalk implements VoidProvider {
-  INSTANCE;
-
+class FVPE_Randomwalk implements VoidProvider {
   @Override
   public Void runStandalone() {
     Randomwalk randomwalk = new Randomwalk(5);
@@ -38,6 +36,6 @@ enum FVPE_Randomwalk implements VoidProvider {
   }
 
   static void main() {
-    INSTANCE.runStandalone();
+    new FVPE_Randomwalk().runStandalone();
   }
 }
