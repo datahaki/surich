@@ -64,9 +64,9 @@ import ch.alpine.tensor.ext.HomeDirectory;
   }
 
   private static Path savePlot(Path directory, String fileTitle, Show show) throws Exception {
-    Path file = directory.resolve(fileTitle + ".png");
-    show.export(file, new Dimension(WIDTH, HEIGHT));
+    Path path = directory.resolve(fileTitle + ".png");
+    show.export(path, new Dimension(WIDTH, HEIGHT));
     System.out.println("Exported " + fileTitle + ".png to " + directory);
-    return file;
+    return path;
   }
 }

@@ -19,7 +19,6 @@ import ch.alpine.tensor.Tensor;
 import ch.alpine.tensor.alg.Array;
 import ch.alpine.tensor.api.ScalarTensorFunction;
 import ch.alpine.tensor.img.ColorDataGradients;
-import ch.alpine.tensor.qty.Timing;
 import ch.alpine.tensor.red.Min;
 
 public class LearningCompetition {
@@ -56,7 +55,6 @@ public class LearningCompetition {
     ImageIconRecorder imageIconRecorder = new ImageIconRecorder(period);
     for (int index = 0; index < epsilon.length(); ++index) {
       final int findex = index;
-      Timing timing = Timing.started();
       map.entrySet().stream().parallel().forEach(entry -> //
       processEntry(image, entry.getKey(), entry.getValue(), findex));
       // System.out.printf("%3d %s %n", index, timing.seconds().maps(Round._1));

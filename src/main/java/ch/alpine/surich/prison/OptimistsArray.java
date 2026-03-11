@@ -73,8 +73,8 @@ import ch.alpine.tensor.sca.N;
       // System.out.println(scalarSummaryStatistics.toString());
       Tensor imageL = tensor.maps(RealScalar.ONE::add).multiply(Rational.HALF); //
       Tensor image = Join.of(1, imageL, separator, action).maps(ColorDataGradients.CLASSIC);
-      Path file = folder.resolve(String.format("%04d.png", frame));
-      Export.of(file, image);
+      Path path = folder.resolve(String.format("%04d.png", frame));
+      Export.of(path, image);
     }
   }
 }

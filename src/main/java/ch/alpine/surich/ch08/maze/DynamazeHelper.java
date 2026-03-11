@@ -42,9 +42,9 @@ public enum DynamazeHelper {
   }
 
   /* package */ static Tensor load(String name) {
-    Path file = Unprotect.resourcePath("ch/alpine/subare/ch08/" + name + ".png");
+    Path path = Unprotect.resourcePath("ch/alpine/subare/ch08/" + name + ".png");
     try {
-      return Import.of(file);
+      return Import.of(path);
     } catch (Exception exception) {
       throw new RuntimeException(exception);
     }
