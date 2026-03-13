@@ -4,9 +4,9 @@ package ch.alpine.surich.ch02.bandits;
 import java.util.Map;
 import java.util.Map.Entry;
 
-import ch.alpine.bridge.fig.ListLinePlot;
 import ch.alpine.bridge.fig.Show;
 import ch.alpine.bridge.fig.Showable;
+import ch.alpine.bridge.fig.plt.ListLinePlot;
 import ch.alpine.bridge.pro.ShowProvider;
 import ch.alpine.surich.ch02.Agent;
 import ch.alpine.surich.ch02.EGreedyAgent;

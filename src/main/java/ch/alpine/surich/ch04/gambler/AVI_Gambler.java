@@ -3,9 +3,9 @@ package ch.alpine.surich.ch04.gambler;
 
 import javax.swing.JComponent;
 
-import ch.alpine.bridge.fig.ArrayPlot;
 import ch.alpine.bridge.fig.Show;
 import ch.alpine.bridge.fig.ShowGridComponent;
+import ch.alpine.bridge.fig.plt.ArrayPlot;
 import ch.alpine.bridge.pro.ManipulateProvider;
 import ch.alpine.bridge.ref.ann.ReflectionMarker;
 import ch.alpine.subare.util.DiscreteQsa;

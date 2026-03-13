@@ -1,8 +1,8 @@
 // code by fluric
 package ch.alpine.surich.demo;
 
-import ch.alpine.bridge.fig.ListLinePlot;
 import ch.alpine.bridge.fig.Show;
+import ch.alpine.bridge.fig.plt.ListLinePlot;
 import ch.alpine.bridge.pro.ShowWindow;
 import ch.alpine.subare.alg.ActionValueIteration;
 import ch.alpine.subare.analysis.DiscreteModelErrorAnalysis;
