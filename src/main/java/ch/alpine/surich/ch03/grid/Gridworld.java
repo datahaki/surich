@@ -1,7 +1,7 @@
 // code by jph
 package ch.alpine.surich.ch03.grid;
 
-import ch.alpine.subare.api.MonteCarloInterface;
+import ch.alpine.subare.api.mod.MonteCarloInterface;
 import ch.alpine.subare.util.DeterministicStandardModel;
 import ch.alpine.tensor.DoubleScalar;
 import ch.alpine.tensor.RealScalar;

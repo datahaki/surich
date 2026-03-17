@@ -6,7 +6,7 @@ import ch.alpine.bridge.fig.plt.ListLinePlot;
 import ch.alpine.bridge.pro.ShowProvider;
 import ch.alpine.subare.alg.ActionValueIteration;
 import ch.alpine.subare.alg.Random1StepTabularQPlanning;
-import ch.alpine.subare.api.StepDigest;
+import ch.alpine.subare.api.pol.StepDigest;
 import ch.alpine.subare.util.ConstantLearningRate;
 import ch.alpine.subare.util.DiscreteQsa;
 import ch.alpine.subare.util.Infoline;

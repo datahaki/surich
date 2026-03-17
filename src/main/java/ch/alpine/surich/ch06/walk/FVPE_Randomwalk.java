@@ -2,7 +2,7 @@
 package ch.alpine.surich.ch06.walk;
 
 import ch.alpine.bridge.pro.VoidProvider;
-import ch.alpine.subare.api.Policy;
+import ch.alpine.subare.api.pol.Policy;
 import ch.alpine.subare.mc.FirstVisitPolicyEvaluation;
 import ch.alpine.subare.util.DiscreteUtils;
 import ch.alpine.subare.util.DiscreteVs;

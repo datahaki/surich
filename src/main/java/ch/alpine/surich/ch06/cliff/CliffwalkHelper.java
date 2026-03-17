@@ -3,7 +3,7 @@ package ch.alpine.surich.ch06.cliff;
 
 import ch.alpine.subare.alg.ActionValueIteration;
 import ch.alpine.subare.alg.ValueIteration;
-import ch.alpine.subare.api.Policy;
+import ch.alpine.subare.api.pol.Policy;
 import ch.alpine.subare.util.DiscreteQsa;
 import ch.alpine.subare.util.PolicyType;
 import ch.alpine.tensor.sca.Chop;

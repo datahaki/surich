@@ -1,7 +1,7 @@
 // code by jph
 package ch.alpine.surich.ch04.grid;
 
-import ch.alpine.subare.api.Policy;
+import ch.alpine.subare.api.pol.Policy;
 import ch.alpine.subare.mc.FirstVisitPolicyEvaluation;
 import ch.alpine.subare.util.DiscreteUtils;
 import ch.alpine.subare.util.DiscreteVs;

@@ -5,7 +5,7 @@ import java.io.IOException;
 import java.nio.file.Path;
 
 import ch.alpine.subare.alg.IterativePolicyEvaluation;
-import ch.alpine.subare.api.Policy;
+import ch.alpine.subare.api.pol.Policy;
 import ch.alpine.subare.util.DiscreteUtils;
 import ch.alpine.subare.util.EquiprobablePolicy;
 import ch.alpine.tensor.Unprotect;

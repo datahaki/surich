@@ -3,7 +3,7 @@ package ch.alpine.surich.ch05.blackjack;
 
 import ch.alpine.bridge.awt.AwtUtil;
 import ch.alpine.bridge.io.ImageIconRecorder;
-import ch.alpine.subare.api.StateActionCounter;
+import ch.alpine.subare.api.pol.StateActionCounter;
 import ch.alpine.subare.mc.MonteCarloExploringStarts;
 import ch.alpine.subare.util.DiscreteStateActionCounter;
 import ch.alpine.subare.util.EGreedyPolicy;

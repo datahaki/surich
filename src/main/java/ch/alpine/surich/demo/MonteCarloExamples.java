@@ -3,7 +3,7 @@ package ch.alpine.surich.demo;
 
 import java.util.function.Supplier;
 
-import ch.alpine.subare.api.MonteCarloInterface;
+import ch.alpine.subare.api.mod.MonteCarloInterface;
 import ch.alpine.surich.airport.Airport;
 import ch.alpine.surich.ch04.gambler.GamblerModel;
 import ch.alpine.surich.ch04.grid.Gridworld;

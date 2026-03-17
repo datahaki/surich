@@ -11,7 +11,7 @@ import ch.alpine.bridge.io.ImageIconRecorder;
 import ch.alpine.bridge.pro.ManipulateProvider;
 import ch.alpine.bridge.ref.ann.ReflectionMarker;
 import ch.alpine.subare.api.LearningRate;
-import ch.alpine.subare.api.StateActionCounter;
+import ch.alpine.subare.api.pol.StateActionCounter;
 import ch.alpine.subare.td.Sarsa;
 import ch.alpine.subare.td.SarsaType;
 import ch.alpine.subare.util.DefaultLearningRate;

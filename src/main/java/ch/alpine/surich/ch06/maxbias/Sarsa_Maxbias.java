@@ -2,7 +2,7 @@
 package ch.alpine.surich.ch06.maxbias;
 
 import ch.alpine.subare.api.LearningRate;
-import ch.alpine.subare.api.StateActionCounter;
+import ch.alpine.subare.api.pol.StateActionCounter;
 import ch.alpine.subare.td.Sarsa;
 import ch.alpine.subare.td.SarsaType;
 import ch.alpine.subare.util.ActionValueStatistics;

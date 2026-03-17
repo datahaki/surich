@@ -5,7 +5,7 @@ import ch.alpine.bridge.fig.Show;
 import ch.alpine.bridge.fig.plt.ListLinePlot;
 import ch.alpine.bridge.pro.ShowProvider;
 import ch.alpine.subare.alg.ValueIteration;
-import ch.alpine.subare.api.Policy;
+import ch.alpine.subare.api.pol.Policy;
 import ch.alpine.subare.td.TabularTemporalDifference0;
 import ch.alpine.subare.util.DefaultLearningRate;
 import ch.alpine.subare.util.DiscreteStateActionCounter;

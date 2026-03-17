@@ -3,7 +3,7 @@ package ch.alpine.surich.ch06.windy;
 
 import java.awt.Dimension;
 
-import ch.alpine.subare.api.DiscreteModel;
+import ch.alpine.subare.api.mod.DiscreteModel;
 import ch.alpine.subare.math.Index;
 import ch.alpine.subare.util.gfx.IntPoint;
 import ch.alpine.subare.util.gfx.StateActionRaster;

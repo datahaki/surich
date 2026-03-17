@@ -6,7 +6,7 @@ import java.util.List;
 import java.util.Objects;
 import java.util.Set;
 
-import ch.alpine.subare.api.MonteCarloInterface;
+import ch.alpine.subare.api.mod.MonteCarloInterface;
 import ch.alpine.subare.util.DeterministicStandardModel;
 import ch.alpine.tensor.RealScalar;
 import ch.alpine.tensor.Scalar;

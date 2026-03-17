@@ -1,8 +1,8 @@
 // code by jph
 package ch.alpine.surich.ch06.maxbias;
 
-import ch.alpine.subare.api.MonteCarloInterface;
-import ch.alpine.subare.api.StandardModel;
+import ch.alpine.subare.api.mod.MonteCarloInterface;
+import ch.alpine.subare.api.mod.StandardModel;
 import ch.alpine.tensor.RealScalar;
 import ch.alpine.tensor.Scalar;
 import ch.alpine.tensor.Tensor;

@@ -2,7 +2,7 @@
 package ch.alpine.surich.ch05.infvar;
 
 import ch.alpine.bridge.pro.VoidProvider;
-import ch.alpine.subare.api.Policy;
+import ch.alpine.subare.api.pol.Policy;
 import ch.alpine.subare.mc.FirstVisitPolicyEvaluation;
 import ch.alpine.subare.util.ExploringStarts;
 import ch.alpine.tensor.Rational;

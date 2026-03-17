@@ -8,7 +8,7 @@ import javax.swing.ImageIcon;
 import ch.alpine.bridge.awt.AwtUtil;
 import ch.alpine.bridge.pro.ManipulateProvider;
 import ch.alpine.bridge.ref.ann.ReflectionMarker;
-import ch.alpine.subare.api.StateActionCounter;
+import ch.alpine.subare.api.pol.StateActionCounter;
 import ch.alpine.subare.td.Sarsa;
 import ch.alpine.subare.td.SarsaType;
 import ch.alpine.subare.util.DefaultLearningRate;

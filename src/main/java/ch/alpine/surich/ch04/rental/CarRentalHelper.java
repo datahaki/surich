@@ -3,7 +3,7 @@ package ch.alpine.surich.ch04.rental;
 
 import java.util.List;
 
-import ch.alpine.subare.api.Policy;
+import ch.alpine.subare.api.pol.Policy;
 import ch.alpine.subare.util.DiscreteVs;
 import ch.alpine.subare.util.PolicyType;
 import ch.alpine.subare.util.PolicyWrap;

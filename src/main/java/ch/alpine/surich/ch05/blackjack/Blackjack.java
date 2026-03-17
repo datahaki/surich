@@ -3,7 +3,7 @@ package ch.alpine.surich.ch05.blackjack;
 
 import java.util.concurrent.ThreadLocalRandom;
 
-import ch.alpine.subare.api.MonteCarloInterface;
+import ch.alpine.subare.api.mod.MonteCarloInterface;
 import ch.alpine.tensor.RealScalar;
 import ch.alpine.tensor.Scalar;
 import ch.alpine.tensor.Scalars;

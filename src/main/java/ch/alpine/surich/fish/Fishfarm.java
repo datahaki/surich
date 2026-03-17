@@ -2,7 +2,7 @@
 // code by jph
 package ch.alpine.surich.fish;
 
-import ch.alpine.subare.api.MonteCarloInterface;
+import ch.alpine.subare.api.mod.MonteCarloInterface;
 import ch.alpine.subare.util.DeterministicStandardModel;
 import ch.alpine.tensor.RealScalar;
 import ch.alpine.tensor.Scalar;

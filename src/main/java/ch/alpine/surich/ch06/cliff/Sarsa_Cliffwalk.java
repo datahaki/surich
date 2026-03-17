@@ -4,7 +4,7 @@ package ch.alpine.surich.ch06.cliff;
 
 import ch.alpine.bridge.awt.AwtUtil;
 import ch.alpine.bridge.io.ImageIconRecorder;
-import ch.alpine.subare.api.StateActionCounter;
+import ch.alpine.subare.api.pol.StateActionCounter;
 import ch.alpine.subare.td.Sarsa;
 import ch.alpine.subare.td.SarsaType;
 import ch.alpine.subare.util.DefaultLearningRate;
@@ -47,9 +47,9 @@ enum Sarsa_Cliffwalk {
     // Policy policy = GreedyPolicy.bestEquiprobable(cliffwalk, qsa);
     // EpisodeInterface mce = EpisodeKickoff.single(cliffwalk, policy);
     // while (mce.hasNext()) {
-    // StepInterface stepInterface = mce.step();
-    // Tensor state = stepInterface.prevState();
-    // System.out.println(state + " then " + stepInterface.action());
+    // StepInterface stepRecord = mce.step();
+    // Tensor state = stepRecord.prevState();
+    // System.out.println(state + " then " + stepRecord.action());
     // }
     AwtUtil.iconAsLabel(imageIconRecorder.getIconImage());
   }

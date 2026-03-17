@@ -1,8 +1,8 @@
 // code by jph
 package ch.alpine.surich.ch06.walk;
 
-import ch.alpine.subare.api.Policy;
 import ch.alpine.subare.api.VsInterface;
+import ch.alpine.subare.api.pol.Policy;
 import ch.alpine.subare.math.PolynomialBasis;
 import ch.alpine.subare.td.TabularTemporalDifference0;
 import ch.alpine.subare.util.DefaultLearningRate;

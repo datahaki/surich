@@ -5,7 +5,7 @@ import java.awt.Dimension;
 import java.util.List;
 import java.util.Objects;
 
-import ch.alpine.subare.api.Policy;
+import ch.alpine.subare.api.pol.Policy;
 import ch.alpine.subare.util.DiscreteQsa;
 import ch.alpine.subare.util.PolicyType;
 import ch.alpine.subare.util.gfx.StateRasters;

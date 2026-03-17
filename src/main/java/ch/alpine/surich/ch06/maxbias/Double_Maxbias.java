@@ -2,9 +2,9 @@
 package ch.alpine.surich.ch06.maxbias;
 
 import ch.alpine.subare.api.EpisodeInterface;
-import ch.alpine.subare.api.Policy;
-import ch.alpine.subare.api.StateActionCounter;
 import ch.alpine.subare.api.StepRecord;
+import ch.alpine.subare.api.pol.Policy;
+import ch.alpine.subare.api.pol.StateActionCounter;
 import ch.alpine.subare.td.DoubleSarsa;
 import ch.alpine.subare.td.SarsaType;
 import ch.alpine.subare.util.DefaultLearningRate;
@@ -53,9 +53,9 @@ enum Double_Maxbias {
     Policy policy = PolicyType.GREEDY.bestEquiprobable(maxbias, doubleSarsa.qsa(), doubleSarsa.sac());
     EpisodeInterface ei = EpisodeKickoff.single(maxbias, policy);
     while (ei.hasNext()) {
-      StepRecord stepInterface = ei.step();
-      Tensor state = stepInterface.prevState();
-      System.out.println(state + " then " + stepInterface.action());
+      StepRecord stepRecord = ei.step();
+      Tensor state = stepRecord.prevState();
+      System.out.println(state + " then " + stepRecord.action());
     }
   }
 

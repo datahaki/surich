@@ -11,7 +11,7 @@ import ch.alpine.bridge.fig.plt.ListLinePlot;
 import ch.alpine.bridge.pro.ManipulateProvider;
 import ch.alpine.bridge.ref.ann.ReflectionMarker;
 import ch.alpine.subare.api.EpisodeInterface;
-import ch.alpine.subare.api.Policy;
+import ch.alpine.subare.api.pol.Policy;
 import ch.alpine.subare.util.EpisodeKickoff;
 import ch.alpine.subare.util.EquiprobablePolicy;
 import ch.alpine.tensor.RealScalar;

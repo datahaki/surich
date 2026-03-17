@@ -4,7 +4,7 @@ package ch.alpine.surich.ch04.grid;
 import java.awt.Dimension;
 import java.util.List;
 
-import ch.alpine.subare.api.DiscreteModel;
+import ch.alpine.subare.api.mod.DiscreteModel;
 import ch.alpine.subare.math.Index;
 import ch.alpine.subare.util.gfx.IntPoint;
 import ch.alpine.subare.util.gfx.StateActionRaster;

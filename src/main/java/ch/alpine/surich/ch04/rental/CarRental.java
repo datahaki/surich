@@ -2,8 +2,8 @@
 // inspired by Shangtong Zhang
 package ch.alpine.surich.ch04.rental;
 
-import ch.alpine.subare.api.SampleModel;
-import ch.alpine.subare.api.StandardModel;
+import ch.alpine.subare.api.mod.SampleModel;
+import ch.alpine.subare.api.mod.StandardModel;
 import ch.alpine.tensor.RealScalar;
 import ch.alpine.tensor.Scalar;
 import ch.alpine.tensor.Scalars;

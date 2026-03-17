@@ -3,7 +3,7 @@ package ch.alpine.surich.ch04.grid;
 
 import java.util.function.Predicate;
 
-import ch.alpine.subare.api.MonteCarloInterface;
+import ch.alpine.subare.api.mod.MonteCarloInterface;
 import ch.alpine.subare.util.DeterministicStandardModel;
 import ch.alpine.tensor.RealScalar;
 import ch.alpine.tensor.Scalar;
