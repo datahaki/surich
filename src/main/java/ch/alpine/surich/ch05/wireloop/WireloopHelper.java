@@ -4,7 +4,7 @@ package ch.alpine.surich.ch05.wireloop;
 import java.util.List;
 
 import ch.alpine.subare.alg.ActionValueIteration;
-import ch.alpine.subare.api.QsaInterface;
+import ch.alpine.subare.api.val.QsaInterface;
 import ch.alpine.subare.math.RobustArgMax;
 import ch.alpine.subare.util.DiscreteQsa;
 import ch.alpine.subare.util.DiscreteVs;

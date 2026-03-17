@@ -7,7 +7,7 @@ import ch.alpine.bridge.awt.AwtUtil;
 import ch.alpine.bridge.io.ImageIconRecorder;
 import ch.alpine.bridge.pro.ManipulateProvider;
 import ch.alpine.bridge.ref.ann.ReflectionMarker;
-import ch.alpine.subare.api.EpisodeVsEstimator;
+import ch.alpine.subare.api.epi.EpisodeVsEstimator;
 import ch.alpine.subare.api.pol.Policy;
 import ch.alpine.subare.mc.ConstantAlphaMonteCarloVs;
 import ch.alpine.subare.util.DefaultLearningRate;
