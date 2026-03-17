@@ -23,7 +23,7 @@ class EtaGambler implements VoidProvider {
     GamblerModel gamblerModel = new GamblerModel(10, Rational.of(4, 10));
     // Policy policy = EquiprobablePolicy.create(gambler);
     Policy policy = GamblerHelper.getOptimalPolicy(gamblerModel);
-    OnPolicyStateDistribution opsd = new OnPolicyStateDistribution(gamblerModel, gamblerModel, policy);
+    OnPolicyStateDistribution opsd = new OnPolicyStateDistribution(gamblerModel, policy);
     Tensor values = //
         ArrayPad.of(ConstantArray.of(RealScalar.ONE, 9), List.of(1), List.of(1));
     values.maps(Sign::requirePositiveOrZero);
