@@ -15,7 +15,7 @@ import ch.alpine.subare.rate.ConstantLearningRate;
 import ch.alpine.subare.util.TabularSteps;
 import ch.alpine.subare.val.DiscreteQsa;
 import ch.alpine.subare.val.DiscreteValueFunctions;
-import ch.alpine.surich.ch04.grid.Gridworld;
+import ch.alpine.surich.ch04.grid.Ch04Gridworld;
 import ch.alpine.tensor.RealScalar;
 import ch.alpine.tensor.Scalar;
 import ch.alpine.tensor.Scalars;
@@ -26,7 +26,7 @@ class GridworldTest {
   @Disabled
   @Test
   void testBasics() {
-    Gridworld gridworld = new Gridworld();
+    Ch04Gridworld gridworld = new Ch04Gridworld();
     assertEquals(gridworld.reward(Tensors.vector(0, 0), Tensors.vector(1, 0), null), RealScalar.ZERO);
     assertEquals(gridworld.reward(Tensors.vector(0, 0), Tensors.vector(-1, 0), null), RealScalar.ONE.negate());
   }
@@ -34,7 +34,7 @@ class GridworldTest {
   @Disabled
   @Test
   void testIndex() {
-    Gridworld gridworld = new Gridworld();
+    Ch04Gridworld gridworld = new Ch04Gridworld();
     Index actionsIndex = Index.build(gridworld.actions(null));
     int index = actionsIndex.of(Tensors.vector(1, 0));
     assertEquals(index, 3);
@@ -42,7 +42,7 @@ class GridworldTest {
 
   @Test
   void testR1STQL() {
-    Gridworld gridworld = new Gridworld();
+    Ch04Gridworld gridworld = new Ch04Gridworld();
     DiscreteQsa ref = ActionValueIteration.solve(gridworld, Chop._04);
     DiscreteQsa qsa = DiscreteQsa.build(gridworld);
     StepDigest stepDigest = //

@@ -38,7 +38,7 @@ class TOS_Gridworld implements ManipulateProvider {
 
   @Override
   public Container getContainer() {
-    Gridworld gridworld = new Gridworld();
+    Ch04Gridworld gridworld = new Ch04Gridworld();
     final DiscreteQsa ref = GridworldHelper.getOptimalQsa(gridworld);
     FeatureMapper mapper = ExactFeatureMapper.of(gridworld);
     FeatureWeight w = new FeatureWeight(mapper);

@@ -38,7 +38,7 @@ import ch.alpine.subare.val.DiscreteValueFunctions;
 class AVI_Gridworld implements ManipulateProvider {
   @Override
   public Container getContainer() {
-    Gridworld gridworld = new Gridworld();
+    Ch04Gridworld gridworld = new Ch04Gridworld();
     GridworldRaster gridworldRaster = new GridworldRaster(gridworld);
     ActionValueIteration avi = ActionValueIteration.of(gridworld);
     ImageIconRecorder imageIconRecorder = new ImageIconRecorder(250);

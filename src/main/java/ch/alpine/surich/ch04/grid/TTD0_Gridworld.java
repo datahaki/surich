@@ -42,7 +42,7 @@ import ch.alpine.tensor.sca.Round;
 class TTD0_Gridworld implements ShowProvider {
   @Override
   public Show getShow() {
-    Gridworld gridWorld = new Gridworld();
+    Ch04Gridworld gridWorld = new Ch04Gridworld();
     DiscreteVs sol = ValueIteration.solve(gridWorld, Chop._04);
     DiscreteVs vs = DiscreteVs.build(gridWorld.states());
     TabularTemporalDifference0 ttd0 = new TabularTemporalDifference0( //

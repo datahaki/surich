@@ -23,7 +23,7 @@ import ch.alpine.tensor.api.TensorScalarFunction;
  * Kakutani (1945)
  * Hersh, and Griego (1969)
  * Doyle, and Snell (1984) */
-class Wireloop extends DeterministicStandardModel implements MonteCarloInterface {
+public class Wireloop extends DeterministicStandardModel implements MonteCarloInterface {
   static final Tensor WHITE = Tensors.vector(255, 255, 255, 255);
   static final Tensor GREEN = Tensors.vector(0, 255, 0, 255);
   // ---
@@ -43,7 +43,7 @@ class Wireloop extends DeterministicStandardModel implements MonteCarloInterface
   private final Set<Tensor> endStates = new HashSet<>();
   // private final StateActionMap stateActionMap = StateActionMap.empty();
 
-  Wireloop(Tensor image, TensorScalarFunction function, WireloopReward wireloopReward) {
+  public Wireloop(Tensor image, TensorScalarFunction function, WireloopReward wireloopReward) {
     this.image = Objects.requireNonNull(image);
     this.function = function;
     this.wireloopReward = wireloopReward;

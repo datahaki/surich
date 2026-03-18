@@ -16,7 +16,7 @@ import ch.alpine.tensor.sca.Chop;
 class GridworldTest {
   @Test
   void testVI() {
-    Gridworld gridworld = new Gridworld();
+    Ch04Gridworld gridworld = new Ch04Gridworld();
     ValueIteration vi = new ValueIteration(gridworld);
     vi.untilBelow(Chop._04);
     DiscreteVs vs = vi.vs();
@@ -29,7 +29,7 @@ class GridworldTest {
 
   @Test
   void testAVI() {
-    Gridworld gridworld = new Gridworld();
+    Ch04Gridworld gridworld = new Ch04Gridworld();
     ActionValueIteration avi = ActionValueIteration.of(gridworld);
     avi.untilBelow(Chop._04);
     // ---

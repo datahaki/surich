@@ -16,10 +16,10 @@ import ch.alpine.tensor.Scalars;
 import ch.alpine.tensor.Tensor;
 
 class GridworldRaster implements StateRaster, StateActionRaster {
-  private final Gridworld gridworld;
+  private final Ch04Gridworld gridworld;
   private final Index indexActions;
 
-  public GridworldRaster(Gridworld gridworld) {
+  public GridworldRaster(Ch04Gridworld gridworld) {
     this.gridworld = gridworld;
     indexActions = Index.build(gridworld.actions(null));
   }
@@ -31,7 +31,7 @@ class GridworldRaster implements StateRaster, StateActionRaster {
 
   @Override
   public Dimension dimensionStateRaster() {
-    return new Dimension(Gridworld.NX, Gridworld.NY);
+    return new Dimension(Ch04Gridworld.NX, Ch04Gridworld.NY);
   }
 
   @Override
@@ -41,7 +41,7 @@ class GridworldRaster implements StateRaster, StateActionRaster {
 
   @Override
   public Dimension dimensionStateActionRaster() {
-    return new Dimension((Gridworld.NX + 1) * 4 - 1, Gridworld.NY);
+    return new Dimension((Ch04Gridworld.NX + 1) * 4 - 1, Ch04Gridworld.NY);
   }
 
   @Override
@@ -49,7 +49,7 @@ class GridworldRaster implements StateRaster, StateActionRaster {
     int sx = Scalars.intValueExact(state.Get(0));
     int sy = Scalars.intValueExact(state.Get(1));
     int a = indexActions.of(action);
-    return new IntPoint(sx + (Gridworld.NX + 1) * a, sy);
+    return new IntPoint(sx + (Ch04Gridworld.NX + 1) * a, sy);
   }
 
   @Override

@@ -38,7 +38,7 @@ class SES_Gridworld implements ManipulateProvider {
 
   @Override
   public Container getContainer() {
-    Gridworld gridworld = new Gridworld();
+    Ch04Gridworld gridworld = new Ch04Gridworld();
     final DiscreteQsa ref = GridworldHelper.getOptimalQsa(gridworld);
     DiscreteQsa qsa = DiscreteQsa.build(gridworld);
     StateActionCounter sac = new DiscreteStateActionCounter();

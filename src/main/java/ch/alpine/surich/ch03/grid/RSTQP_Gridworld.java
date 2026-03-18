@@ -23,10 +23,10 @@ class RSTQP_Gridworld implements ShowProvider {
   @Override
   public Show getShow() {
     Ch03Gridworld gridworld = new Ch03Gridworld();
-    DiscreteQsa ref = ActionValueIteration.solve(gridworld, Chop._04);
     DiscreteQsa qsa = DiscreteQsa.build(gridworld);
     StepDigest stepDigest = Random1StepTabularQPlanning.of(gridworld, qsa, ConstantLearningRate.one());
     TableBuilder tableBuilder = new TableBuilder();
+    DiscreteQsa ref = ActionValueIteration.solve(gridworld, Chop._04);
     for (int index = 0; index < 20; ++index) {
       Infoline infoline = Infoline.of(gridworld, ref, qsa);
       tableBuilder.appendRow(infoline.indexedVector(index));

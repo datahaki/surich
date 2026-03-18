@@ -6,7 +6,7 @@ import java.util.function.Supplier;
 import ch.alpine.subare.mod.MonteCarloInterface;
 import ch.alpine.surich.airport.Airport;
 import ch.alpine.surich.ch04.gambler.GamblerModel;
-import ch.alpine.surich.ch04.grid.Gridworld;
+import ch.alpine.surich.ch04.grid.Ch04Gridworld;
 import ch.alpine.surich.ch05.infvar.InfiniteVariance;
 import ch.alpine.surich.ch05.racetrack.RacetrackHelper;
 import ch.alpine.surich.ch05.wireloop.WireloopHelper;
@@ -40,7 +40,7 @@ public enum MonteCarloExamples implements Supplier<MonteCarloInterface> {
     wireloopReward = WireloopReward.constantCost();
     return WireloopHelper.create("wirec", WireloopReward::id_x, wireloopReward);
   }), //
-  GRIDWORLD(Gridworld::new), //
+  GRIDWORLD(Ch04Gridworld::new), //
   INFINITEVARIANCE(InfiniteVariance::new), //
   RACETRACK(() -> RacetrackHelper.create("track0", 5)), //
   CLIFFWALK(() -> new Cliffwalk(12, 4)), //

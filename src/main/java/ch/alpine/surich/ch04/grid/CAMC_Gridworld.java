@@ -20,7 +20,7 @@ import ch.alpine.subare.val.DiscreteValueFunctions;
 class CAMC_Gridworld implements ManipulateProvider { // TODO SUBARE work in progress?
   @Override
   public Container getContainer() {
-    Gridworld gridworld = new Gridworld();
+    Ch04Gridworld gridworld = new Ch04Gridworld();
     GridworldRaster gridworldRaster = new GridworldRaster(gridworld);
     // final DiscreteQsa ref = GridworldHelper.getOptimalQsa(gridworld);
     EpisodeVsEstimator camc = ConstantAlphaMonteCarloVs.create( //

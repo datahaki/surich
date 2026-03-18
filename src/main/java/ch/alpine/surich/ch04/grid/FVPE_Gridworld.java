@@ -31,7 +31,7 @@ import ch.alpine.tensor.sca.Round;
 enum FVPE_Gridworld {
   ;
   static void main() {
-    Gridworld gridworld = new Gridworld();
+    Ch04Gridworld gridworld = new Ch04Gridworld();
     FirstVisitPolicyEvaluation fvpe = new FirstVisitPolicyEvaluation( //
         gridworld, null);
     Policy policy = EquiprobablePolicy.create(gridworld);

@@ -7,7 +7,7 @@ import ch.alpine.tensor.sca.Chop;
 
 enum GridworldHelper {
   ;
-  static DiscreteQsa getOptimalQsa(Gridworld gridworld) {
+  static DiscreteQsa getOptimalQsa(Ch04Gridworld gridworld) {
     return ActionValueIteration.solve(gridworld, Chop._04);
   }
 }

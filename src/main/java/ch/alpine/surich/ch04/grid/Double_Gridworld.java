@@ -36,7 +36,7 @@ class Double_Gridworld implements ManipulateProvider {
   @Override
   public Container getContainer() {
     System.out.println("double " + sarsaType);
-    Gridworld gridworld = new Gridworld();
+    Ch04Gridworld gridworld = new Ch04Gridworld();
     final DiscreteQsa ref = GridworldHelper.getOptimalQsa(gridworld);
     int batches = 40;
     DiscreteQsa qsa1 = DiscreteQsa.build(gridworld);

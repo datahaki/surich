@@ -20,6 +20,7 @@ import ch.alpine.tensor.alg.Dimensions;
 import ch.alpine.tensor.alg.Flatten;
 import ch.alpine.tensor.alg.Join;
 import ch.alpine.tensor.alg.Subdivide;
+import ch.alpine.tensor.io.MathematicaFormat;
 import ch.alpine.tensor.itp.Interpolation;
 import ch.alpine.tensor.itp.NearestInterpolation;
 import ch.alpine.tensor.sca.Clip;
@@ -37,7 +38,7 @@ import ch.alpine.tensor.sca.Clips;
  * References:
  * Barto, Bradtke, and Singh (1995)
  * Gardner (1973) */
-class Racetrack extends DeterministicStandardModel implements MonteCarloInterface {
+public class Racetrack extends DeterministicStandardModel implements MonteCarloInterface {
   static final Tensor WHITE = Tensors.vector(255, 255, 255, 255);
   static final Tensor RED = Tensors.vector(255, 0, 0, 255);
   static final Tensor GREEN = Tensors.vector(0, 255, 0, 255);
@@ -64,7 +65,7 @@ class Racetrack extends DeterministicStandardModel implements MonteCarloInterfac
   private final Tensor image;
   private final Tensor actionsTerminal = Tensors.vector(0); // do nothing
 
-  Racetrack(Tensor image, int maxSpeed) {
+  public Racetrack(Tensor image, int maxSpeed) {
     Tensor blue = image.get(Tensor.ALL, Tensor.ALL, 2);
     interpolation = NearestInterpolation.of(blue);
     List<Integer> list = Dimensions.of(image);
@@ -201,5 +202,10 @@ class Racetrack extends DeterministicStandardModel implements MonteCarloInterfac
   // ---
   public Tensor image() {
     return image.copy();
+  }
+
+  @Override
+  public String toString() {
+    return MathematicaFormat.concise("Racetrack", image);
   }
 }

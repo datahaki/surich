@@ -16,7 +16,7 @@ import ch.alpine.tensor.sca.Sign;
 /** Example 5.1 p.101: Blackjack
  * 
  * Reference: Widrow, Gupta, and Maitra (1973) */
-class Blackjack implements MonteCarloInterface {
+public class Blackjack implements MonteCarloInterface {
   private static final Tensor END_WIN = Tensors.vector(1);
   private static final Tensor END_DRAW = Tensors.vector(0);
   private static final Tensor END_LOSS = Tensors.vector(-1);

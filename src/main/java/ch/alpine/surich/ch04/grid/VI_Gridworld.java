@@ -38,7 +38,7 @@ import ch.alpine.tensor.sca.Chop;
 enum VI_Gridworld {
   ;
   static void main() throws Exception {
-    Gridworld gridworld = new Gridworld();
+    Ch04Gridworld gridworld = new Ch04Gridworld();
     GridworldRaster gridworldStateRaster = new GridworldRaster(gridworld);
     ValueIteration vi = new ValueIteration(gridworld);
     vi.untilBelow(Chop._04);

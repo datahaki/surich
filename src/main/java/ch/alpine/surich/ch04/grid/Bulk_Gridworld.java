@@ -31,7 +31,7 @@ class Bulk_Gridworld implements ManipulateProvider {
 
   @Override
   public Container getContainer() {
-    Gridworld gambler = new Gridworld(); // 20, 4/10
+    Ch04Gridworld gambler = new Ch04Gridworld(); // 20, 4/10
     final DiscreteQsa ref = GridworldHelper.getOptimalQsa(gambler); // true q-function, for error measurement
     // ---
     final Scalar errorcap = RealScalar.of(20); // 15

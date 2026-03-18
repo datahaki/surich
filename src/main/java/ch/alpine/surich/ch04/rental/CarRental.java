@@ -33,7 +33,7 @@ import ch.alpine.tensor.sca.Sign;
  * the action is encoded as a 2-vector {+n, -n}
  * 
  * [no further references are provided in the book] */
-/* package */ class CarRental implements StandardModel, SampleModel {
+public class CarRental implements StandardModel, SampleModel {
   private static final int MAX_MOVE_OF_CARS = 5;
   private static final int RENTAL_REQUEST_FIRST_LOC = 3;
   private static final int RENTAL_REQUEST_SECOND_LOC = 4;
