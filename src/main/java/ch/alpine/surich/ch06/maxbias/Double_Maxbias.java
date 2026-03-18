@@ -1,8 +1,8 @@
 // code by jph
 package ch.alpine.surich.ch06.maxbias;
 
-import ch.alpine.subare.api.EpisodeInterface;
 import ch.alpine.subare.api.StepRecord;
+import ch.alpine.subare.epi.EpisodeInterface;
 import ch.alpine.subare.pol.EGreedyPolicy;
 import ch.alpine.subare.pol.Policy;
 import ch.alpine.subare.pol.PolicyType;

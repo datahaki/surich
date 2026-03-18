@@ -29,7 +29,7 @@ class VI_RaceTrack implements ManipulateProvider {
 
   @Override
   public Container getContainer() {
-    ValueIteration vi = new ValueIteration(racetrack, racetrack);
+    ValueIteration vi = new ValueIteration(racetrack);
     vi.untilBelow(Chop.below(10), 5);
     Policy policy = PolicyType.GREEDY.bestEquiprobable(racetrack, vi.vs(), null);
     ImageIconRecorder imageIconRecorder = new ImageIconRecorder(400);

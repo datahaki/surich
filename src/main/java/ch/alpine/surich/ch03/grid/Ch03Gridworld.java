@@ -3,7 +3,6 @@ package ch.alpine.surich.ch03.grid;
 
 import ch.alpine.subare.mod.DeterministicStandardModel;
 import ch.alpine.subare.mod.MonteCarloInterface;
-import ch.alpine.tensor.DoubleScalar;
 import ch.alpine.tensor.RealScalar;
 import ch.alpine.tensor.Scalar;
 import ch.alpine.tensor.Tensor;
@@ -16,7 +15,7 @@ import ch.alpine.tensor.sca.Clips;
 /** Example 3.8 p.64: Gridworld
  * 
  * continuous task */
-class Gridworld extends DeterministicStandardModel implements MonteCarloInterface {
+public class Ch03Gridworld extends DeterministicStandardModel implements MonteCarloInterface {
   private static final Tensor WARP1_ANTE = Tensors.vector(0, 1); // A
   private static final Tensor WARP1_POST = Tensors.vector(4, 1); // A'
   private static final Tensor WARP2_ANTE = Tensors.vector(0, 3); // B
@@ -43,10 +42,9 @@ class Gridworld extends DeterministicStandardModel implements MonteCarloInterfac
 
   @Override
   public Scalar gamma() {
-    return DoubleScalar.of(.9);
+    return RealScalar.of(0.9);
   }
 
-  // ---
   @Override
   public Scalar reward(Tensor state, Tensor action, Tensor next) {
     if (state.equals(WARP1_ANTE))
@@ -69,7 +67,6 @@ class Gridworld extends DeterministicStandardModel implements MonteCarloInterfac
     return state.add(action).maps(CLIP);
   }
 
-  // ---
   @Override // from MonteCarloInterface
   public Tensor startStates() {
     return states;

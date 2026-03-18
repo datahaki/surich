@@ -43,7 +43,7 @@ import ch.alpine.tensor.sca.Round;
 class AVI_Gridworld implements ShowProvider {
   @Override
   public Show getShow() {
-    Gridworld gridworld = new Gridworld();
+    Ch03Gridworld gridworld = new Ch03Gridworld();
     ActionValueIteration avi = ActionValueIteration.of(gridworld);
     avi.untilBelow(Chop._04);
     DiscreteUtils.print(avi.qsa(), Round._1);

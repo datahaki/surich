@@ -3,8 +3,8 @@
 package ch.alpine.surich.ch06.cliff;
 
 import ch.alpine.subare.alg.ValueIteration;
-import ch.alpine.subare.api.EpisodeInterface;
 import ch.alpine.subare.api.StepRecord;
+import ch.alpine.subare.epi.EpisodeInterface;
 import ch.alpine.subare.pol.Policy;
 import ch.alpine.subare.pol.PolicyType;
 import ch.alpine.subare.util.DiscreteUtils;
@@ -26,7 +26,7 @@ enum VI_Cliffwalk {
     Cliffwalk cliffwalk = new Cliffwalk(12, 4);
     CliffwalkRaster cliffwalkRaster = new CliffwalkRaster(cliffwalk);
     DiscreteQsa ref = CliffwalkHelper.getOptimalQsa(cliffwalk);
-    ValueIteration vi = new ValueIteration(cliffwalk, cliffwalk);
+    ValueIteration vi = new ValueIteration(cliffwalk);
     vi.untilBelow(Chop._04);
     DiscreteVs vs = vi.vs();
     DiscreteVs vr = DiscreteUtils.createVs(cliffwalk, ref);

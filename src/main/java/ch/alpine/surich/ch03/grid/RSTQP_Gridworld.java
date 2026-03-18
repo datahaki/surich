@@ -22,7 +22,7 @@ class RSTQP_Gridworld implements ShowProvider {
 
   @Override
   public Show getShow() {
-    Gridworld gridworld = new Gridworld();
+    Ch03Gridworld gridworld = new Ch03Gridworld();
     DiscreteQsa ref = ActionValueIteration.solve(gridworld, Chop._04);
     DiscreteQsa qsa = DiscreteQsa.build(gridworld);
     StepDigest stepDigest = Random1StepTabularQPlanning.of(gridworld, qsa, ConstantLearningRate.one());

@@ -41,7 +41,7 @@ import ch.alpine.tensor.sca.Round;
 class IPE_Gridworld implements ShowProvider {
   @Override
   public Show getShow() {
-    Gridworld gridworld = new Gridworld();
+    Ch03Gridworld gridworld = new Ch03Gridworld();
     IterativePolicyEvaluation ipe = new IterativePolicyEvaluation( //
         gridworld, EquiprobablePolicy.create(gridworld));
     ipe.until(Chop._04);

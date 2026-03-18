@@ -17,7 +17,7 @@ class GridworldTest {
   @Test
   void testVI() {
     Gridworld gridworld = new Gridworld();
-    ValueIteration vi = new ValueIteration(gridworld, gridworld);
+    ValueIteration vi = new ValueIteration(gridworld);
     vi.untilBelow(Chop._04);
     DiscreteVs vs = vi.vs();
     // vs.print();

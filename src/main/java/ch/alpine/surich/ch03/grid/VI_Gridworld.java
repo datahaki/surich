@@ -45,8 +45,8 @@ import ch.alpine.tensor.sca.Round;
 class VI_Gridworld implements ShowProvider {
   @Override
   public Show getShow() {
-    Gridworld gridworld = new Gridworld();
-    ValueIteration vi = new ValueIteration(gridworld, gridworld);
+    Ch03Gridworld gridworld = new Ch03Gridworld();
+    ValueIteration vi = new ValueIteration(gridworld);
     vi.untilBelow(Chop._04);
     DiscreteUtils.print(vi.vs(), Round._1);
     Policy policy = PolicyType.GREEDY.bestEquiprobable(gridworld, vi.vs(), null);

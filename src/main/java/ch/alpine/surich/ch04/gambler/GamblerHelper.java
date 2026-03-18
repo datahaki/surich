@@ -3,8 +3,8 @@ package ch.alpine.surich.ch04.gambler;
 
 import ch.alpine.subare.alg.ActionValueIteration;
 import ch.alpine.subare.alg.ValueIteration;
-import ch.alpine.subare.api.EpisodeInterface;
 import ch.alpine.subare.api.StepRecord;
+import ch.alpine.subare.epi.EpisodeInterface;
 import ch.alpine.subare.pol.Policy;
 import ch.alpine.subare.pol.PolicyType;
 import ch.alpine.subare.util.DiscreteUtils;
@@ -27,7 +27,7 @@ import ch.alpine.tensor.sca.Round;
 
   public static Policy getOptimalPolicy(GamblerModel gamblerModel) {
     // TODO SUBARE test for equality of policies from qsa and vs
-    ValueIteration vi = new ValueIteration(gamblerModel, gamblerModel);
+    ValueIteration vi = new ValueIteration(gamblerModel);
     vi.untilBelow(Chop._10);
     return PolicyType.GREEDY.bestEquiprobable(gamblerModel, vi.vs(), null);
   }

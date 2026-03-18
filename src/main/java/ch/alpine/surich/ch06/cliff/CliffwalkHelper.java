@@ -15,7 +15,7 @@ enum CliffwalkHelper {
   }
 
   static Policy getOptimalPolicy(Cliffwalk cliffwalk) {
-    ValueIteration vi = new ValueIteration(cliffwalk, cliffwalk);
+    ValueIteration vi = new ValueIteration(cliffwalk);
     vi.untilBelow(Chop._10);
     return PolicyType.GREEDY.bestEquiprobable(cliffwalk, vi.vs(), null);
   }

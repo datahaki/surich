@@ -20,7 +20,7 @@ import ch.alpine.tensor.io.Put;
   static void main() throws IOException {
     Path path = HomeDirectory.Ephemeral.mk_dirs(Gambler_Ex4_04.class.getSimpleName());
     GamblerModel gamblerModel = GamblerModel.createDefault();
-    ValueIteration vi = new ValueIteration(gamblerModel, gamblerModel);
+    ValueIteration vi = new ValueIteration(gamblerModel);
     Tensor record = Tensors.empty();
     for (int iters = 0; iters < 20; ++iters) {
       vi.step();

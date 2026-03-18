@@ -30,7 +30,7 @@ class VI_Gambler implements ShowProvider {
   public Show getShow() {
     GamblerModel gamblerModel = GamblerModel.createDefault();
     DiscreteQsa ref = GamblerHelper.getOptimalQsa(gamblerModel);
-    ValueIteration vi = new ValueIteration(gamblerModel, gamblerModel);
+    ValueIteration vi = new ValueIteration(gamblerModel);
     vi.untilBelow(Chop._20);
     final DiscreteVs vs = vi.vs();
     final DiscreteVs vr = DiscreteUtils.createVs(gamblerModel, ref);

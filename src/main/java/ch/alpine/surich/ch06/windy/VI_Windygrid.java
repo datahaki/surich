@@ -2,8 +2,8 @@
 package ch.alpine.surich.ch06.windy;
 
 import ch.alpine.subare.alg.ValueIteration;
-import ch.alpine.subare.api.EpisodeInterface;
 import ch.alpine.subare.api.StepRecord;
+import ch.alpine.subare.epi.EpisodeInterface;
 import ch.alpine.subare.pol.Policy;
 import ch.alpine.subare.pol.PolicyType;
 import ch.alpine.subare.util.EpisodeKickoff;
@@ -14,7 +14,7 @@ import ch.alpine.tensor.sca.Chop;
 enum VI_Windygrid {
   ;
   public static void simulate(Windygrid windygrid) {
-    ValueIteration vi = new ValueIteration(windygrid, windygrid);
+    ValueIteration vi = new ValueIteration(windygrid);
     vi.untilBelow(Chop._03);
     final Tensor values = vi.vs().values();
     System.out.println(values);

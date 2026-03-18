@@ -40,7 +40,7 @@ enum VI_Gridworld {
   static void main() throws Exception {
     Gridworld gridworld = new Gridworld();
     GridworldRaster gridworldStateRaster = new GridworldRaster(gridworld);
-    ValueIteration vi = new ValueIteration(gridworld, gridworld);
+    ValueIteration vi = new ValueIteration(gridworld);
     vi.untilBelow(Chop._04);
     DiscreteUtils.print(vi.vs());
     Policy policy = PolicyType.GREEDY.bestEquiprobable(gridworld, vi.vs(), null);
