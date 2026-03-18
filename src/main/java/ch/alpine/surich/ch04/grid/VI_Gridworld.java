@@ -3,12 +3,12 @@
 package ch.alpine.surich.ch04.grid;
 
 import ch.alpine.subare.alg.ValueIteration;
-import ch.alpine.subare.api.pol.Policies;
-import ch.alpine.subare.api.pol.Policy;
-import ch.alpine.subare.api.pol.PolicyType;
+import ch.alpine.subare.pol.Policies;
+import ch.alpine.subare.pol.Policy;
+import ch.alpine.subare.pol.PolicyType;
 import ch.alpine.subare.util.DiscreteUtils;
-import ch.alpine.subare.util.DiscreteValueFunctions;
 import ch.alpine.subare.util.gfx.StateRasters;
+import ch.alpine.subare.val.DiscreteValueFunctions;
 import ch.alpine.tensor.ext.HomeDirectory;
 import ch.alpine.tensor.io.Export;
 import ch.alpine.tensor.sca.Chop;

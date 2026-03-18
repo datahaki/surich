@@ -4,8 +4,8 @@ package ch.alpine.surich.bus;
 import java.io.IOException;
 
 import ch.alpine.subare.alg.ActionValueIteration;
-import ch.alpine.subare.util.DiscreteQsa;
 import ch.alpine.subare.util.gfx.StateActionRasters;
+import ch.alpine.subare.val.DiscreteQsa;
 import ch.alpine.tensor.ext.HomeDirectory;
 import ch.alpine.tensor.io.Export;
 import ch.alpine.tensor.sca.Chop;

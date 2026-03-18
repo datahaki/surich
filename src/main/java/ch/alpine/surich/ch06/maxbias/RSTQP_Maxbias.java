@@ -5,11 +5,11 @@ import ch.alpine.subare.alg.ActionValueIteration;
 import ch.alpine.subare.alg.Random1StepTabularQPlanning;
 import ch.alpine.subare.rate.DefaultLearningRate;
 import ch.alpine.subare.util.ActionValueStatistics;
-import ch.alpine.subare.util.DiscreteQsa;
 import ch.alpine.subare.util.DiscreteUtils;
-import ch.alpine.subare.util.DiscreteValueFunctions;
 import ch.alpine.subare.util.Infoline;
 import ch.alpine.subare.util.TabularSteps;
+import ch.alpine.subare.val.DiscreteQsa;
+import ch.alpine.subare.val.DiscreteValueFunctions;
 import ch.alpine.tensor.Scalar;
 import ch.alpine.tensor.sca.Chop;
 

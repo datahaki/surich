@@ -4,12 +4,12 @@ package ch.alpine.surich.ch05.wireloop;
 import java.util.List;
 
 import ch.alpine.subare.alg.ActionValueIteration;
-import ch.alpine.subare.api.val.QsaInterface;
 import ch.alpine.subare.math.RobustArgMax;
-import ch.alpine.subare.util.DiscreteQsa;
-import ch.alpine.subare.util.DiscreteVs;
 import ch.alpine.subare.util.Loss;
 import ch.alpine.subare.util.gfx.StateRasters;
+import ch.alpine.subare.val.DiscreteQsa;
+import ch.alpine.subare.val.DiscreteVs;
+import ch.alpine.subare.val.QsaInterface;
 import ch.alpine.tensor.RealScalar;
 import ch.alpine.tensor.Tensor;
 import ch.alpine.tensor.alg.Array;

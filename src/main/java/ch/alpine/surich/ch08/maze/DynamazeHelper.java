@@ -4,7 +4,7 @@ package ch.alpine.surich.ch08.maze;
 import java.nio.file.Path;
 
 import ch.alpine.subare.alg.ActionValueIteration;
-import ch.alpine.subare.util.DiscreteQsa;
+import ch.alpine.subare.val.DiscreteQsa;
 import ch.alpine.tensor.Scalars;
 import ch.alpine.tensor.Tensor;
 import ch.alpine.tensor.Tensors;

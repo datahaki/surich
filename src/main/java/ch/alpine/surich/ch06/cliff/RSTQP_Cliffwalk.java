@@ -5,11 +5,11 @@ import ch.alpine.bridge.awt.AwtUtil;
 import ch.alpine.bridge.io.ImageIconRecorder;
 import ch.alpine.subare.alg.Random1StepTabularQPlanning;
 import ch.alpine.subare.rate.ConstantLearningRate;
-import ch.alpine.subare.util.DiscreteQsa;
 import ch.alpine.subare.util.DiscreteUtils;
 import ch.alpine.subare.util.Infoline;
 import ch.alpine.subare.util.TabularSteps;
 import ch.alpine.subare.util.gfx.StateActionRasters;
+import ch.alpine.subare.val.DiscreteQsa;
 import ch.alpine.tensor.DoubleScalar;
 import ch.alpine.tensor.sca.Round;
 

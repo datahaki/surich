@@ -2,9 +2,9 @@
 // inspired by Shangtong Zhang
 package ch.alpine.surich.ch04.gambler;
 
-import ch.alpine.subare.api.mod.MonteCarloInterface;
-import ch.alpine.subare.api.mod.StandardModel;
 import ch.alpine.subare.math.Coinflip;
+import ch.alpine.subare.mod.MonteCarloInterface;
+import ch.alpine.subare.mod.StandardModel;
 import ch.alpine.tensor.Rational;
 import ch.alpine.tensor.RealScalar;
 import ch.alpine.tensor.Scalar;

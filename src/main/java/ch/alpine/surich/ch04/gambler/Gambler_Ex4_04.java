@@ -6,9 +6,9 @@ import java.io.IOException;
 import java.nio.file.Path;
 
 import ch.alpine.subare.alg.ValueIteration;
-import ch.alpine.subare.api.pol.Policies;
-import ch.alpine.subare.api.pol.PolicyBase;
-import ch.alpine.subare.api.pol.PolicyType;
+import ch.alpine.subare.pol.Policies;
+import ch.alpine.subare.pol.PolicyBase;
+import ch.alpine.subare.pol.PolicyType;
 import ch.alpine.tensor.Tensor;
 import ch.alpine.tensor.Tensors;
 import ch.alpine.tensor.alg.Last;

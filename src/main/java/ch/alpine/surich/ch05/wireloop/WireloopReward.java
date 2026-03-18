@@ -1,7 +1,7 @@
 // code by jph
 package ch.alpine.surich.ch05.wireloop;
 
-import ch.alpine.subare.api.mod.RewardInterface;
+import ch.alpine.subare.mod.RewardInterface;
 import ch.alpine.tensor.RealScalar;
 import ch.alpine.tensor.Scalar;
 import ch.alpine.tensor.Tensor;

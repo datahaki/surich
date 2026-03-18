@@ -2,7 +2,7 @@
 package ch.alpine.surich.ch05.racetrack;
 
 import ch.alpine.subare.math.Index;
-import ch.alpine.subare.util.DiscreteQsa;
+import ch.alpine.subare.val.DiscreteQsa;
 import ch.alpine.tensor.DoubleScalar;
 import ch.alpine.tensor.Scalar;
 import ch.alpine.tensor.Scalars;

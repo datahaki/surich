@@ -2,8 +2,8 @@
 package ch.alpine.surich.ch02.bandits2;
 
 import ch.alpine.subare.alg.ActionValueIteration;
-import ch.alpine.subare.api.mod.StandardModel;
-import ch.alpine.subare.util.DiscreteQsa;
+import ch.alpine.subare.mod.StandardModel;
+import ch.alpine.subare.val.DiscreteQsa;
 import ch.alpine.tensor.sca.Chop;
 
 /* package */ enum BanditsHelper {

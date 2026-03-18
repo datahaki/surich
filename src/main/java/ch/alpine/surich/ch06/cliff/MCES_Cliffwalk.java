@@ -3,15 +3,15 @@ package ch.alpine.surich.ch06.cliff;
 
 import ch.alpine.bridge.awt.AwtUtil;
 import ch.alpine.bridge.io.ImageIconRecorder;
-import ch.alpine.subare.api.pol.PolicyBase;
-import ch.alpine.subare.api.pol.PolicyType;
-import ch.alpine.subare.api.pol.StateActionCounter;
 import ch.alpine.subare.mc.MonteCarloExploringStarts;
-import ch.alpine.subare.util.DiscreteQsa;
+import ch.alpine.subare.pol.PolicyBase;
+import ch.alpine.subare.pol.PolicyType;
+import ch.alpine.subare.pol.StateActionCounter;
 import ch.alpine.subare.util.DiscreteStateActionCounter;
 import ch.alpine.subare.util.ExploringStarts;
 import ch.alpine.subare.util.Infoline;
 import ch.alpine.subare.util.gfx.StateActionRasters;
+import ch.alpine.subare.val.DiscreteQsa;
 
 /** monte carlo is bad in this example, since the steep negative reward biases most episodes */
 // TODO SUBARE this does not really converge at all

@@ -2,12 +2,12 @@
 package ch.alpine.surich.ch06.walk;
 
 import ch.alpine.bridge.pro.VoidProvider;
-import ch.alpine.subare.api.pol.Policy;
 import ch.alpine.subare.mc.FirstVisitPolicyEvaluation;
+import ch.alpine.subare.pol.EquiprobablePolicy;
+import ch.alpine.subare.pol.Policy;
 import ch.alpine.subare.util.DiscreteUtils;
-import ch.alpine.subare.util.DiscreteVs;
-import ch.alpine.subare.util.EquiprobablePolicy;
 import ch.alpine.subare.util.ExploringStarts;
+import ch.alpine.subare.val.DiscreteVs;
 import ch.alpine.tensor.sca.Round;
 
 /** first visit policy evaluation determines state values v(s)

@@ -3,8 +3,8 @@ package ch.alpine.surich.ch05.infvar;
 
 import ch.alpine.bridge.pro.VoidProvider;
 import ch.alpine.subare.alg.ActionValueIteration;
-import ch.alpine.subare.util.DiscreteQsa;
 import ch.alpine.subare.util.DiscreteUtils;
+import ch.alpine.subare.val.DiscreteQsa;
 import ch.alpine.tensor.sca.Chop;
 
 class AVI_InfiniteVariance implements VoidProvider {

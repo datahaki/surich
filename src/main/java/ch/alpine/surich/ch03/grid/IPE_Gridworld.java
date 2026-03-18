@@ -6,8 +6,8 @@ import ch.alpine.bridge.fig.Show;
 import ch.alpine.bridge.fig.plt.ListLinePlot;
 import ch.alpine.bridge.pro.ShowProvider;
 import ch.alpine.subare.alg.IterativePolicyEvaluation;
+import ch.alpine.subare.pol.EquiprobablePolicy;
 import ch.alpine.subare.util.DiscreteUtils;
-import ch.alpine.subare.util.EquiprobablePolicy;
 import ch.alpine.tensor.sca.Chop;
 import ch.alpine.tensor.sca.Round;
 

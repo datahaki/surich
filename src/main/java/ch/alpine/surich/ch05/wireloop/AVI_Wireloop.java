@@ -4,8 +4,8 @@ package ch.alpine.surich.ch05.wireloop;
 import ch.alpine.bridge.awt.AwtUtil;
 import ch.alpine.bridge.io.ImageIconRecorder;
 import ch.alpine.subare.alg.ActionValueIteration;
-import ch.alpine.subare.util.DiscreteQsa;
 import ch.alpine.subare.util.Infoline;
+import ch.alpine.subare.val.DiscreteQsa;
 
 enum AVI_Wireloop {
   ;

@@ -9,12 +9,12 @@ import org.junit.jupiter.api.Test;
 
 import ch.alpine.subare.alg.ActionValueIteration;
 import ch.alpine.subare.alg.Random1StepTabularQPlanning;
-import ch.alpine.subare.api.pol.StepDigest;
 import ch.alpine.subare.math.Index;
+import ch.alpine.subare.pol.StepDigest;
 import ch.alpine.subare.rate.ConstantLearningRate;
-import ch.alpine.subare.util.DiscreteQsa;
-import ch.alpine.subare.util.DiscreteValueFunctions;
 import ch.alpine.subare.util.TabularSteps;
+import ch.alpine.subare.val.DiscreteQsa;
+import ch.alpine.subare.val.DiscreteValueFunctions;
 import ch.alpine.surich.ch04.grid.Gridworld;
 import ch.alpine.tensor.RealScalar;
 import ch.alpine.tensor.Scalar;

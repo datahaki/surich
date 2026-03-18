@@ -2,8 +2,8 @@
 package ch.alpine.surich.ch08.maze;
 
 import ch.alpine.subare.math.Index;
-import ch.alpine.subare.util.DiscreteQsa;
-import ch.alpine.subare.util.DiscreteValueFunctions;
+import ch.alpine.subare.val.DiscreteQsa;
+import ch.alpine.subare.val.DiscreteValueFunctions;
 import ch.alpine.tensor.Scalar;
 import ch.alpine.tensor.Tensor;
 import ch.alpine.tensor.nrm.Vector1Norm;

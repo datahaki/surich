@@ -1,8 +1,8 @@
 // code by jph
 package ch.alpine.surich.ch06.windy;
 
-import ch.alpine.subare.api.mod.DeterministicStandardModel;
-import ch.alpine.subare.api.mod.MonteCarloInterface;
+import ch.alpine.subare.mod.DeterministicStandardModel;
+import ch.alpine.subare.mod.MonteCarloInterface;
 import ch.alpine.subare.util.StateActionMap;
 import ch.alpine.subare.util.StateActionMaps;
 import ch.alpine.tensor.RealScalar;

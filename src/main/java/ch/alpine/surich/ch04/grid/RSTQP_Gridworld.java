@@ -9,10 +9,10 @@ import ch.alpine.bridge.pro.ManipulateProvider;
 import ch.alpine.bridge.ref.ann.ReflectionMarker;
 import ch.alpine.subare.alg.Random1StepTabularQPlanning;
 import ch.alpine.subare.rate.ConstantLearningRate;
-import ch.alpine.subare.util.DiscreteQsa;
 import ch.alpine.subare.util.Infoline;
 import ch.alpine.subare.util.TabularSteps;
 import ch.alpine.subare.util.gfx.StateActionRasters;
+import ch.alpine.subare.val.DiscreteQsa;
 
 /** Example 4.1, p.82 */
 @ReflectionMarker

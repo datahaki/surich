@@ -1,17 +1,17 @@
 // code by jph
 package ch.alpine.surich.ch06.walk;
 
-import ch.alpine.subare.api.pol.Policy;
-import ch.alpine.subare.api.val.VsInterface;
 import ch.alpine.subare.math.PolynomialBasis;
+import ch.alpine.subare.pol.EquiprobablePolicy;
+import ch.alpine.subare.pol.Policy;
 import ch.alpine.subare.rate.DefaultLearningRate;
 import ch.alpine.subare.td.TabularTemporalDifference0;
 import ch.alpine.subare.util.DiscreteStateActionCounter;
 import ch.alpine.subare.util.DiscreteUtils;
-import ch.alpine.subare.util.DiscreteVs;
-import ch.alpine.subare.util.EquiprobablePolicy;
 import ch.alpine.subare.util.ExploringStarts;
 import ch.alpine.subare.util.LinearApproximationVs;
+import ch.alpine.subare.val.DiscreteVs;
+import ch.alpine.subare.val.VsInterface;
 import ch.alpine.tensor.alg.Array;
 import ch.alpine.tensor.sca.Clips;
 import ch.alpine.tensor.sca.Round;

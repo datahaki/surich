@@ -4,7 +4,7 @@ package ch.alpine.surich.ch04.rental;
 import java.awt.Dimension;
 import java.util.List;
 
-import ch.alpine.subare.api.mod.DiscreteModel;
+import ch.alpine.subare.mod.DiscreteModel;
 import ch.alpine.subare.util.gfx.StateRaster;
 import ch.alpine.subare.util.gfx.StateRasters;
 import ch.alpine.tensor.RealScalar;

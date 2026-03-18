@@ -1,12 +1,12 @@
 // code by jph
 package ch.alpine.surich.ch04.gambler;
 
-import ch.alpine.subare.api.pol.Policy;
-import ch.alpine.subare.api.pol.PolicyType;
 import ch.alpine.subare.mc.FirstVisitPolicyEvaluation;
-import ch.alpine.subare.util.DiscreteValueFunctions;
-import ch.alpine.subare.util.DiscreteVs;
+import ch.alpine.subare.pol.Policy;
+import ch.alpine.subare.pol.PolicyType;
 import ch.alpine.subare.util.ExploringStarts;
+import ch.alpine.subare.val.DiscreteValueFunctions;
+import ch.alpine.subare.val.DiscreteVs;
 import ch.alpine.tensor.Scalar;
 import ch.alpine.tensor.sca.N;
 

@@ -2,7 +2,7 @@
 package ch.alpine.surich.ch05.racetrack;
 
 import ch.alpine.subare.alg.ActionValueIteration;
-import ch.alpine.subare.util.DiscreteQsa;
+import ch.alpine.subare.val.DiscreteQsa;
 import ch.alpine.tensor.Tensor;
 import ch.alpine.tensor.Tensors;
 import ch.alpine.tensor.ext.HomeDirectory;

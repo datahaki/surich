@@ -9,8 +9,8 @@ import org.junit.jupiter.api.Test;
 
 import ch.alpine.subare.analysis.DiscreteModelErrorAnalysis;
 import ch.alpine.subare.analysis.MonteCarloAlgorithms;
-import ch.alpine.subare.api.mod.MonteCarloInterface;
-import ch.alpine.subare.util.DiscreteQsa;
+import ch.alpine.subare.mod.MonteCarloInterface;
+import ch.alpine.subare.val.DiscreteQsa;
 
 class MonteCarloExamplesTest {
   @Test

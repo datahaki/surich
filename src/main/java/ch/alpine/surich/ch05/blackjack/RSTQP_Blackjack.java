@@ -5,8 +5,8 @@ import ch.alpine.bridge.awt.AwtUtil;
 import ch.alpine.bridge.io.ImageIconRecorder;
 import ch.alpine.subare.alg.Random1StepTabularQPlanning;
 import ch.alpine.subare.rate.DefaultLearningRate;
-import ch.alpine.subare.util.DiscreteQsa;
 import ch.alpine.subare.util.TabularSteps;
+import ch.alpine.subare.val.DiscreteQsa;
 
 /** finding optimal policy to stay or hit
  * 

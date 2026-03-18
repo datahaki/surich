@@ -8,8 +8,8 @@ import ch.alpine.bridge.io.ImageIconRecorder;
 import ch.alpine.bridge.pro.ManipulateProvider;
 import ch.alpine.bridge.ref.ann.ReflectionMarker;
 import ch.alpine.subare.alg.IterativePolicyEvaluation;
-import ch.alpine.subare.api.pol.Policy;
-import ch.alpine.subare.util.EquiprobablePolicy;
+import ch.alpine.subare.pol.EquiprobablePolicy;
+import ch.alpine.subare.pol.Policy;
 import ch.alpine.subare.util.gfx.StateRasters;
 
 @ReflectionMarker

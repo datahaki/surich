@@ -7,14 +7,14 @@ import ch.alpine.bridge.awt.AwtUtil;
 import ch.alpine.bridge.io.ImageIconRecorder;
 import ch.alpine.bridge.pro.ManipulateProvider;
 import ch.alpine.bridge.ref.ann.ReflectionMarker;
-import ch.alpine.subare.api.epi.EpisodeVsEstimator;
-import ch.alpine.subare.api.pol.Policy;
+import ch.alpine.subare.epi.EpisodeVsEstimator;
 import ch.alpine.subare.mc.ConstantAlphaMonteCarloVs;
+import ch.alpine.subare.pol.EquiprobablePolicy;
+import ch.alpine.subare.pol.Policy;
 import ch.alpine.subare.rate.DefaultLearningRate;
-import ch.alpine.subare.util.DiscreteValueFunctions;
-import ch.alpine.subare.util.EquiprobablePolicy;
 import ch.alpine.subare.util.ExploringStarts;
 import ch.alpine.subare.util.gfx.StateRasters;
+import ch.alpine.subare.val.DiscreteValueFunctions;
 
 @ReflectionMarker
 class CAMC_Gridworld implements ManipulateProvider { // TODO SUBARE work in progress?

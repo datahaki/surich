@@ -5,10 +5,10 @@ import java.awt.Dimension;
 import java.util.List;
 import java.util.Objects;
 
-import ch.alpine.subare.api.pol.Policy;
-import ch.alpine.subare.api.pol.PolicyType;
-import ch.alpine.subare.util.DiscreteQsa;
+import ch.alpine.subare.pol.Policy;
+import ch.alpine.subare.pol.PolicyType;
 import ch.alpine.subare.util.gfx.StateRasters;
+import ch.alpine.subare.val.DiscreteQsa;
 import ch.alpine.tensor.DoubleScalar;
 import ch.alpine.tensor.RealScalar;
 import ch.alpine.tensor.Tensor;

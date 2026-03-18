@@ -5,8 +5,8 @@ import java.util.List;
 
 import ch.alpine.bridge.pro.VoidProvider;
 import ch.alpine.subare.alg.OnPolicyStateDistribution;
-import ch.alpine.subare.api.pol.Policy;
-import ch.alpine.subare.util.DiscreteVs;
+import ch.alpine.subare.pol.Policy;
+import ch.alpine.subare.val.DiscreteVs;
 import ch.alpine.tensor.Rational;
 import ch.alpine.tensor.RealScalar;
 import ch.alpine.tensor.Scalar;

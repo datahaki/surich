@@ -2,9 +2,9 @@
 package ch.alpine.surich.ch06.maxbias;
 
 import ch.alpine.bridge.pro.VoidProvider;
-import ch.alpine.subare.util.DiscreteQsa;
 import ch.alpine.subare.util.DiscreteUtils;
-import ch.alpine.subare.util.DiscreteVs;
+import ch.alpine.subare.val.DiscreteQsa;
+import ch.alpine.subare.val.DiscreteVs;
 
 /** the code produces the correct state value function
  *
