@@ -3,9 +3,9 @@ package ch.alpine.surich.ch02.bandits2;
 
 import org.junit.jupiter.api.Test;
 
-import ch.alpine.subare.api.LearningRate;
+import ch.alpine.subare.rate.DefaultLearningRate;
+import ch.alpine.subare.rate.LearningRate;
 import ch.alpine.subare.td.SarsaType;
-import ch.alpine.subare.util.DefaultLearningRate;
 import ch.alpine.subare.util.DiscreteQsa;
 import ch.alpine.subare.util.DiscreteUtils;
 import ch.alpine.subare.util.DiscreteVs;

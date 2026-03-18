@@ -1,12 +1,13 @@
 // code by jph
 package ch.alpine.surich.ch06.maxbias;
 
-import ch.alpine.subare.api.LearningRate;
+import ch.alpine.subare.api.pol.PolicyType;
 import ch.alpine.subare.api.pol.StateActionCounter;
+import ch.alpine.subare.rate.DefaultLearningRate;
+import ch.alpine.subare.rate.LearningRate;
 import ch.alpine.subare.td.Sarsa;
 import ch.alpine.subare.td.SarsaType;
 import ch.alpine.subare.util.ActionValueStatistics;
-import ch.alpine.subare.util.DefaultLearningRate;
 import ch.alpine.subare.util.DiscreteQsa;
 import ch.alpine.subare.util.DiscreteStateActionCounter;
 import ch.alpine.subare.util.DiscreteUtils;
@@ -15,7 +16,6 @@ import ch.alpine.subare.util.EGreedyPolicy;
 import ch.alpine.subare.util.ExploringStarts;
 import ch.alpine.subare.util.Infoline;
 import ch.alpine.subare.util.LinearExplorationRate;
-import ch.alpine.subare.util.PolicyType;
 import ch.alpine.tensor.sca.Round;
 
 enum Sarsa_Maxbias {

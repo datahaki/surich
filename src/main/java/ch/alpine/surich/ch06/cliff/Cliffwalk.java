@@ -1,8 +1,8 @@
 // code by jph
 package ch.alpine.surich.ch06.cliff;
 
+import ch.alpine.subare.api.mod.DeterministicStandardModel;
 import ch.alpine.subare.api.mod.MonteCarloInterface;
-import ch.alpine.subare.util.DeterministicStandardModel;
 import ch.alpine.tensor.RealScalar;
 import ch.alpine.tensor.Scalar;
 import ch.alpine.tensor.Scalars;

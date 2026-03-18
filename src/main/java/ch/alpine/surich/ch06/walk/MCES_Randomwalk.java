@@ -1,6 +1,8 @@
 // code by jph
 package ch.alpine.surich.ch06.walk;
 
+import ch.alpine.subare.api.pol.Policies;
+import ch.alpine.subare.api.pol.PolicyType;
 import ch.alpine.subare.api.pol.StateActionCounter;
 import ch.alpine.subare.mc.MonteCarloExploringStarts;
 import ch.alpine.subare.util.DiscreteQsa;
@@ -9,8 +11,6 @@ import ch.alpine.subare.util.DiscreteUtils;
 import ch.alpine.subare.util.EGreedyPolicy;
 import ch.alpine.subare.util.EquiprobablePolicy;
 import ch.alpine.subare.util.ExploringStarts;
-import ch.alpine.subare.util.Policies;
-import ch.alpine.subare.util.PolicyType;
 import ch.alpine.tensor.sca.Round;
 
 /** <pre>

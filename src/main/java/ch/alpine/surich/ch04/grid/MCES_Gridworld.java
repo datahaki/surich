@@ -7,6 +7,7 @@ import ch.alpine.bridge.awt.AwtUtil;
 import ch.alpine.bridge.io.ImageIconRecorder;
 import ch.alpine.bridge.pro.ManipulateProvider;
 import ch.alpine.bridge.ref.ann.ReflectionMarker;
+import ch.alpine.subare.api.pol.PolicyType;
 import ch.alpine.subare.api.pol.StateActionCounter;
 import ch.alpine.subare.mc.MonteCarloExploringStarts;
 import ch.alpine.subare.util.DiscreteQsa;
@@ -15,7 +16,6 @@ import ch.alpine.subare.util.EGreedyPolicy;
 import ch.alpine.subare.util.ExploringStarts;
 import ch.alpine.subare.util.Infoline;
 import ch.alpine.subare.util.LinearExplorationRate;
-import ch.alpine.subare.util.PolicyType;
 import ch.alpine.subare.util.gfx.StateActionRasters;
 
 /** Example 4.1, p.82 */

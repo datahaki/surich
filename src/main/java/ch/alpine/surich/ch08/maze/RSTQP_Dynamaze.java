@@ -8,7 +8,7 @@ import ch.alpine.bridge.io.ImageIconRecorder;
 import ch.alpine.bridge.pro.ManipulateProvider;
 import ch.alpine.bridge.ref.ann.ReflectionMarker;
 import ch.alpine.subare.alg.Random1StepTabularQPlanning;
-import ch.alpine.subare.util.ConstantLearningRate;
+import ch.alpine.subare.rate.ConstantLearningRate;
 import ch.alpine.subare.util.DiscreteQsa;
 import ch.alpine.subare.util.Infoline;
 import ch.alpine.subare.util.TabularSteps;
@@ -32,7 +32,7 @@ class RSTQP_Dynamaze implements ManipulateProvider {
     ImageIconRecorder imageIconRecorder = new ImageIconRecorder(250);
     for (int index = 0; index < batches; ++index) {
       Infoline infoline = Infoline.of(dynamaze, ref, qsa);
-      TabularSteps.batch(dynamaze, dynamaze, rstqp);
+      TabularSteps.batch(dynamaze, rstqp);
       imageIconRecorder.write(StateRasters.vs_rescale(dynamazeRaster, qsa));
       if (infoline.isLossfree())
         break;

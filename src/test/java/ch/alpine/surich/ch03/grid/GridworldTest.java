@@ -11,7 +11,7 @@ import ch.alpine.subare.alg.ActionValueIteration;
 import ch.alpine.subare.alg.Random1StepTabularQPlanning;
 import ch.alpine.subare.api.pol.StepDigest;
 import ch.alpine.subare.math.Index;
-import ch.alpine.subare.util.ConstantLearningRate;
+import ch.alpine.subare.rate.ConstantLearningRate;
 import ch.alpine.subare.util.DiscreteQsa;
 import ch.alpine.subare.util.DiscreteValueFunctions;
 import ch.alpine.subare.util.TabularSteps;
@@ -49,7 +49,7 @@ class GridworldTest {
         Random1StepTabularQPlanning.of(gridworld, qsa, ConstantLearningRate.of(RealScalar.ONE));
     Scalar error = null;
     for (int index = 0; index < 40; ++index) {
-      TabularSteps.batch(gridworld, gridworld, stepDigest);
+      TabularSteps.batch(gridworld, stepDigest);
       error = DiscreteValueFunctions.distance(ref, qsa);
     }
     assertTrue(Scalars.lessThan(error, RealScalar.of(3)));

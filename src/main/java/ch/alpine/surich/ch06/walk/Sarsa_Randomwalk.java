@@ -2,19 +2,19 @@
 // inspired by Shangtong Zhang
 package ch.alpine.surich.ch06.walk;
 
-import ch.alpine.subare.api.LearningRate;
 import ch.alpine.subare.api.pol.Policy;
+import ch.alpine.subare.api.pol.PolicyBase;
+import ch.alpine.subare.api.pol.PolicyType;
 import ch.alpine.subare.api.pol.StateActionCounter;
+import ch.alpine.subare.rate.DefaultLearningRate;
+import ch.alpine.subare.rate.LearningRate;
 import ch.alpine.subare.td.Sarsa;
 import ch.alpine.subare.td.SarsaType;
-import ch.alpine.subare.util.DefaultLearningRate;
 import ch.alpine.subare.util.DiscreteQsa;
 import ch.alpine.subare.util.DiscreteStateActionCounter;
 import ch.alpine.subare.util.DiscreteUtils;
 import ch.alpine.subare.util.EquiprobablePolicy;
 import ch.alpine.subare.util.ExploringStarts;
-import ch.alpine.subare.util.PolicyBase;
-import ch.alpine.subare.util.PolicyType;
 import ch.alpine.tensor.sca.Round;
 
 /** determines state action value function q(s, a).

@@ -3,19 +3,19 @@ package ch.alpine.surich.ch06.cliff;
 
 import ch.alpine.bridge.awt.AwtUtil;
 import ch.alpine.bridge.io.ImageIconRecorder;
-import ch.alpine.subare.api.LearningRate;
 import ch.alpine.subare.api.pol.Policy;
+import ch.alpine.subare.api.pol.PolicyType;
 import ch.alpine.subare.api.pol.StateActionCounter;
+import ch.alpine.subare.rate.DefaultLearningRate;
+import ch.alpine.subare.rate.LearningRate;
 import ch.alpine.subare.td.Sarsa;
 import ch.alpine.subare.td.SarsaType;
-import ch.alpine.subare.util.DefaultLearningRate;
 import ch.alpine.subare.util.DequeExploringStarts;
 import ch.alpine.subare.util.DiscreteQsa;
 import ch.alpine.subare.util.DiscreteStateActionCounter;
 import ch.alpine.subare.util.EGreedyPolicy;
 import ch.alpine.subare.util.Infoline;
 import ch.alpine.subare.util.LinearExplorationRate;
-import ch.alpine.subare.util.PolicyType;
 import ch.alpine.subare.util.gfx.StateActionRasters;
 
 /** 1, or N-step Original/Expected Sarsa, and QLearning for gridworld

@@ -11,8 +11,8 @@ import ch.alpine.bridge.io.ImageIconRecorder;
 import ch.alpine.bridge.pro.ManipulateProvider;
 import ch.alpine.bridge.ref.ann.ReflectionMarker;
 import ch.alpine.subare.alg.Random1StepTabularQPlanning;
+import ch.alpine.subare.rate.DefaultLearningRate;
 import ch.alpine.subare.util.ActionValueStatistics;
-import ch.alpine.subare.util.DefaultLearningRate;
 import ch.alpine.subare.util.DiscreteQsa;
 import ch.alpine.subare.util.DiscreteStateActionCounter;
 import ch.alpine.subare.util.DiscreteValueFunctions;
@@ -39,7 +39,7 @@ class RSTQP_Gambler implements ManipulateProvider {
     ImageIconRecorder imageIconRecorder2 = new ImageIconRecorder(250);
     for (int index = 0; index < batches; ++index) {
       Infoline infoline = Infoline.of(gamblerModel, ref, qsa);
-      TabularSteps.batch(gamblerModel, gamblerModel, rstqp, avs);
+      TabularSteps.batch(gamblerModel, rstqp, avs);
       imageIconRecorder1.write(StateActionRasters.qsaPolicyRef(gamblerRaster, qsa, ref));
       imageIconRecorder2.write(StateActionRasters.qsa( //
           gamblerRaster, DiscreteValueFunctions.rescaled(((DiscreteStateActionCounter) rstqp.sac()).inQsa(gamblerModel))));

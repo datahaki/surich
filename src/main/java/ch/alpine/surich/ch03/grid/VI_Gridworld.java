@@ -6,10 +6,10 @@ import ch.alpine.bridge.fig.Show;
 import ch.alpine.bridge.fig.plt.ListLinePlot;
 import ch.alpine.bridge.pro.ShowProvider;
 import ch.alpine.subare.alg.ValueIteration;
+import ch.alpine.subare.api.pol.Policies;
 import ch.alpine.subare.api.pol.Policy;
+import ch.alpine.subare.api.pol.PolicyType;
 import ch.alpine.subare.util.DiscreteUtils;
-import ch.alpine.subare.util.Policies;
-import ch.alpine.subare.util.PolicyType;
 import ch.alpine.tensor.sca.Chop;
 import ch.alpine.tensor.sca.Round;
 

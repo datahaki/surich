@@ -7,8 +7,8 @@ import java.util.Map;
 import javax.swing.ImageIcon;
 
 import ch.alpine.bridge.io.ImageIconRecorder;
-import ch.alpine.subare.api.ExplorationRate;
-import ch.alpine.subare.util.ConstantExplorationRate;
+import ch.alpine.subare.rate.ConstantExplorationRate;
+import ch.alpine.subare.rate.ExplorationRate;
 import ch.alpine.subare.util.DiscreteQsa;
 import ch.alpine.subare.util.Infoline;
 import ch.alpine.subare.util.LearningContender;

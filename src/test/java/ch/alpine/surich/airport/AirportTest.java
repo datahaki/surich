@@ -10,13 +10,13 @@ import java.util.stream.IntStream;
 import org.junit.jupiter.api.Test;
 
 import ch.alpine.subare.api.StepRecord;
+import ch.alpine.subare.api.pol.PolicyType;
 import ch.alpine.subare.api.pol.StateActionCounter;
+import ch.alpine.subare.rate.ConstantLearningRate;
 import ch.alpine.subare.td.Sarsa;
 import ch.alpine.subare.td.SarsaType;
-import ch.alpine.subare.util.ConstantLearningRate;
 import ch.alpine.subare.util.DiscreteQsa;
 import ch.alpine.subare.util.DiscreteStateActionCounter;
-import ch.alpine.subare.util.PolicyType;
 import ch.alpine.subare.util.StateAction;
 import ch.alpine.subare.util.UcbUtils;
 import ch.alpine.tensor.DoubleScalar;

@@ -1,8 +1,8 @@
 // code by jph
 package ch.alpine.surich.ch03.grid;
 
+import ch.alpine.subare.api.mod.DeterministicStandardModel;
 import ch.alpine.subare.api.mod.MonteCarloInterface;
-import ch.alpine.subare.util.DeterministicStandardModel;
 import ch.alpine.tensor.DoubleScalar;
 import ch.alpine.tensor.RealScalar;
 import ch.alpine.tensor.Scalar;
@@ -16,7 +16,7 @@ import ch.alpine.tensor.sca.Clips;
 /** Example 3.8 p.64: Gridworld
  * 
  * continuous task */
-/* package */ class Gridworld extends DeterministicStandardModel implements MonteCarloInterface {
+class Gridworld extends DeterministicStandardModel implements MonteCarloInterface {
   private static final Tensor WARP1_ANTE = Tensors.vector(0, 1); // A
   private static final Tensor WARP1_POST = Tensors.vector(4, 1); // A'
   private static final Tensor WARP2_ANTE = Tensors.vector(0, 3); // B

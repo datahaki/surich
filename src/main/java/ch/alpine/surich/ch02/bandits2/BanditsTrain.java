@@ -1,12 +1,13 @@
 // code by jph
 package ch.alpine.surich.ch02.bandits2;
 
-import ch.alpine.subare.api.LearningRate;
+import ch.alpine.subare.api.pol.PolicyType;
 import ch.alpine.subare.api.pol.StateActionCounter;
+import ch.alpine.subare.rate.DefaultLearningRate;
+import ch.alpine.subare.rate.LearningRate;
 import ch.alpine.subare.td.DoubleSarsa;
 import ch.alpine.subare.td.Sarsa;
 import ch.alpine.subare.td.SarsaType;
-import ch.alpine.subare.util.DefaultLearningRate;
 import ch.alpine.subare.util.DiscreteQsa;
 import ch.alpine.subare.util.DiscreteStateActionCounter;
 import ch.alpine.subare.util.DiscreteUtils;
@@ -14,7 +15,6 @@ import ch.alpine.subare.util.EGreedyPolicy;
 import ch.alpine.subare.util.ExploringStarts;
 import ch.alpine.subare.util.LinearExplorationRate;
 import ch.alpine.subare.util.Loss;
-import ch.alpine.subare.util.PolicyType;
 import ch.alpine.tensor.Scalar;
 import ch.alpine.tensor.Tensor;
 import ch.alpine.tensor.alg.Subdivide;

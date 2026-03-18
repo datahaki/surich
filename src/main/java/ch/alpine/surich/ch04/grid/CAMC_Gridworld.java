@@ -10,7 +10,7 @@ import ch.alpine.bridge.ref.ann.ReflectionMarker;
 import ch.alpine.subare.api.epi.EpisodeVsEstimator;
 import ch.alpine.subare.api.pol.Policy;
 import ch.alpine.subare.mc.ConstantAlphaMonteCarloVs;
-import ch.alpine.subare.util.DefaultLearningRate;
+import ch.alpine.subare.rate.DefaultLearningRate;
 import ch.alpine.subare.util.DiscreteValueFunctions;
 import ch.alpine.subare.util.EquiprobablePolicy;
 import ch.alpine.subare.util.ExploringStarts;

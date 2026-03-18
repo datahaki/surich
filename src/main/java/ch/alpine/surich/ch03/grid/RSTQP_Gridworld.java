@@ -7,7 +7,7 @@ import ch.alpine.bridge.pro.ShowProvider;
 import ch.alpine.subare.alg.ActionValueIteration;
 import ch.alpine.subare.alg.Random1StepTabularQPlanning;
 import ch.alpine.subare.api.pol.StepDigest;
-import ch.alpine.subare.util.ConstantLearningRate;
+import ch.alpine.subare.rate.ConstantLearningRate;
 import ch.alpine.subare.util.DiscreteQsa;
 import ch.alpine.subare.util.Infoline;
 import ch.alpine.subare.util.TabularSteps;
@@ -30,7 +30,7 @@ class RSTQP_Gridworld implements ShowProvider {
     for (int index = 0; index < 20; ++index) {
       Infoline infoline = Infoline.of(gridworld, ref, qsa);
       tableBuilder.appendRow(infoline.indexedVector(index));
-      TabularSteps.batch(gridworld, gridworld, stepDigest);
+      TabularSteps.batch(gridworld, stepDigest);
       if (infoline.isLossfree())
         break;
     }

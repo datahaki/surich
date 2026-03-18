@@ -3,11 +3,11 @@
 package ch.alpine.surich.ch04.grid;
 
 import ch.alpine.subare.alg.ValueIteration;
+import ch.alpine.subare.api.pol.Policies;
 import ch.alpine.subare.api.pol.Policy;
+import ch.alpine.subare.api.pol.PolicyType;
 import ch.alpine.subare.util.DiscreteUtils;
 import ch.alpine.subare.util.DiscreteValueFunctions;
-import ch.alpine.subare.util.Policies;
-import ch.alpine.subare.util.PolicyType;
 import ch.alpine.subare.util.gfx.StateRasters;
 import ch.alpine.tensor.ext.HomeDirectory;
 import ch.alpine.tensor.io.Export;

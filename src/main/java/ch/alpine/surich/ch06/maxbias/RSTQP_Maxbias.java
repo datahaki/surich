@@ -3,8 +3,8 @@ package ch.alpine.surich.ch06.maxbias;
 
 import ch.alpine.subare.alg.ActionValueIteration;
 import ch.alpine.subare.alg.Random1StepTabularQPlanning;
+import ch.alpine.subare.rate.DefaultLearningRate;
 import ch.alpine.subare.util.ActionValueStatistics;
-import ch.alpine.subare.util.DefaultLearningRate;
 import ch.alpine.subare.util.DiscreteQsa;
 import ch.alpine.subare.util.DiscreteUtils;
 import ch.alpine.subare.util.DiscreteValueFunctions;
@@ -24,7 +24,7 @@ enum RSTQP_Maxbias {
     ActionValueStatistics avs = new ActionValueStatistics(maxbias);
     int batches = 5000;
     for (int index = 0; index < 500; ++index)
-      TabularSteps.batch(maxbias, maxbias, rstqp, avs);
+      TabularSteps.batch(maxbias, rstqp, avs);
     Infoline.of(maxbias, ref, qsa);
     System.out.println("---");
     ActionValueIteration avi = ActionValueIteration.of(maxbias, avs);

@@ -8,7 +8,7 @@ import ch.alpine.bridge.io.ImageIconRecorder;
 import ch.alpine.bridge.pro.ManipulateProvider;
 import ch.alpine.bridge.ref.ann.ReflectionMarker;
 import ch.alpine.subare.alg.Random1StepTabularQPlanning;
-import ch.alpine.subare.util.ConstantLearningRate;
+import ch.alpine.subare.rate.ConstantLearningRate;
 import ch.alpine.subare.util.DiscreteQsa;
 import ch.alpine.subare.util.Infoline;
 import ch.alpine.subare.util.TabularSteps;
@@ -30,7 +30,7 @@ class RSTQP_Gridworld implements ManipulateProvider {
     for (int index = 0; index < batches; ++index) {
       imageIconRecorder.write(StateActionRasters.qsaLossRef(new GridworldRaster(gridworld), qsa, ref));
       Infoline.of(gridworld, ref, qsa);
-      TabularSteps.batch(gridworld, gridworld, rstqp);
+      TabularSteps.batch(gridworld, rstqp);
     }
     return AwtUtil.iconAsLabel(imageIconRecorder.getIconImage());
   }
