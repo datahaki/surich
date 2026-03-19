@@ -3,6 +3,7 @@
 package ch.alpine.surich.fish;
 
 import java.awt.Container;
+import java.time.Duration;
 
 import ch.alpine.bridge.awt.AwtUtil;
 import ch.alpine.bridge.io.ImageIconRecorder;
@@ -28,7 +29,7 @@ class AVI_Fishfarm implements ManipulateProvider {
     // Export.of(UserHome.Pictures("cliffwalk_qsa_avi.png"), //
     // StateActionRasters.qsa(new CliffwalkRaster(cliffwalk), DiscreteValueFunctions.rescaled(ref)));
     ActionValueIteration avi = ActionValueIteration.of(fishfarm);
-    ImageIconRecorder imageIconRecorder = new ImageIconRecorder(250);
+    ImageIconRecorder imageIconRecorder = ImageIconRecorder.loop(Duration.ofMillis(250));
     for (int index = 0; index < 20; ++index) {
       Infoline infoline = Infoline.of(fishfarm, ref, avi.qsa());
       imageIconRecorder.write(StateRasters.qsaLossRef(fishfarmRaster, avi.qsa(), ref));

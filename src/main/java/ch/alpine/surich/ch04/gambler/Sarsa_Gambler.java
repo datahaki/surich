@@ -3,6 +3,7 @@ package ch.alpine.surich.ch04.gambler;
 
 import java.awt.Container;
 import java.awt.GridLayout;
+import java.time.Duration;
 
 import javax.swing.JPanel;
 
@@ -45,8 +46,8 @@ class Sarsa_Gambler implements ManipulateProvider {
     EGreedyPolicy policy = (EGreedyPolicy) PolicyType.EGREEDY.bestEquiprobable(gamblerModel, qsa, sac);
     policy.setExplorationRate(LinearExplorationRate.of(batches, 0.2, 0.01));
     // ---
-    ImageIconRecorder imageIconRecorder1 = new ImageIconRecorder(250);
-    ImageIconRecorder imageIconRecorder2 = new ImageIconRecorder(250);
+    ImageIconRecorder imageIconRecorder1 = ImageIconRecorder.loop(Duration.ofMillis(250));
+    ImageIconRecorder imageIconRecorder2 = ImageIconRecorder.loop(Duration.ofMillis(250));
     Sarsa sarsa = sarsaType.sarsa(gamblerModel, learningRate, qsa, sac, policy);
     for (int index = 0; index < batches; ++index) {
       Infoline.of(gamblerModel, ref, qsa);

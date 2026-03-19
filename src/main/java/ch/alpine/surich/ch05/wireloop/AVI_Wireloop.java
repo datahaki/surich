@@ -1,6 +1,8 @@
 // code by jph
 package ch.alpine.surich.ch05.wireloop;
 
+import java.time.Duration;
+
 import ch.alpine.bridge.awt.AwtUtil;
 import ch.alpine.bridge.io.ImageIconRecorder;
 import ch.alpine.subare.alg.ActionValueIteration;
@@ -17,7 +19,7 @@ enum AVI_Wireloop {
     WireloopRaster wireloopRaster = new WireloopRaster(wireloop);
     DiscreteQsa ref = WireloopHelper.getOptimalQsa(wireloop);
     ActionValueIteration avi = ActionValueIteration.of(wireloop);
-    ImageIconRecorder imageIconRecorder = new ImageIconRecorder(250);
+    ImageIconRecorder imageIconRecorder = ImageIconRecorder.loop(Duration.ofMillis(250));
     int batches = 50;
     for (int index = 0; index < batches; ++index) {
       Infoline infoline = Infoline.of(wireloop, ref, avi.qsa());

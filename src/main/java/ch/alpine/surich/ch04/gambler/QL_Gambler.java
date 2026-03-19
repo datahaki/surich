@@ -2,6 +2,7 @@
 package ch.alpine.surich.ch04.gambler;
 
 import java.awt.Container;
+import java.time.Duration;
 
 import ch.alpine.bridge.awt.AwtUtil;
 import ch.alpine.bridge.io.ImageIconRecorder;
@@ -43,7 +44,7 @@ class QL_Gambler implements ManipulateProvider {
     EGreedyPolicy policyEGreedy = (EGreedyPolicy) PolicyType.EGREEDY.bestEquiprobable(gamblerModel, qsa, sac);
     policyEGreedy.setExplorationRate(LinearExplorationRate.of(batches, 0.1, 0.01));
     // System.out.println(qsa.size());
-    ImageIconRecorder imageIconRecorder = new ImageIconRecorder(250);
+    ImageIconRecorder imageIconRecorder = ImageIconRecorder.loop(Duration.ofMillis(250));
     LearningRate learningRate = DefaultLearningRate.of(2, 0.51);
     Sarsa stepDigest = sarsaType.sarsa(gamblerModel, learningRate, qsa, sac, policyEGreedy);
     for (int index = 0; index < batches; ++index) {

@@ -3,6 +3,7 @@
 package ch.alpine.surich.ch04.grid;
 
 import java.awt.Container;
+import java.time.Duration;
 
 import ch.alpine.bridge.awt.AwtUtil;
 import ch.alpine.bridge.io.ImageIconRecorder;
@@ -41,7 +42,7 @@ class AVI_Gridworld implements ManipulateProvider {
     Ch04Gridworld gridworld = new Ch04Gridworld();
     GridworldRaster gridworldRaster = new GridworldRaster(gridworld);
     ActionValueIteration avi = ActionValueIteration.of(gridworld);
-    ImageIconRecorder imageIconRecorder = new ImageIconRecorder(250);
+    ImageIconRecorder imageIconRecorder = ImageIconRecorder.loop(Duration.ofMillis(250));
     for (int count = 0; count < 7; ++count) {
       imageIconRecorder.write(StateActionRasters.qsa(gridworldRaster, DiscreteValueFunctions.rescaled(avi.qsa())));
       avi.step();

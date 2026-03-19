@@ -2,6 +2,7 @@
 package ch.alpine.surich.ch04.grid;
 
 import java.awt.Container;
+import java.time.Duration;
 
 import ch.alpine.bridge.awt.AwtUtil;
 import ch.alpine.bridge.io.ImageIconRecorder;
@@ -25,7 +26,7 @@ class CAMC_Gridworld implements ManipulateProvider { // TODO SUBARE work in prog
     // final DiscreteQsa ref = GridworldHelper.getOptimalQsa(gridworld);
     EpisodeVsEstimator camc = ConstantAlphaMonteCarloVs.create( //
         gridworld, DefaultLearningRate.of(3, .51));
-    ImageIconRecorder imageIconRecorder = new ImageIconRecorder(250);
+    ImageIconRecorder imageIconRecorder = ImageIconRecorder.loop(Duration.ofMillis(250));
     final int batches = 50;
     // Tensor epsilon = Subdivide.of(.2, .05, batches);
     for (int index = 0; index < batches; ++index) {

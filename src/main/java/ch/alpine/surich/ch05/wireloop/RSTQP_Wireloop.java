@@ -2,6 +2,7 @@
 package ch.alpine.surich.ch05.wireloop;
 
 import java.awt.Container;
+import java.time.Duration;
 
 import ch.alpine.bridge.awt.AwtUtil;
 import ch.alpine.bridge.io.ImageIconRecorder;
@@ -30,7 +31,7 @@ class RSTQP_Wireloop implements ManipulateProvider {
     DiscreteQsa qsa = DiscreteQsa.build(wireloop);
     Random1StepTabularQPlanning rstqp = Random1StepTabularQPlanning.of( //
         wireloop, qsa, ConstantLearningRate.of(RealScalar.ONE));
-    ImageIconRecorder imageIconRecorder = new ImageIconRecorder(250);
+    ImageIconRecorder imageIconRecorder = ImageIconRecorder.loop(Duration.ofMillis(250));
     for (int index = 0; index < batches; ++index) {
       Infoline infoline = Infoline.of(wireloop, ref, qsa);
       TabularSteps.batch(wireloop, rstqp);

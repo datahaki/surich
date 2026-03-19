@@ -2,6 +2,7 @@
 package ch.alpine.surich.ch04.grid;
 
 import java.awt.Container;
+import java.time.Duration;
 
 import ch.alpine.bridge.awt.AwtUtil;
 import ch.alpine.bridge.awt.ColumnPanel;
@@ -44,7 +45,7 @@ class SES_Gridworld implements ManipulateProvider {
     StateActionCounter sac = new DiscreteStateActionCounter();
     EGreedyPolicy policy = (EGreedyPolicy) PolicyType.EGREEDY.bestEquiprobable(gridworld, qsa, sac);
     policy.setExplorationRate(LinearExplorationRate.of(batches, 0.2, 0.01));
-    ImageIconRecorder imageIconRecorder = new ImageIconRecorder(250);
+    ImageIconRecorder imageIconRecorder = ImageIconRecorder.loop(Duration.ofMillis(250));
     LearningRate learningRate = DefaultLearningRate.of(5, 1.1);
     Sarsa sarsa = sarsaType.sarsa(gridworld, learningRate, qsa, sac, policy);
     DequeExploringStarts exploringStartsStream = new DequeExploringStarts(gridworld, nstep, sarsa) {

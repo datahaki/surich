@@ -2,6 +2,8 @@
 // inspired by Shangtong Zhang
 package ch.alpine.surich.ch08.maze;
 
+import java.time.Duration;
+
 import ch.alpine.bridge.awt.AwtUtil;
 import ch.alpine.bridge.io.ImageIconRecorder;
 import ch.alpine.subare.alg.ActionValueIteration;
@@ -25,7 +27,7 @@ enum AVI_Dynamaze {
     // Export.of(UserHome.Pictures("dynamaze_qsa_avi.png"), //
     // DynamazeHelper.render(windygrid, DiscreteValueFunctions.rescaled(ref)));
     ActionValueIteration avi = ActionValueIteration.of(dynamaze);
-    ImageIconRecorder imageIconRecorder = new ImageIconRecorder(250);
+    ImageIconRecorder imageIconRecorder = ImageIconRecorder.loop(Duration.ofMillis(250));
     for (int index = 0; index < 50; ++index) {
       Infoline infoline = Infoline.of(dynamaze, ref, avi.qsa());
       imageIconRecorder.write(StateRasters.qsaLossRef(dynamazeRaster, avi.qsa(), ref));

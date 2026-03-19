@@ -2,6 +2,7 @@
 package ch.alpine.surich.ch05.wireloop;
 
 import java.awt.Container;
+import java.time.Duration;
 
 import ch.alpine.bridge.awt.AwtUtil;
 import ch.alpine.bridge.io.ImageIconRecorder;
@@ -28,7 +29,7 @@ class MCES_Wireloop implements ManipulateProvider {
     WireloopRaster wireloopRaster = new WireloopRaster(wireloop);
     DiscreteQsa ref = WireloopHelper.getOptimalQsa(wireloop);
     MonteCarloExploringStarts mces = new MonteCarloExploringStarts(wireloop);
-    ImageIconRecorder imageIconRecorder = new ImageIconRecorder(200);
+    ImageIconRecorder imageIconRecorder = ImageIconRecorder.loop(Duration.ofMillis(200));
     StateActionCounter sac = new DiscreteStateActionCounter();
     EGreedyPolicy policy = (EGreedyPolicy) PolicyType.EGREEDY.bestEquiprobable(wireloop, mces.qsa(), sac);
     policy.setExplorationRate(LinearExplorationRate.of(batches, 0.2, 0.05));

@@ -2,6 +2,7 @@
 package ch.alpine.surich.ch04.grid;
 
 import java.awt.Container;
+import java.time.Duration;
 
 import ch.alpine.bridge.awt.AwtUtil;
 import ch.alpine.bridge.io.ImageIconRecorder;
@@ -26,7 +27,7 @@ class RSTQP_Gridworld implements ManipulateProvider {
     DiscreteQsa qsa = DiscreteQsa.build(gridworld);
     Random1StepTabularQPlanning rstqp = //
         Random1StepTabularQPlanning.of(gridworld, qsa, ConstantLearningRate.one());
-    ImageIconRecorder imageIconRecorder = new ImageIconRecorder(250);
+    ImageIconRecorder imageIconRecorder = ImageIconRecorder.loop(Duration.ofMillis(250));
     for (int index = 0; index < batches; ++index) {
       imageIconRecorder.write(StateActionRasters.qsaLossRef(new GridworldRaster(gridworld), qsa, ref));
       Infoline.of(gridworld, ref, qsa);

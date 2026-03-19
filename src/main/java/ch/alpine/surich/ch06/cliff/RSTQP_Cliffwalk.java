@@ -1,6 +1,8 @@
 // code by jph
 package ch.alpine.surich.ch06.cliff;
 
+import java.time.Duration;
+
 import ch.alpine.bridge.awt.AwtUtil;
 import ch.alpine.bridge.io.ImageIconRecorder;
 import ch.alpine.subare.alg.Random1StepTabularQPlanning;
@@ -22,7 +24,7 @@ enum RSTQP_Cliffwalk {
     DiscreteQsa qsa = DiscreteQsa.build(cliffwalk, DoubleScalar.POSITIVE_INFINITY);
     Random1StepTabularQPlanning rstqp = Random1StepTabularQPlanning.of( //
         cliffwalk, qsa, ConstantLearningRate.one());
-    ImageIconRecorder imageIconRecorder = new ImageIconRecorder(250);
+    ImageIconRecorder imageIconRecorder = ImageIconRecorder.loop(Duration.ofMillis(250));
     int batches = 20;
     for (int index = 0; index < batches; ++index) {
       Infoline infoline = Infoline.of(cliffwalk, ref, qsa);

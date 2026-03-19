@@ -3,6 +3,7 @@ package ch.alpine.surich.ch04.gambler;
 
 import java.awt.Container;
 import java.awt.GridLayout;
+import java.time.Duration;
 
 import javax.swing.JPanel;
 
@@ -35,8 +36,8 @@ class RSTQP_Gambler implements ManipulateProvider {
     Random1StepTabularQPlanning rstqp = Random1StepTabularQPlanning.of(gamblerModel, qsa, //
         DefaultLearningRate.of(4, 0.71));
     ActionValueStatistics avs = new ActionValueStatistics(gamblerModel);
-    ImageIconRecorder imageIconRecorder1 = new ImageIconRecorder(250);
-    ImageIconRecorder imageIconRecorder2 = new ImageIconRecorder(250);
+    ImageIconRecorder imageIconRecorder1 = ImageIconRecorder.loop(Duration.ofMillis(250));
+    ImageIconRecorder imageIconRecorder2 = ImageIconRecorder.loop(Duration.ofMillis(250));
     for (int index = 0; index < batches; ++index) {
       Infoline infoline = Infoline.of(gamblerModel, ref, qsa);
       TabularSteps.batch(gamblerModel, rstqp, avs);

@@ -1,6 +1,8 @@
 // code by jph
 package ch.alpine.surich.ch06.cliff;
 
+import java.time.Duration;
+
 import ch.alpine.bridge.awt.AwtUtil;
 import ch.alpine.bridge.io.ImageIconRecorder;
 import ch.alpine.subare.pol.EGreedyPolicy;
@@ -43,7 +45,7 @@ enum SES_Cliffwalk {
       }
     };
     int episode = 0;
-    ImageIconRecorder imageIconRecorder = new ImageIconRecorder(250);
+    ImageIconRecorder imageIconRecorder = ImageIconRecorder.loop(Duration.ofMillis(250));
     while (exploringStartsStream.batchIndex() < batches) {
       exploringStartsStream.nextEpisode();
       // if (episode % 5 == 0)

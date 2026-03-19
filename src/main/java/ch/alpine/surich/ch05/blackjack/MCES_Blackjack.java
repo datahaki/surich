@@ -1,6 +1,8 @@
 // code by jph
 package ch.alpine.surich.ch05.blackjack;
 
+import java.time.Duration;
+
 import ch.alpine.bridge.awt.AwtUtil;
 import ch.alpine.bridge.io.ImageIconRecorder;
 import ch.alpine.subare.mc.MonteCarloExploringStarts;
@@ -22,7 +24,7 @@ enum MCES_Blackjack {
   static void main() throws Exception {
     Blackjack blackjack = new Blackjack();
     MonteCarloExploringStarts mces = new MonteCarloExploringStarts(blackjack);
-    ImageIconRecorder imageIconRecorder = new ImageIconRecorder(250);
+    ImageIconRecorder imageIconRecorder = ImageIconRecorder.loop(Duration.ofMillis(250));
     int batches = 10; // 40
     Tensor epsilon = Subdivide.of(.2, .05, batches);
     StateActionCounter sac = new DiscreteStateActionCounter();

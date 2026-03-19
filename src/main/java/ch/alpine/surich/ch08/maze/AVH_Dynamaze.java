@@ -3,6 +3,7 @@
 package ch.alpine.surich.ch08.maze;
 
 import java.awt.Container;
+import java.time.Duration;
 
 import ch.alpine.bridge.awt.AwtUtil;
 import ch.alpine.bridge.io.ImageIconRecorder;
@@ -26,7 +27,7 @@ class AVH_Dynamaze implements ManipulateProvider {
     ActionValueIteration avi = ActionValueIteration.of(dynamaze, est);
     // ---
     DiscreteQsa ref = DynamazeHelper.getOptimalQsa(dynamaze);
-    ImageIconRecorder imageIconRecorder = new ImageIconRecorder(500);
+    ImageIconRecorder imageIconRecorder = ImageIconRecorder.loop(Duration.ofMillis(500));
     DynamazeRaster dynamazeRaster = new DynamazeRaster(dynamaze);
     for (int index = 0; index < batches; ++index) {
       Infoline infoline = Infoline.of(dynamaze, ref, avi.qsa());

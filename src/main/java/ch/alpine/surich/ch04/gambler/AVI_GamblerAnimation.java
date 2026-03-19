@@ -2,6 +2,7 @@
 package ch.alpine.surich.ch04.gambler;
 
 import java.awt.Container;
+import java.time.Duration;
 
 import ch.alpine.bridge.awt.AwtUtil;
 import ch.alpine.bridge.io.ImageIconRecorder;
@@ -22,7 +23,7 @@ class AVI_GamblerAnimation implements ManipulateProvider {
     GamblerModel gamblerModel = GamblerModel.createDefault();
     final DiscreteQsa ref = GamblerHelper.getOptimalQsa(gamblerModel);
     ActionValueIteration avi = ActionValueIteration.of(gamblerModel);
-    ImageIconRecorder imageIconRecorder = new ImageIconRecorder(500);
+    ImageIconRecorder imageIconRecorder = ImageIconRecorder.loop(Duration.ofMillis(500));
     for (int index = 0; index < 13; ++index) {
       DiscreteQsa qsa = avi.qsa();
       Infoline.of(gamblerModel, ref, qsa);

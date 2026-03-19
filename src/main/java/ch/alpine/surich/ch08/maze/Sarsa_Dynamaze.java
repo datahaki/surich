@@ -3,6 +3,7 @@
 package ch.alpine.surich.ch08.maze;
 
 import java.awt.Container;
+import java.time.Duration;
 
 import ch.alpine.bridge.awt.AwtUtil;
 import ch.alpine.bridge.io.ImageIconRecorder;
@@ -41,7 +42,7 @@ class Sarsa_Dynamaze implements ManipulateProvider {
     policy.setExplorationRate(LinearExplorationRate.of(batches, 0.3, 0.01));
     LearningRate learningRate = DefaultLearningRate.of(15, 0.51);
     Sarsa sarsa = sarsaType.sarsa(dynamaze, learningRate, qsa, sac, policy);
-    ImageIconRecorder imageIconRecorder = new ImageIconRecorder(250);
+    ImageIconRecorder imageIconRecorder = ImageIconRecorder.loop(Duration.ofMillis(250));
     for (int index = 0; index < batches; ++index) {
       // if (EPISODES - 10 < index)
       Infoline infoline = Infoline.of(dynamaze, ref, qsa);

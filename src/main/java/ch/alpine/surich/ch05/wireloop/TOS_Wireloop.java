@@ -1,6 +1,8 @@
 // code by jph
 package ch.alpine.surich.ch05.wireloop;
 
+import java.time.Duration;
+
 import ch.alpine.bridge.awt.AwtUtil;
 import ch.alpine.bridge.io.ImageIconRecorder;
 import ch.alpine.subare.pol.PolicyBase;
@@ -45,7 +47,7 @@ enum TOS_Wireloop {
     TrueOnlineSarsa trueOnlineSarsa = sarsaType.trueOnline(wireloop, LAMBDA, mapper, learningRate, w, sac, policy);
     final String algo = sarsaType.name().toLowerCase();
     Timing timing = Timing.started();
-    ImageIconRecorder imageIconRecorder = new ImageIconRecorder(250);
+    ImageIconRecorder imageIconRecorder = ImageIconRecorder.loop(Duration.ofMillis(250));
     for (int batch = 0; batch < 20; ++batch) {
       // System.out.println("batch " + batch);
       policy.setQsa(trueOnlineSarsa.qsaInterface());

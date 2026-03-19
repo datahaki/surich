@@ -2,6 +2,7 @@
 package ch.alpine.surich.ch05.wireloop;
 
 import java.awt.Container;
+import java.time.Duration;
 
 import ch.alpine.bridge.awt.AwtUtil;
 import ch.alpine.bridge.io.ImageIconRecorder;
@@ -22,7 +23,7 @@ class IPE_Wireloop implements ManipulateProvider {
     Policy policy = EquiprobablePolicy.create(wireloop);
     IterativePolicyEvaluation ipe = new IterativePolicyEvaluation( //
         wireloop, policy);
-    ImageIconRecorder imageIconRecorder = new ImageIconRecorder(200);
+    ImageIconRecorder imageIconRecorder = ImageIconRecorder.loop(Duration.ofMillis(200));
     for (int count = 0; count < 20; ++count) {
       imageIconRecorder.write(StateRasters.vs_rescale(wireloopRaster, ipe.vs()));
       for (int ep = 0; ep < 5; ++ep)

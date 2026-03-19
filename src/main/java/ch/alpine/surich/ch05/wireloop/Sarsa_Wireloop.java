@@ -2,6 +2,7 @@
 package ch.alpine.surich.ch05.wireloop;
 
 import java.awt.Container;
+import java.time.Duration;
 
 import ch.alpine.bridge.awt.AwtUtil;
 import ch.alpine.bridge.io.ImageIconRecorder;
@@ -38,7 +39,7 @@ class Sarsa_Wireloop implements ManipulateProvider {
     EGreedyPolicy policy = (EGreedyPolicy) PolicyType.EGREEDY.bestEquiprobable(wireloop, qsa, sac);
     policy.setExplorationRate(LinearExplorationRate.of(batches, 0.2, 0.01));
     Sarsa sarsa = sarsaType.sarsa(wireloop, DefaultLearningRate.of(3, 0.51), qsa, sac, policy);
-    ImageIconRecorder imageIconRecorder = new ImageIconRecorder(250);
+    ImageIconRecorder imageIconRecorder = ImageIconRecorder.loop(Duration.ofMillis(250));
     for (int index = 0; index < batches; ++index) {
       Infoline infoline = Infoline.of(wireloop, ref, qsa);
       ExploringStarts.batch(wireloop, policy, nstep, sarsa);

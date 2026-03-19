@@ -2,6 +2,7 @@
 package ch.alpine.surich.ch04.gambler;
 
 import java.awt.Container;
+import java.time.Duration;
 
 import javax.swing.JPanel;
 
@@ -52,7 +53,7 @@ class TOS_Gambler implements ManipulateProvider {
     // LearningRate learningRate = ConstantLearningRate.of(RealScalar.of(0.3), false); // the case without warmStart
     TrueOnlineSarsa trueOnlineSarsa = sarsaType.trueOnline(gamblerModel, LAMBDA, mapper, learningRate, w, sac, policy);
     Timing timing = Timing.started();
-    ImageIconRecorder imageIconRecorder = new ImageIconRecorder(250);
+    ImageIconRecorder imageIconRecorder = ImageIconRecorder.loop(Duration.ofMillis(250));
     TableBuilder tableBuilder = new TableBuilder();
     for (int batch = 0; batch < batches; ++batch) {
       // System.out.println("batch " + batch);

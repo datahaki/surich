@@ -3,6 +3,7 @@
 package ch.alpine.surich.ch06.windy;
 
 import java.awt.Container;
+import java.time.Duration;
 
 import ch.alpine.bridge.awt.AwtUtil;
 import ch.alpine.bridge.io.ImageIconRecorder;
@@ -37,7 +38,7 @@ class Sarsa_Windygrid implements ManipulateProvider {
     StateActionCounter sac = new DiscreteStateActionCounter();
     EGreedyPolicy policy = (EGreedyPolicy) PolicyType.EGREEDY.bestEquiprobable(windygrid, qsa, sac);
     Sarsa sarsa = sarsaType.sarsa(windygrid, learningRate, qsa, sac, policy);
-    ImageIconRecorder imageIconRecorder = new ImageIconRecorder(250);
+    ImageIconRecorder imageIconRecorder = ImageIconRecorder.loop(Duration.ofMillis(250));
     for (int index = 0; index < batches; ++index) {
       Infoline infoline = Infoline.of(windygrid, ref, qsa);
       // sarsa.supplyPolicy(() -> policy);

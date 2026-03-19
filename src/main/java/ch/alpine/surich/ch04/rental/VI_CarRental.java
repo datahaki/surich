@@ -2,6 +2,7 @@
 package ch.alpine.surich.ch04.rental;
 
 import java.awt.Container;
+import java.time.Duration;
 
 import ch.alpine.bridge.awt.AwtUtil;
 import ch.alpine.bridge.io.ImageIconRecorder;
@@ -22,7 +23,7 @@ class VI_CarRental implements ManipulateProvider {
   public Container getContainer() {
     CarRental carRental = new CarRental(maxCars);
     ValueIteration vi = new ValueIteration(carRental);
-    ImageIconRecorder imageIconRecorder = new ImageIconRecorder(250);
+    ImageIconRecorder imageIconRecorder = ImageIconRecorder.loop(Duration.ofMillis(250));
     for (int count = 0; count <= batches; ++count) {
       System.out.println(count);
       imageIconRecorder.write(CarRentalHelper.joinAll(carRental, vi.vs()));

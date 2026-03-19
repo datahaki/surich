@@ -3,6 +3,7 @@ package ch.alpine.surich.demo;
 
 import java.awt.Dimension;
 import java.io.IOException;
+import java.io.UncheckedIOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.util.List;
@@ -25,8 +26,8 @@ import ch.alpine.tensor.ext.HomeDirectory;
     Path directory = HomeDirectory.Pictures.resolve("plots");
     try {
       Files.createDirectories(directory);
-    } catch (IOException e) {
-      throw new RuntimeException(e);
+    } catch (IOException ioException) {
+      throw new UncheckedIOException(ioException);
     }
     return directory;
   }

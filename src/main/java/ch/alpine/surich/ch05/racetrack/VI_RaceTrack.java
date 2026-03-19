@@ -2,6 +2,7 @@
 package ch.alpine.surich.ch05.racetrack;
 
 import java.awt.Container;
+import java.time.Duration;
 import java.util.LinkedList;
 
 import ch.alpine.bridge.awt.AwtUtil;
@@ -32,7 +33,7 @@ class VI_RaceTrack implements ManipulateProvider {
     ValueIteration vi = new ValueIteration(racetrack);
     vi.untilBelow(Chop.below(10), 5);
     Policy policy = PolicyType.GREEDY.bestEquiprobable(racetrack, vi.vs(), null);
-    ImageIconRecorder imageIconRecorder = new ImageIconRecorder(400);
+    ImageIconRecorder imageIconRecorder = ImageIconRecorder.loop(Duration.ofMillis(400));
     for (Tensor start : racetrack.statesStart) {
       Tensor image = racetrack.image();
       MonteCarloEpisode mce = new MonteCarloEpisode(racetrack, policy, start, new LinkedList<>());

@@ -3,6 +3,7 @@
 package ch.alpine.surich.ch08.maze;
 
 import java.awt.Container;
+import java.time.Duration;
 
 import ch.alpine.bridge.awt.AwtUtil;
 import ch.alpine.bridge.io.ImageIconRecorder;
@@ -51,7 +52,7 @@ class PS_Dynamaze implements ManipulateProvider {
             return policy;
           }
         };
-    ImageIconRecorder imageIconRecorder = new ImageIconRecorder(250);
+    ImageIconRecorder imageIconRecorder = ImageIconRecorder.loop(Duration.ofMillis(250));
     while (stepExploringStarts.batchIndex() < batches) {
       Infoline infoline = Infoline.of(dynamaze, ref, qsa);
       stepExploringStarts.nextEpisode();

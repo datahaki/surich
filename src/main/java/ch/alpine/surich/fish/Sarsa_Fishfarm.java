@@ -3,6 +3,7 @@
 package ch.alpine.surich.fish;
 
 import java.awt.Container;
+import java.time.Duration;
 
 import ch.alpine.bridge.awt.AwtUtil;
 import ch.alpine.bridge.io.ImageIconRecorder;
@@ -43,7 +44,7 @@ class Sarsa_Fishfarm implements ManipulateProvider {
     EGreedyPolicy policy = (EGreedyPolicy) PolicyType.EGREEDY.bestEquiprobable(fishfarm, qsa, sac);
     policy.setExplorationRate(LinearExplorationRate.of(batches, 0.5, 0.01));
     Sarsa sarsa = sarsaType.sarsa(fishfarm, DefaultLearningRate.of(7, 0.61), qsa, sac, policy);
-    ImageIconRecorder imageIconRecorder = new ImageIconRecorder(250);
+    ImageIconRecorder imageIconRecorder = ImageIconRecorder.loop(Duration.ofMillis(250));
     for (int index = 0; index < batches; ++index) {
       // if (batches - 10 < index)
       Infoline infoline = Infoline.of(fishfarm, ref, qsa);

@@ -1,6 +1,8 @@
 // code by jph
 package ch.alpine.surich.ch05.wireloop;
 
+import java.time.Duration;
+
 import ch.alpine.bridge.awt.AwtUtil;
 import ch.alpine.bridge.io.ImageIconRecorder;
 import ch.alpine.subare.pol.EGreedyPolicy;
@@ -38,7 +40,7 @@ enum SES_Wireloop {
         return policy;
       }
     };
-    ImageIconRecorder imageIconRecorder = new ImageIconRecorder(250);
+    ImageIconRecorder imageIconRecorder = ImageIconRecorder.loop(Duration.ofMillis(250));
     int index = 0;
     while (exploringStartsStream.batchIndex() < batches) {
       exploringStartsStream.nextEpisode();

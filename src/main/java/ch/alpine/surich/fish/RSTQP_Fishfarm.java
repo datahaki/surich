@@ -2,6 +2,7 @@
 package ch.alpine.surich.fish;
 
 import java.awt.Container;
+import java.time.Duration;
 
 import ch.alpine.bridge.awt.AwtUtil;
 import ch.alpine.bridge.io.ImageIconRecorder;
@@ -31,7 +32,7 @@ class RSTQP_Fishfarm implements ManipulateProvider {
     DiscreteQsa qsa = DiscreteQsa.build(fishfarm, DoubleScalar.POSITIVE_INFINITY);
     Random1StepTabularQPlanning rstqp = Random1StepTabularQPlanning.of( //
         fishfarm, qsa, ConstantLearningRate.one());
-    ImageIconRecorder imageIconRecorder = new ImageIconRecorder(250);
+    ImageIconRecorder imageIconRecorder = ImageIconRecorder.loop(Duration.ofMillis(250));
     for (int index = 0; index < batches; ++index) {
       Infoline infoline = Infoline.of(fishfarm, ref, qsa);
       TabularSteps.batch(fishfarm, rstqp);

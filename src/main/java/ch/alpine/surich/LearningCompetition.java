@@ -1,6 +1,7 @@
 // code by jph
 package ch.alpine.surich;
 
+import java.time.Duration;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -52,7 +53,7 @@ public class LearningCompetition {
     RESX = map.keySet().stream().mapToInt(point -> point.x()).reduce(Math::max).orElseThrow() + 1;
     int RESY = map.keySet().stream().mapToInt(point -> point.y()).reduce(Math::max).orElseThrow() + 1;
     Tensor image = Array.zeros(RESX + 1 + RESX, RESY, 4);
-    ImageIconRecorder imageIconRecorder = new ImageIconRecorder(period);
+    ImageIconRecorder imageIconRecorder = ImageIconRecorder.loop(Duration.ofMillis(period));
     for (int index = 0; index < epsilon.length(); ++index) {
       final int findex = index;
       map.entrySet().stream().parallel().forEach(entry -> //

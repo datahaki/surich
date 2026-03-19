@@ -4,6 +4,7 @@ package ch.alpine.surich.ch06.windy;
 
 import java.awt.Container;
 import java.io.IOException;
+import java.time.Duration;
 
 import ch.alpine.bridge.awt.AwtUtil;
 import ch.alpine.bridge.io.ImageIconRecorder;
@@ -35,10 +36,10 @@ class AVI_Windygrid implements ManipulateProvider {
     try {
       Export.of(HomeDirectory.Pictures.resolve("windygrid_qsa_avi.png"), //
           StateActionRasters.qsa_rescaled(windygridRaster, ref));
-    } catch (IOException e) {
-      e.printStackTrace();
+    } catch (IOException ioException) {
+      ioException.printStackTrace();
     }
-    ImageIconRecorder imageIconRecorder = new ImageIconRecorder(250);
+    ImageIconRecorder imageIconRecorder = ImageIconRecorder.loop(Duration.ofMillis(250));
     for (int index = 0; index < batches; ++index) {
       Infoline infoline = Infoline.of(windygrid, ref, avi.qsa());
       imageIconRecorder.write(StateActionRasters.qsaLossRef(windygridRaster, avi.qsa(), ref));

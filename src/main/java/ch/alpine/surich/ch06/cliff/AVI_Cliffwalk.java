@@ -2,6 +2,8 @@
 // inspired by Shangtong Zhang
 package ch.alpine.surich.ch06.cliff;
 
+import java.time.Duration;
+
 import ch.alpine.bridge.awt.AwtUtil;
 import ch.alpine.bridge.io.ImageIconRecorder;
 import ch.alpine.subare.alg.ActionValueIteration;
@@ -27,7 +29,7 @@ enum AVI_Cliffwalk {
     Export.of(HomeDirectory.Pictures.resolve("cliffwalk_qsa_avi.png"), //
         StateActionRasters.qsa(new CliffwalkRaster(cliffwalk), DiscreteValueFunctions.rescaled(ref)));
     ActionValueIteration avi = ActionValueIteration.of(cliffwalk);
-    ImageIconRecorder imageIconRecorder = new ImageIconRecorder(250);
+    ImageIconRecorder imageIconRecorder = ImageIconRecorder.loop(Duration.ofMillis(250));
     for (int index = 0; index < 20; ++index) {
       Infoline infoline = Infoline.of(cliffwalk, ref, avi.qsa());
       imageIconRecorder.write(StateActionRasters.qsaLossRef(cliffwalkRaster, avi.qsa(), ref));

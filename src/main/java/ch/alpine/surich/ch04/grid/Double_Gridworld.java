@@ -2,6 +2,7 @@
 package ch.alpine.surich.ch04.grid;
 
 import java.awt.Container;
+import java.time.Duration;
 
 import ch.alpine.bridge.awt.AwtUtil;
 import ch.alpine.bridge.io.ImageIconRecorder;
@@ -54,7 +55,7 @@ class Double_Gridworld implements ManipulateProvider {
         gridworld, //
         DefaultLearningRate.of(5, .51), //
         qsa1, qsa2, sac1, sac2, policy1, policy2);
-    ImageIconRecorder imageIconRecorder = new ImageIconRecorder(250);
+    ImageIconRecorder imageIconRecorder = ImageIconRecorder.loop(Duration.ofMillis(250));
     for (int index = 0; index < batches; ++index) {
       if (batches - 10 < index)
         Infoline.of(gridworld, ref, qsa1);

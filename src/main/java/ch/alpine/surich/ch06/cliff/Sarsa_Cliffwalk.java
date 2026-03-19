@@ -2,6 +2,8 @@
 // inspired by Shangtong Zhang
 package ch.alpine.surich.ch06.cliff;
 
+import java.time.Duration;
+
 import ch.alpine.bridge.awt.AwtUtil;
 import ch.alpine.bridge.io.ImageIconRecorder;
 import ch.alpine.subare.pol.EGreedyPolicy;
@@ -33,7 +35,7 @@ enum Sarsa_Cliffwalk {
     EGreedyPolicy policy = (EGreedyPolicy) PolicyType.EGREEDY.bestEquiprobable(cliffwalk, qsa, sac);
     policy.setExplorationRate(LinearExplorationRate.of(batches, 0.2, 0.01));
     Sarsa sarsa = sarsaType.sarsa(cliffwalk, DefaultLearningRate.of(7, 0.61), qsa, sac, policy);
-    ImageIconRecorder imageIconRecorder = new ImageIconRecorder(250);
+    ImageIconRecorder imageIconRecorder = ImageIconRecorder.loop(Duration.ofMillis(250));
     for (int index = 0; index < batches; ++index) {
       // if (batches - 10 < index)
       Infoline infoline = Infoline.of(cliffwalk, ref, qsa);

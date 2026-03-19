@@ -2,6 +2,7 @@
 package ch.alpine.surich.ch04.gambler;
 
 import java.awt.Container;
+import java.time.Duration;
 
 import ch.alpine.bridge.awt.AwtUtil;
 import ch.alpine.bridge.io.ImageIconRecorder;
@@ -33,7 +34,7 @@ class MCES_Gambler implements ManipulateProvider {
     MonteCarloExploringStarts mces = new MonteCarloExploringStarts(gambler);
     StateActionCounter sac = new DiscreteStateActionCounter();
     EGreedyPolicy policy = (EGreedyPolicy) PolicyType.EGREEDY.bestEquiprobable(gambler, mces.qsa(), sac);
-    ImageIconRecorder imageIconRecorder = new ImageIconRecorder(250);
+    ImageIconRecorder imageIconRecorder = ImageIconRecorder.loop(Duration.ofMillis(250));
     for (int index = 0; index < batches; ++index) {
       Infoline.of(gambler, ref, mces.qsa());
       ExploringStarts.batch(gambler, policy, mces);

@@ -2,6 +2,7 @@
 package ch.alpine.surich.ch06.windy;
 
 import java.awt.Container;
+import java.time.Duration;
 
 import ch.alpine.bridge.awt.AwtUtil;
 import ch.alpine.bridge.io.ImageIconRecorder;
@@ -29,7 +30,7 @@ class RSTQP_Windygrid implements ManipulateProvider {
     DiscreteQsa qsa = DiscreteQsa.build(windygrid);
     Random1StepTabularQPlanning rstqp = Random1StepTabularQPlanning.of( //
         windygrid, qsa, ConstantLearningRate.one());
-    ImageIconRecorder imageIconRecorder = new ImageIconRecorder(250);
+    ImageIconRecorder imageIconRecorder = ImageIconRecorder.loop(Duration.ofMillis(250));
     for (int index = 0; index < batches; ++index) {
       Infoline infoline = Infoline.of(windygrid, ref, qsa);
       TabularSteps.batch(windygrid, rstqp);

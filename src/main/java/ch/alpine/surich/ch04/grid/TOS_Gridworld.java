@@ -2,6 +2,7 @@
 package ch.alpine.surich.ch04.grid;
 
 import java.awt.Container;
+import java.time.Duration;
 
 import ch.alpine.bridge.awt.AwtUtil;
 import ch.alpine.bridge.awt.ColumnPanel;
@@ -50,7 +51,7 @@ class TOS_Gridworld implements ManipulateProvider {
     // LearningRate learningRate = ConstantLearningRate.of(RealScalar.of(0.3), false); // the case without warmStart
     TrueOnlineSarsa trueOnlineSarsa = sarsaType.trueOnline(gridworld, LAMBDA, mapper, learningRate, w, sac, policy);
     Timing timing = Timing.started();
-    ImageIconRecorder imageIconRecorder = new ImageIconRecorder(250);
+    ImageIconRecorder imageIconRecorder = ImageIconRecorder.loop(Duration.ofMillis(250));
     TableBuilder tableBuilder = new TableBuilder();
     for (int batch = 0; batch < 100; ++batch) {
       // System.out.println("starting batch " + (index + 1) + " of " + batches);

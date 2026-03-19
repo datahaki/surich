@@ -1,6 +1,8 @@
 // code by jph
 package ch.alpine.surich.ch05.blackjack;
 
+import java.time.Duration;
+
 import ch.alpine.bridge.awt.AwtUtil;
 import ch.alpine.bridge.io.ImageIconRecorder;
 import ch.alpine.subare.pol.EGreedyPolicy;
@@ -29,7 +31,7 @@ import ch.alpine.tensor.sca.Round;
     StateActionCounter sac = new DiscreteStateActionCounter();
     EGreedyPolicy policy = (EGreedyPolicy) PolicyType.EGREEDY.bestEquiprobable(blackjack, qsa, sac);
     policy.setExplorationRate(LinearExplorationRate.of(batches, 0.1, 0.01));
-    ImageIconRecorder imageIconRecorder = new ImageIconRecorder(250);
+    ImageIconRecorder imageIconRecorder = ImageIconRecorder.loop(Duration.ofMillis(250));
     Sarsa sarsa = sarsaType.sarsa(blackjack, DefaultLearningRate.of(2, 0.6), qsa, sac, policy);
     for (int index = 0; index < batches; ++index) {
       // Scalar error = DiscreteQsas.distance(qsa, ref);
