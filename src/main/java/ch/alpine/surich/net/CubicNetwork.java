@@ -97,7 +97,7 @@ class CubicNetwork implements ManipulateProvider {
         show1.add(ListLinePlot.of(tableBuilder.getColumns(0, i)));
     }
     Show show2 = new Show();
-    show2.setPlotLabel("Infty error: " + error.maps(Round._3));
+    show2.setShowLabel("Infty error: " + error.maps(Round._3));
     show2.add(Plot.of(network.power, CLIP)).setLabel("cubic");
     show2.add(Plot.of(x -> network.netChain.forward(Tensors.of(x)).Get(0), CLIP)).setLabel("network");
     return ShowGridComponent.of(show1, show2);

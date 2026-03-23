@@ -81,7 +81,7 @@ class XORNeuralNetwork implements ManipulateProvider {
       int n = table.getRow(0).length();
       for (int i = 1; i < n; ++i)
         show1.add(ListLinePlot.of(table.getColumns(0, i)));
-      show1.setPlotLabel("Error: " + error.maps(Round._3));
+      show1.setShowLabel("Error: " + error.maps(Round._3));
     }
     Show show2 = new Show();
     {
@@ -89,7 +89,7 @@ class XORNeuralNetwork implements ManipulateProvider {
       int n = table.getRow(0).length();
       for (int i = 1; i < n; ++i)
         show2.add(ListLinePlot.of(table.getColumns(0, i)));
-      show2.setPlotLabel("Error: " + error.maps(Round._3));
+      show2.setShowLabel("Error: " + error.maps(Round._3));
     }
     return ShowGridComponent.of(show1, show2);
   }

@@ -64,7 +64,7 @@ class SoftmaxMLP implements ManipulateProvider {
       int n = tableBuilder.getRow(0).length();
       for (int i = 1; i < n; ++i)
         show1.add(ListLinePlot.of(tableBuilder.getColumns(0, i)));
-      show1.setPlotLabel("Error: " + error.maps(Round._3));
+      show1.setShowLabel("Error: " + error.maps(Round._3));
     }
     Show show2 = new Show();
     {
@@ -72,7 +72,7 @@ class SoftmaxMLP implements ManipulateProvider {
       int n = tableBuilder.getRow(0).length();
       for (int i = 1; i < n; ++i)
         show2.add(ListLinePlot.of(tableBuilder.getColumns(0, i)));
-      show2.setPlotLabel("Error: " + error.maps(Round._3));
+      show2.setShowLabel("Error: " + error.maps(Round._3));
     }
     return ShowGridComponent.of(show1, show2);
   }

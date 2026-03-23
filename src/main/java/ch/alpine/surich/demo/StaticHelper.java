@@ -57,7 +57,7 @@ import ch.alpine.tensor.ext.HomeDirectory;
 
   private static void plot( //
       String filename, String diagramTitle, String axisLabelX, String axisLabelY, Show show) {
-    show.setPlotLabel(diagramTitle);
+    show.setShowLabel(diagramTitle);
     // show.add(ListPlot.of(null))
     // show.getAxisX().setLabel(axisLabelX);
     // show.getAxisY().setLabel(axisLabelY);
