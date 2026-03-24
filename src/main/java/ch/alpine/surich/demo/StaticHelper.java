@@ -10,6 +10,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
 
+import ch.alpine.bridge.fig.Rasterize;
 import ch.alpine.bridge.fig.Show;
 import ch.alpine.bridge.fig.Showable;
 import ch.alpine.bridge.fig.plt.ListPlot;
@@ -66,7 +67,7 @@ import ch.alpine.tensor.ext.HomeDirectory;
 
   private static Path savePlot(Path directory, String fileTitle, Show show) throws Exception {
     Path path = directory.resolve(fileTitle + ".png");
-    show.export(path, new Dimension(WIDTH, HEIGHT));
+    new Rasterize(show, new Dimension(WIDTH, HEIGHT)).export(path);
     System.out.println("Exported " + fileTitle + ".png to " + directory);
     return path;
   }
