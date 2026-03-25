@@ -25,7 +25,7 @@ import ch.alpine.tensor.Tensor;
 import ch.alpine.tensor.qty.Timing;
 import ch.alpine.tensor.sca.Chop;
 
-/* package */ enum MonteCarloAnalysisShow {
+enum MonteCarloAnalysisShow {
   ;
   public static void analyse(MonteCarloInterface monteCarloInterface, int trials, int batches, List<MonteCarloAlgorithms> algorithmList,
       List<DiscreteModelErrorAnalysis> errorAnalysisList) {
@@ -63,6 +63,7 @@ import ch.alpine.tensor.sca.Chop;
     MonteCarloInterface monteCarloInterface = MonteCarloExamples.AIRPORT.get();
     // ---
     List<MonteCarloAlgorithms> list = new ArrayList<>();
+    // FIXME SOPHIS
     // list.add(MonteCarloAlgorithms.MONTE_CARLO);
     // list.add(MonteCarloAlgorithms.ORIGINAL_SARSA);
     // list.add(MonteCarloAlgorithms.ORIGINAL_TRUE_ONLINE_SARSA);

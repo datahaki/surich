@@ -6,7 +6,7 @@ import ch.alpine.tensor.Scalar;
 import ch.alpine.tensor.Tensor;
 import ch.alpine.tensor.Tensors;
 
-/* package */ class TitForTatAgent extends Agent {
+class TitForTatAgent extends Agent {
   private int nextAction = 1;
 
   @Override

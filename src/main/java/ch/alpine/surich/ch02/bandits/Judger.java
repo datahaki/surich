@@ -17,7 +17,7 @@ import ch.alpine.tensor.Tensors;
 import ch.alpine.tensor.sca.Clip;
 import ch.alpine.tensor.sca.Round;
 
-/* package */ class Judger {
+class Judger {
   private final Bandits bandit;
   private final Map<Agent, Tensor> map = new HashMap<>();
 

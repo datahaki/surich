@@ -6,7 +6,7 @@ import ch.alpine.subare.mod.StandardModel;
 import ch.alpine.subare.val.DiscreteQsa;
 import ch.alpine.tensor.sca.Chop;
 
-/* package */ enum BanditsHelper {
+enum BanditsHelper {
   ;
   static DiscreteQsa getOptimalQsa(StandardModel standardModel) {
     return ActionValueIteration.solve(standardModel, Chop._04);

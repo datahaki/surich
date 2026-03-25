@@ -5,7 +5,7 @@ import java.util.function.Supplier;
 
 import ch.alpine.surich.ch02.Agent;
 
-/* package */ class OptimistsExact extends AbstractExact {
+class OptimistsExact extends AbstractExact {
   public OptimistsExact(Supplier<Agent> sup1, Supplier<Agent> sup2) {
     super(sup1, sup2);
     // ---

@@ -23,7 +23,7 @@ import ch.alpine.tensor.red.StandardDeviation;
 
 /** "A k-armed Bandit Problem"
  * Section 2.1 p.28 */
-/* package */ class BanditsModel implements StandardModel, MonteCarloInterface {
+class BanditsModel implements StandardModel, MonteCarloInterface {
   private static final TensorUnaryOperator NORMALIZE = Normalize.with(StandardDeviation::ofVector);
   /** state before choosing bandit */
   static final Tensor START = RealScalar.ZERO;

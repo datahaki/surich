@@ -8,7 +8,7 @@ import ch.alpine.surich.ch02.Agent;
 import ch.alpine.tensor.Tensor;
 import ch.alpine.tensor.sca.Round;
 
-/* package */ enum Listing {
+enum Listing {
   ;
   static void main() {
     List<Supplier<Agent>> list = AgentSupplier.mixed;

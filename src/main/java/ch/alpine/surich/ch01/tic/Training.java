@@ -1,7 +1,7 @@
 // code by jph
 package ch.alpine.surich.ch01.tic;
 
-/* package */ enum Training {
+enum Training {
   ;
   public static void train(int epochs) {
     Agent player1 = new Agent(1);

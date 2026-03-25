@@ -5,7 +5,7 @@ import ch.alpine.surich.ch02.Agent;
 import ch.alpine.tensor.Scalar;
 import ch.alpine.tensor.sca.Round;
 
-/* package */ enum SummaryString {
+enum SummaryString {
   ;
   public static String of(Agent agent) {
     int rnd = agent.getRandomizedDecisionCount();

@@ -14,7 +14,7 @@ import java.util.TreeMap;
 import ch.alpine.subare.math.Coinflip;
 import ch.alpine.tensor.RealScalar;
 
-/* package */ class Agent {
+class Agent {
   double stepSize;
   // double exploreRate;
   private Coinflip coinflip = Coinflip.fair();

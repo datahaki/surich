@@ -6,7 +6,7 @@ import ch.alpine.tensor.Scalar;
 import ch.alpine.tensor.Tensor;
 import ch.alpine.tensor.alg.Range;
 
-/* package */ class ConstantDrawTrip implements TripProfile {
+class ConstantDrawTrip implements TripProfile {
   private final int length;
   private final Tensor costPerUnit;
   private final Scalar draw;

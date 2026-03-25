@@ -21,7 +21,7 @@ import ch.alpine.tensor.alg.Subdivide;
 import ch.alpine.tensor.sca.Round;
 
 /** Sarsa applied to bandits */
-/* package */ class BanditsTrain {
+class BanditsTrain {
   private final BanditsModel banditsModel;
   final DiscreteQsa ref;
 

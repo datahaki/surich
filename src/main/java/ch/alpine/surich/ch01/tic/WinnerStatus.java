@@ -3,7 +3,7 @@ package ch.alpine.surich.ch01.tic;
 
 import java.util.Arrays;
 
-/* package */ class WinnerStatus {
+class WinnerStatus {
   final int[] data;
   private Integer private_winner = null;
   final Integer winner;

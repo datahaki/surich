@@ -19,7 +19,7 @@ import ch.alpine.tensor.alg.Rescale;
 import ch.alpine.tensor.img.ColorDataGradients;
 import ch.alpine.tensor.img.Raster;
 
-/* package */ enum CarRentalHelper {
+enum CarRentalHelper {
   ;
   public static Tensor render(CarRental carRental, DiscreteVs vs) {
     // TODO SUBARE use createRaster

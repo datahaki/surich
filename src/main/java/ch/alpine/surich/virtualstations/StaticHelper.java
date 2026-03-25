@@ -8,7 +8,7 @@ import ch.alpine.tensor.alg.Append;
 import ch.alpine.tensor.alg.Array;
 import ch.alpine.tensor.alg.Join;
 
-/* package */ enum StaticHelper {
+enum StaticHelper {
   ;
   /** returns the tensor of all possible binary combinations in a vector of size length
    * 

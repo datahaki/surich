@@ -12,7 +12,7 @@ import ch.alpine.tensor.ext.Integers;
 import ch.alpine.tensor.red.Mean;
 import ch.alpine.tensor.sca.Chop;
 
-/* package */ enum AllPairs {
+enum AllPairs {
   ;
   static Tensor performance(List<Supplier<Agent>> list, int runs, int epochs) {
     final int size = list.size();

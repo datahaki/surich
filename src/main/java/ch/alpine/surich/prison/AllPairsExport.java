@@ -9,7 +9,7 @@ import ch.alpine.surich.ch02.Agent;
 import ch.alpine.tensor.ext.HomeDirectory;
 import ch.alpine.tensor.io.Put;
 
-/* package */ enum AllPairsExport {
+enum AllPairsExport {
   ;
   static void main() throws IOException {
     // List<Supplier<Agent>> list = AgentSupplier.getOptimists(.01, .8, 30);

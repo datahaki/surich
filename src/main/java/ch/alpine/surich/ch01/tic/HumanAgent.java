@@ -3,7 +3,7 @@ package ch.alpine.surich.ch01.tic;
 
 import java.util.Scanner;
 
-/* package */ class HumanAgent extends Agent {
+class HumanAgent extends Agent {
   HumanAgent(int symbol) {
     super(symbol);
   }

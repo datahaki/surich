@@ -15,7 +15,7 @@ import ch.alpine.tensor.Rational;
 import ch.alpine.tensor.RealScalar;
 import ch.alpine.tensor.Scalar;
 
-/* package */ enum AgentSupplier {
+enum AgentSupplier {
   ;
   public static final List<Supplier<Agent>> mixed = List.of( //
       // () -> new ConstantAgent(2, 0), //

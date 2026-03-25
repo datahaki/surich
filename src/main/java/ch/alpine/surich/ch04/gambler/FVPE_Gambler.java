@@ -11,7 +11,7 @@ import ch.alpine.tensor.Scalar;
 import ch.alpine.tensor.sca.N;
 
 /** FirstVisitPolicyEvaluation of optimal greedy policy */
-/* package */ enum FVPE_Gambler {
+enum FVPE_Gambler {
   ;
   static void main() {
     GamblerModel gamblerModel = GamblerModel.createDefault();

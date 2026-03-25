@@ -11,7 +11,7 @@ import ch.alpine.tensor.Scalar;
 import ch.alpine.tensor.Scalars;
 import ch.alpine.tensor.Tensor;
 
-/* package */ class GamblerRaster implements StateActionRaster {
+class GamblerRaster implements StateActionRaster {
   private final GamblerModel gamblerModel;
   private final int offset;
 

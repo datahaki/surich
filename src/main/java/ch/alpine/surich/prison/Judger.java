@@ -6,7 +6,7 @@ import ch.alpine.tensor.Tensor;
 import ch.alpine.tensor.Tensors;
 import ch.alpine.tensor.sca.Chop;
 
-/* package */ class Judger {
+class Judger {
   private final Tensor reward;
   private final Agent a1;
   private final Agent a2;

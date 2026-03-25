@@ -15,7 +15,7 @@ import ch.alpine.tensor.alg.Last;
 import ch.alpine.tensor.ext.HomeDirectory;
 import ch.alpine.tensor.io.Put;
 
-/* package */ enum Gambler_Ex4_04 {
+enum Gambler_Ex4_04 {
   ;
   static void main() throws IOException {
     Path path = HomeDirectory.Ephemeral.mk_dirs(Gambler_Ex4_04.class.getSimpleName());

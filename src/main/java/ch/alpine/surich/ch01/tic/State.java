@@ -6,7 +6,7 @@ import java.io.Serializable;
 import java.util.Arrays;
 import java.util.Objects;
 
-/* package */ class State implements Serializable {
+class State implements Serializable {
   public static final String[] SYMBOL = { "0", "x", "*" };
   public static final State EMPTY = new State(new int[9]);
 

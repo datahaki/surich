@@ -11,7 +11,7 @@ import ch.alpine.tensor.Scalar;
 import ch.alpine.tensor.Scalars;
 import ch.alpine.tensor.Tensor;
 
-/* package */ class ChargerRaster implements StateActionRaster {
+class ChargerRaster implements StateActionRaster {
   private final Charger charger;
   private final int SPACE_Y;
 

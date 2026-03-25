@@ -18,7 +18,7 @@ import ch.alpine.tensor.alg.Join;
 import ch.alpine.tensor.img.ColorDataGradients;
 import ch.alpine.tensor.img.Raster;
 
-/* package */ enum BlackjackHelper {
+enum BlackjackHelper {
   ;
   // TODO SUBARE magnify irregular
   public static Tensor render(Blackjack blackjack, Policy policy) {

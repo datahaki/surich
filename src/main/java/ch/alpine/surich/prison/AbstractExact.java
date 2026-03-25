@@ -10,7 +10,7 @@ import ch.alpine.tensor.RealScalar;
 import ch.alpine.tensor.Scalar;
 import ch.alpine.tensor.Tensor;
 
-/* package */ abstract class AbstractExact {
+abstract class AbstractExact {
   private final Supplier<Agent> sup1;
   private final Supplier<Agent> sup2;
   private final List<Opening> list = new LinkedList<>();

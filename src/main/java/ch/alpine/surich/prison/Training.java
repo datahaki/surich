@@ -6,7 +6,7 @@ import ch.alpine.tensor.Tensor;
 import ch.alpine.tensor.Tensors;
 
 /** Julian's idea: Prisoners' Dilemma */
-/* package */ enum Training {
+enum Training {
   ;
   /** rewards average at 2 */
   static final Tensor R2 = Tensors.matrixInt(new int[][] { //

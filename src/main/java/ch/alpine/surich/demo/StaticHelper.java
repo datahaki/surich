@@ -18,7 +18,7 @@ import ch.alpine.subare.analysis.DiscreteModelErrorAnalysis;
 import ch.alpine.tensor.Tensor;
 import ch.alpine.tensor.ext.HomeDirectory;
 
-/* package */ enum StaticHelper {
+enum StaticHelper {
   ;
   private static final int WIDTH = 1280;
   private static final int HEIGHT = 720;

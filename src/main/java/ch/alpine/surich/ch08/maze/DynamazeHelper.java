@@ -41,7 +41,7 @@ public enum DynamazeHelper {
     return new Dynamaze(image.unmodifiable());
   }
 
-  /* package */ static Tensor load(String name) {
+  static Tensor load(String name) {
     Path path = Unprotect.resourcePath("ch/alpine/subare/ch08/" + name + ".png");
     try {
       return Import.of(path);

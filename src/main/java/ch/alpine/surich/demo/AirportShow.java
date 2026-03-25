@@ -30,7 +30,7 @@ import ch.alpine.tensor.qty.Timing;
 import ch.alpine.tensor.sca.Chop;
 
 /** uses TrueOnlineSarsa */
-/* package */ enum AirportShow {
+enum AirportShow {
   ;
   static void main() {
     Tensor XYmc = Tensors.empty();

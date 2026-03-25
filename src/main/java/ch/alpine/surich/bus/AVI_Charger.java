@@ -10,7 +10,7 @@ import ch.alpine.tensor.ext.HomeDirectory;
 import ch.alpine.tensor.io.Export;
 import ch.alpine.tensor.sca.Chop;
 
-/* package */ enum AVI_Charger {
+enum AVI_Charger {
   ;
   static void main() throws IOException {
     TripProfile tripProfile = new ConstantDrawTrip(24, 3);

@@ -10,7 +10,7 @@ import ch.alpine.subare.val.DiscreteVs;
 import ch.alpine.tensor.RealScalar;
 import ch.alpine.tensor.sca.Round;
 
-/* package */ enum Sarsa_Bandits {
+enum Sarsa_Bandits {
   ;
   static void main() {
     BanditsModel banditsModel = new BanditsModel(10);

@@ -15,7 +15,7 @@ import ch.alpine.tensor.Tensor;
 import ch.alpine.tensor.sca.Chop;
 import ch.alpine.tensor.sca.Round;
 
-/* package */ enum GamblerHelper {
+enum GamblerHelper {
   ;
   static DiscreteQsa getOptimalQsa(GamblerModel gamblerModel) {
     return ActionValueIteration.solve(gamblerModel, Chop._04);

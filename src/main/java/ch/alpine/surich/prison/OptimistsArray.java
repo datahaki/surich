@@ -22,7 +22,7 @@ import ch.alpine.tensor.img.ColorDataGradients;
 import ch.alpine.tensor.io.Export;
 import ch.alpine.tensor.sca.N;
 
-/* package */ class OptimistsArray {
+class OptimistsArray {
   private final List<List<AbstractExact>> array = new ArrayList<>();
 
   public OptimistsArray(Tensor init, Scalar alpha) {

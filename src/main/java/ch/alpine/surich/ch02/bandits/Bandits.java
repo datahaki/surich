@@ -18,7 +18,7 @@ import ch.alpine.tensor.sca.Clip;
 import ch.alpine.tensor.sca.Clips;
 
 /** implementation corresponds to Figure 2.1, p. 30 */
-/* package */ class Bandits {
+class Bandits {
   private static final TensorUnaryOperator NORMALIZE = Normalize.with(StandardDeviation::ofVector);
   private static final Distribution STANDARD = NormalDistribution.standard();
   // ---

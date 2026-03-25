@@ -11,7 +11,7 @@ import ch.alpine.tensor.RealScalar;
 import ch.alpine.tensor.Scalar;
 import ch.alpine.tensor.Tensor;
 
-/* package */ class CarRentalRaster implements StateRaster {
+class CarRentalRaster implements StateRaster {
   private final CarRental carRental;
 
   public CarRentalRaster(CarRental carRental) {
