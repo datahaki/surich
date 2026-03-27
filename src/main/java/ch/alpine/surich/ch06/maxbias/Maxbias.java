@@ -95,7 +95,7 @@ public class Maxbias implements StandardModel, MonteCarloInterface {
 
   @Override
   public Scalar transitionProbability(Tensor state, Tensor action, Tensor next) {
-    // TODO SUBARE this implementation does not make sense
+    // TODO SURICH this implementation does not make sense
     if (move(state, action).equals(next))
       return KroneckerDelta.of(move(state, action), next);
     throw new Throw(state, action, next);

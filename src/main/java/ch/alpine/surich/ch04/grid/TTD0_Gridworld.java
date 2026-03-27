@@ -38,7 +38,7 @@ import ch.alpine.tensor.sca.Round;
  * {3, 1} -19.68
  * {3, 2} -18.52
  * {3, 3} 0 */
-// TODO does not seem to converge to anything
+// TODO SURICH does not seem to converge to anything
 class TTD0_Gridworld implements ShowProvider {
   @Override
   public Show getShow() {

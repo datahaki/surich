@@ -47,7 +47,7 @@ class AVI_Windygrid implements ManipulateProvider {
       if (infoline.isLossfree())
         break;
     }
-    // TODO SUBARE extract code below to other file
+    // TODO SURICH extract code below to other file
     DiscreteVs vs = DiscreteUtils.createVs(windygrid, ref);
     DiscreteUtils.print(vs);
     Policy policy = PolicyType.GREEDY.bestEquiprobable(windygrid, ref, null);

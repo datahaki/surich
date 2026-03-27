@@ -16,7 +16,7 @@ import ch.alpine.subare.util.gfx.StateActionRasters;
 import ch.alpine.subare.val.DiscreteQsa;
 
 /** monte carlo is bad in this example, since the steep negative reward biases most episodes */
-// TODO SUBARE this does not really converge at all
+// TODO SURICH this does not really converge at all
 enum MCES_Cliffwalk {
   ;
   static void main() throws Exception {

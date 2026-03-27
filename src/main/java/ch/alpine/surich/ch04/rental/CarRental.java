@@ -114,7 +114,7 @@ public class CarRental implements StandardModel, SampleModel {
     Scalar n2out = null;
     boolean status = false;
     int attempts = 0;
-    // TODO SUBARE this is very inefficient for trajectory generation...
+    // TODO SURICH this is very inefficient for trajectory generation...
     while (!status) {
       if (200 < attempts) {
         System.out.println("warning: give up");

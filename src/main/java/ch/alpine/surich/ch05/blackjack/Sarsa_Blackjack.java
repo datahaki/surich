@@ -19,7 +19,7 @@ import ch.alpine.tensor.Tensor;
 import ch.alpine.tensor.alg.Subdivide;
 import ch.alpine.tensor.sca.Round;
 
-// TODO SUBARE this demo throws an exception
+// TODO SURICH this demo throws an exception
 enum Sarsa_Blackjack {
   ;
   static void handle(SarsaType sarsaType) throws Exception {

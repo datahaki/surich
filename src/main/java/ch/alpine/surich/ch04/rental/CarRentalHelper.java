@@ -22,7 +22,7 @@ import ch.alpine.tensor.img.Raster;
 enum CarRentalHelper {
   ;
   public static Tensor render(CarRental carRental, DiscreteVs vs) {
-    // TODO SUBARE use createRaster
+    // TODO SURICH use createRaster
     final Tensor tensor = Array.of(_ -> DoubleScalar.INDETERMINATE, 21, 21);
     DiscreteVs scaled = vs.create(Rescale.of(vs.values()).stream());
     for (Tensor state : carRental.states()) {

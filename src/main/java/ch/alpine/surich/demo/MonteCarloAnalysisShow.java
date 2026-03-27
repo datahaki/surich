@@ -63,7 +63,7 @@ enum MonteCarloAnalysisShow {
     MonteCarloInterface monteCarloInterface = MonteCarloExamples.AIRPORT.get();
     // ---
     List<MonteCarloAlgorithms> list = new ArrayList<>();
-    // FIXME SOPHIS
+    // FIXME SURICH
     // list.add(MonteCarloAlgorithms.MONTE_CARLO);
     // list.add(MonteCarloAlgorithms.ORIGINAL_SARSA);
     // list.add(MonteCarloAlgorithms.ORIGINAL_TRUE_ONLINE_SARSA);

@@ -12,7 +12,7 @@ import ch.alpine.tensor.Rational;
 import ch.alpine.tensor.sca.Chop;
 import ch.alpine.tensor.sca.Round;
 
-// TODO SUBARE check again
+// TODO SURICH check again
 class IPE_InfiniteVariance implements ShowProvider {
   @Override
   public Show getShow() {

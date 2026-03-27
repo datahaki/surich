@@ -23,9 +23,7 @@ public enum DynamazeHelper {
     return fromImage(load(name));
   }
 
-  /** TODO the parameter start does not seem to change anything
-   * 
-   * @param limit
+  /** @param limit
    * @return */
   public static Dynamaze create5(int limit) {
     Tensor image = load("maze5");

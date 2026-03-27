@@ -55,11 +55,11 @@ class Fishfarm extends DeterministicStandardModel implements MonteCarloInterface
   public Tensor move(Tensor state, Tensor action) {
     if (isTerminal(state))
       return state;
-    // TODO SUBARE can make probabilistic: binomial
+    // TODO SURICH can make probabilistic: binomial
     Scalar time = state.Get(0).add(RealScalar.ONE);
     Scalar fish = state.Get(1).subtract(action); // after fishing
     fish = fish.add(growth(fish));
-    fish = clip.apply(fish); // TODO SUBARE this should not be necessary
+    fish = clip.apply(fish); // TODO SURICH this should not be necessary
     return Tensors.of(time, fish);
   }
 

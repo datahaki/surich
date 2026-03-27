@@ -48,7 +48,7 @@ public class LearningCompetition {
 
   private int RESX = 0;
 
-  // TODO this should be shown in plots!?
+  // TODO SURICH this should be shown in plots!?
   public ImageIcon doit() {
     RESX = map.keySet().stream().mapToInt(point -> point.x()).reduce(Math::max).orElseThrow() + 1;
     int RESY = map.keySet().stream().mapToInt(point -> point.y()).reduce(Math::max).orElseThrow() + 1;

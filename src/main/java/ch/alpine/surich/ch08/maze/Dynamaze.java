@@ -70,7 +70,8 @@ class Dynamaze extends DeterministicStandardModel implements MonteCarloInterface
 
   @Override
   public Scalar gamma() {
-    return RealScalar.of(0.95); // TODO SUBARE check how this behaves with 19/20
+    // TODO SURICH check how this behaves with 19/20
+    return RealScalar.of(0.95);
   }
 
   // ---

@@ -68,7 +68,7 @@ class SurichExperimentalTest {
   @ParameterizedTest
   @MethodSource("monteCarlos")
   void testFirstVisit(MonteCarloInterface discreteModel) {
-    // TODO create random policy
+    // TODO SURICH create random policy
     // Policy policy = PolicyType.GREEDY.bestEquiprobable(discreteModel, ref, null);
     FirstVisitPolicyEvaluation fvpe = new FirstVisitPolicyEvaluation( //
         discreteModel, null);

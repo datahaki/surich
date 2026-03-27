@@ -36,7 +36,7 @@ enum AVI_Dynamaze {
         break;
     }
     // gsw.append(ImageFormat.of(DynamazeHelper.render(dynamaze, avi.qsa(), ref)));
-    // TODO SUBARE extract code below to other file
+    // TODO SURICH extract code below to other file
     DiscreteVs vs = DiscreteUtils.createVs(dynamaze, ref);
     DiscreteUtils.print(vs);
     Policy policy = PolicyType.GREEDY.bestEquiprobable(dynamaze, ref, null);

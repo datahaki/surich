@@ -26,7 +26,7 @@ enum GamblerHelper {
   }
 
   public static Policy getOptimalPolicy(GamblerModel gamblerModel) {
-    // TODO SUBARE test for equality of policies from qsa and vs
+    // TODO SURICH test for equality of policies from qsa and vs
     ValueIteration vi = new ValueIteration(gamblerModel);
     vi.untilBelow(Chop._10);
     return PolicyType.GREEDY.bestEquiprobable(gamblerModel, vi.vs(), null);

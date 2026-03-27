@@ -45,7 +45,7 @@ class Bulk_Wireloop implements ManipulateProvider {
     LearningCompetition learningCompetition = new LearningCompetition( //
         ref, epsilon, errorcap, losscap);
     learningCompetition.nstep = 1;
-    // TODO resolution is low: 5 x 5
+    // TODO SURICH resolution is low: 5 x 5
     for (Tensor factor : Subdivide.of(.1, 10, 5)) { // .5 16
       int y = 0;
       for (Tensor exponent : Subdivide.of(.51, 1.5, 5)) { // .51 2

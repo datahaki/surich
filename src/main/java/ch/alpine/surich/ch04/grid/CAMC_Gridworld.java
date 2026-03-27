@@ -18,7 +18,8 @@ import ch.alpine.subare.util.gfx.StateRasters;
 import ch.alpine.subare.val.DiscreteValueFunctions;
 
 @ReflectionMarker
-class CAMC_Gridworld implements ManipulateProvider { // TODO SUBARE work in progress?
+class CAMC_Gridworld implements ManipulateProvider {
+  // TODO SURICH work in progress?
   @Override
   public Container getContainer() {
     Ch04Gridworld gridworld = new Ch04Gridworld();

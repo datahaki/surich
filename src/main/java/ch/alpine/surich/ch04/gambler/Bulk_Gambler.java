@@ -42,7 +42,7 @@ class Bulk_Gambler implements ManipulateProvider {
     String name = "gambler_Q_" + sarsaType.name() + "_E" + epsilon.Get(0) + "_N" + nstep;
     LearningCompetition learningCompetition = new LearningCompetition(ref, epsilon, errorcap, losscap);
     learningCompetition.nstep = nstep;
-    // TODO this should be shown in plots!
+    // TODO SURICH this should be shown in plots!
     for (Tensor factor : Subdivide.of(.1, 10, 8)) { // .5 16
       int y = 0;
       for (Tensor exponent : Subdivide.of(.51, 1.3, 8)) { // .51 2

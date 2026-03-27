@@ -20,7 +20,7 @@ import ch.alpine.tensor.img.Raster;
 
 enum BlackjackHelper {
   ;
-  // TODO SUBARE magnify irregular
+  // TODO SURICH magnify irregular
   public static Tensor render(Blackjack blackjack, Policy policy) {
     BlackjackRaster blackjackRaster = new BlackjackRaster(blackjack);
     Dimension dimension = blackjackRaster.dimensionStateRaster();

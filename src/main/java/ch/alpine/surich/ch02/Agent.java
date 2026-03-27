@@ -91,7 +91,7 @@ public abstract class Agent {
   }
 
   public final void setOpeningSequence(Integer... actions) {
-    // TODO SUBARE set != addAll !?
+    // TODO SURICH set != addAll !?
     openingSequence.addAll(List.of(actions));
   }
 }
