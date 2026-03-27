@@ -8,7 +8,7 @@ import ch.alpine.bridge.pro.RunLaunchPad;
 /** entry point to launch miniatures */
 enum LocalLaunchPad {
   ;
-  static void main() {
+  static void main() throws Exception {
     if (!FileBlock.of(ResourceLocator.of(LocalLaunchPad.class).resolve("")))
       RunLaunchPad.create(LocalLaunchPad.class.getPackageName()).runStandalone();
   }
