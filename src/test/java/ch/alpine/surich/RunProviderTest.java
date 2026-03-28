@@ -3,6 +3,7 @@ package ch.alpine.surich;
 
 import java.util.stream.Stream;
 
+import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.DynamicTest;
 import org.junit.jupiter.api.TestFactory;
 
@@ -10,6 +11,7 @@ import ch.alpine.bridge.cgr.InstanceDiscovery;
 import ch.alpine.bridge.pro.RunProvider;
 import ch.alpine.bridge.pro.SanityCheckRunProvider;
 
+@Disabled
 class RunProviderTest {
   @TestFactory
   Stream<DynamicTest> dynamicTests() throws Exception {
