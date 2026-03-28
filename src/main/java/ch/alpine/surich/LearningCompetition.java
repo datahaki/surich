@@ -7,7 +7,7 @@ import java.util.Map;
 
 import javax.swing.ImageIcon;
 
-import ch.alpine.bridge.io.ImageIconRecorder;
+import ch.alpine.bridge.io.ani.ImageIconRecorder;
 import ch.alpine.subare.rate.ConstantExplorationRate;
 import ch.alpine.subare.rate.ExplorationRate;
 import ch.alpine.subare.util.Infoline;

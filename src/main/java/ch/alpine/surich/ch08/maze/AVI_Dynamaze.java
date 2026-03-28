@@ -5,7 +5,7 @@ package ch.alpine.surich.ch08.maze;
 import java.time.Duration;
 
 import ch.alpine.bridge.awt.AwtUtil;
-import ch.alpine.bridge.io.ImageIconRecorder;
+import ch.alpine.bridge.io.ani.ImageIconRecorder;
 import ch.alpine.subare.alg.ActionValueIteration;
 import ch.alpine.subare.pol.Policies;
 import ch.alpine.subare.pol.Policy;

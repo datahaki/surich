@@ -9,7 +9,7 @@ import ch.alpine.bridge.awt.ColumnPanel;
 import ch.alpine.bridge.fig.Show;
 import ch.alpine.bridge.fig.ShowGridComponent;
 import ch.alpine.bridge.fig.plt.ListLinePlot;
-import ch.alpine.bridge.io.ImageIconRecorder;
+import ch.alpine.bridge.io.ani.ImageIconRecorder;
 import ch.alpine.bridge.pro.ManipulateProvider;
 import ch.alpine.bridge.ref.ann.ReflectionMarker;
 import ch.alpine.subare.pol.PolicyBase;

@@ -4,7 +4,7 @@ package ch.alpine.surich.ch06.cliff;
 import java.time.Duration;
 
 import ch.alpine.bridge.awt.AwtUtil;
-import ch.alpine.bridge.io.ImageIconRecorder;
+import ch.alpine.bridge.io.ani.ImageIconRecorder;
 import ch.alpine.subare.alg.Random1StepTabularQPlanning;
 import ch.alpine.subare.rate.ConstantLearningRate;
 import ch.alpine.subare.util.DiscreteUtils;

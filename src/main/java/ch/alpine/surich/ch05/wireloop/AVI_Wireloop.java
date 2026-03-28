@@ -4,7 +4,7 @@ package ch.alpine.surich.ch05.wireloop;
 import java.time.Duration;
 
 import ch.alpine.bridge.awt.AwtUtil;
-import ch.alpine.bridge.io.ImageIconRecorder;
+import ch.alpine.bridge.io.ani.ImageIconRecorder;
 import ch.alpine.subare.alg.ActionValueIteration;
 import ch.alpine.subare.util.Infoline;
 import ch.alpine.subare.val.DiscreteQsa;
