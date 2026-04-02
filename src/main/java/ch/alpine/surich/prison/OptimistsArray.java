@@ -17,8 +17,8 @@ import ch.alpine.tensor.Tensor;
 import ch.alpine.tensor.alg.ConstantArray;
 import ch.alpine.tensor.alg.Join;
 import ch.alpine.tensor.alg.Subdivide;
+import ch.alpine.tensor.col.ColorDataGradients;
 import ch.alpine.tensor.ext.HomeDirectory;
-import ch.alpine.tensor.img.ColorDataGradients;
 import ch.alpine.tensor.io.Export;
 import ch.alpine.tensor.sca.N;
 

@@ -15,7 +15,7 @@ import ch.alpine.subare.val.DiscreteVs;
 import ch.alpine.tensor.Rational;
 import ch.alpine.tensor.Scalar;
 import ch.alpine.tensor.Tensor;
-import ch.alpine.tensor.img.ColorDataGradients;
+import ch.alpine.tensor.col.ColorDataGradients;
 
 /** action value iteration for gambler's dilemma
  * 
