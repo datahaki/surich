@@ -20,8 +20,8 @@ import ch.alpine.subare.util.DiscreteUtils;
 import ch.alpine.subare.util.ExploringStarts;
 import ch.alpine.subare.util.Infoline;
 import ch.alpine.subare.util.LinearExplorationRate;
-import ch.alpine.subare.util.gfx.StateRasters;
 import ch.alpine.subare.val.DiscreteQsa;
+import ch.alpine.surich.util.gfx.StateRasters;
 import ch.alpine.tensor.DoubleScalar;
 import ch.alpine.tensor.sca.Round;
 

@@ -7,8 +7,8 @@ import java.util.Objects;
 
 import ch.alpine.subare.pol.Policy;
 import ch.alpine.subare.pol.PolicyType;
-import ch.alpine.subare.util.gfx.StateRasters;
 import ch.alpine.subare.val.DiscreteQsa;
+import ch.alpine.surich.util.gfx.StateRasters;
 import ch.alpine.tensor.DoubleScalar;
 import ch.alpine.tensor.RealScalar;
 import ch.alpine.tensor.Tensor;

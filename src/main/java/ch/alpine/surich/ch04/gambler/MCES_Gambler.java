@@ -16,9 +16,9 @@ import ch.alpine.subare.util.DiscreteStateActionCounter;
 import ch.alpine.subare.util.DiscreteUtils;
 import ch.alpine.subare.util.ExploringStarts;
 import ch.alpine.subare.util.Infoline;
-import ch.alpine.subare.util.gfx.StateActionRasters;
 import ch.alpine.subare.val.DiscreteQsa;
 import ch.alpine.subare.val.DiscreteVs;
+import ch.alpine.surich.util.gfx.StateActionRasters;
 import ch.alpine.tensor.Tensor;
 import ch.alpine.tensor.sca.Round;
 

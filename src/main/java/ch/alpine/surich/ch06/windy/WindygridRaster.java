@@ -5,8 +5,8 @@ import java.awt.Dimension;
 
 import ch.alpine.subare.math.Index;
 import ch.alpine.subare.mod.DiscreteModel;
-import ch.alpine.subare.util.gfx.IntPoint;
-import ch.alpine.subare.util.gfx.StateActionRaster;
+import ch.alpine.surich.util.gfx.IntPoint;
+import ch.alpine.surich.util.gfx.StateActionRaster;
 import ch.alpine.tensor.RealScalar;
 import ch.alpine.tensor.Scalar;
 import ch.alpine.tensor.Scalars;

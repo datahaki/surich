@@ -17,9 +17,9 @@ import ch.alpine.subare.util.ActionValueStatistics;
 import ch.alpine.subare.util.DiscreteStateActionCounter;
 import ch.alpine.subare.util.Infoline;
 import ch.alpine.subare.util.TabularSteps;
-import ch.alpine.subare.util.gfx.StateActionRasters;
 import ch.alpine.subare.val.DiscreteQsa;
 import ch.alpine.subare.val.DiscreteValueFunctions;
+import ch.alpine.surich.util.gfx.StateActionRasters;
 import ch.alpine.tensor.Rational;
 
 // R1STQP algorithm is not suited for gambler's dilemma

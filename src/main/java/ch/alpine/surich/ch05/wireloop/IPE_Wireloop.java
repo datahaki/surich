@@ -11,7 +11,7 @@ import ch.alpine.bridge.ref.ann.ReflectionMarker;
 import ch.alpine.subare.alg.IterativePolicyEvaluation;
 import ch.alpine.subare.pol.EquiprobablePolicy;
 import ch.alpine.subare.pol.Policy;
-import ch.alpine.subare.util.gfx.StateRasters;
+import ch.alpine.surich.util.gfx.StateRasters;
 
 @ReflectionMarker
 class IPE_Wireloop implements ManipulateProvider {

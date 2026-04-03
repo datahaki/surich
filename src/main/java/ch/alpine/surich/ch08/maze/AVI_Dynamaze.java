@@ -12,9 +12,9 @@ import ch.alpine.subare.pol.Policy;
 import ch.alpine.subare.pol.PolicyType;
 import ch.alpine.subare.util.DiscreteUtils;
 import ch.alpine.subare.util.Infoline;
-import ch.alpine.subare.util.gfx.StateRasters;
 import ch.alpine.subare.val.DiscreteQsa;
 import ch.alpine.subare.val.DiscreteVs;
+import ch.alpine.surich.util.gfx.StateRasters;
 
 /** action value iteration for cliff walk */
 enum AVI_Dynamaze {

@@ -12,10 +12,10 @@ import ch.alpine.subare.pol.Policy;
 import ch.alpine.subare.pol.PolicyType;
 import ch.alpine.subare.util.DiscreteUtils;
 import ch.alpine.subare.util.Infoline;
-import ch.alpine.subare.util.gfx.StateActionRasters;
 import ch.alpine.subare.val.DiscreteQsa;
 import ch.alpine.subare.val.DiscreteValueFunctions;
 import ch.alpine.subare.val.DiscreteVs;
+import ch.alpine.surich.util.gfx.StateActionRasters;
 import ch.alpine.tensor.ext.HomeDirectory;
 import ch.alpine.tensor.io.Export;
 

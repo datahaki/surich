@@ -10,8 +10,8 @@ import ch.alpine.bridge.io.ani.ImageIconRecorder;
 import ch.alpine.bridge.pro.ManipulateProvider;
 import ch.alpine.bridge.ref.ann.ReflectionMarker;
 import ch.alpine.subare.alg.ActionValueIteration;
-import ch.alpine.subare.util.gfx.StateActionRasters;
 import ch.alpine.subare.val.DiscreteValueFunctions;
+import ch.alpine.surich.util.gfx.StateActionRasters;
 
 /** solving grid world
  * gives the value function for the optimal policy equivalent to

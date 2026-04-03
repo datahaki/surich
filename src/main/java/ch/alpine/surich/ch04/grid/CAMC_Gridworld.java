@@ -14,8 +14,8 @@ import ch.alpine.subare.pol.EquiprobablePolicy;
 import ch.alpine.subare.pol.Policy;
 import ch.alpine.subare.rate.DefaultLearningRate;
 import ch.alpine.subare.util.ExploringStarts;
-import ch.alpine.subare.util.gfx.StateRasters;
 import ch.alpine.subare.val.DiscreteValueFunctions;
+import ch.alpine.surich.util.gfx.StateRasters;
 
 @ReflectionMarker
 class CAMC_Gridworld implements ManipulateProvider {

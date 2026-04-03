@@ -17,8 +17,8 @@ import ch.alpine.subare.util.DequeExploringStarts;
 import ch.alpine.subare.util.DiscreteStateActionCounter;
 import ch.alpine.subare.util.Infoline;
 import ch.alpine.subare.util.LinearExplorationRate;
-import ch.alpine.subare.util.gfx.StateActionRasters;
 import ch.alpine.subare.val.DiscreteQsa;
+import ch.alpine.surich.util.gfx.StateActionRasters;
 
 /** 1, or N-step Original/Expected Sarsa, and QLearning for gridworld
  * 

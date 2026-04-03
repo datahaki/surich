@@ -10,8 +10,8 @@ import ch.alpine.bridge.pro.ManipulateProvider;
 import ch.alpine.bridge.ref.ann.ReflectionMarker;
 import ch.alpine.subare.alg.ActionValueIteration;
 import ch.alpine.subare.util.Infoline;
-import ch.alpine.subare.util.gfx.StateActionRasters;
 import ch.alpine.subare.val.DiscreteQsa;
+import ch.alpine.surich.util.gfx.StateActionRasters;
 
 /** action value iteration for gambler's dilemma
  * 
