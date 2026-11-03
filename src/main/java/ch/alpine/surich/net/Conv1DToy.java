@@ -8,7 +8,7 @@ import ch.alpine.tensor.mat.Tolerance;
 import ch.alpine.tensor.pdf.RandomVariate;
 import ch.alpine.tensor.pdf.c.NormalDistribution;
 
-public class Conv1DToy {
+class Conv1DToy {
   private final Conv1DLayer conv1dLayer = new Conv1DLayer();
 
   public Conv1DToy(int kernelSize) {

@@ -3,6 +3,7 @@ package ch.alpine.surich.net;
 
 import java.awt.Container;
 import java.util.function.Consumer;
+import java.util.stream.Stream;
 
 import ch.alpine.bridge.fig.Show;
 import ch.alpine.bridge.fig.ShowGridComponent;
@@ -18,7 +19,6 @@ import ch.alpine.tensor.Scalar;
 import ch.alpine.tensor.Scalars;
 import ch.alpine.tensor.Tensor;
 import ch.alpine.tensor.Tensors;
-import ch.alpine.tensor.alg.Join;
 import ch.alpine.tensor.alg.Subdivide;
 import ch.alpine.tensor.api.ScalarUnaryOperator;
 import ch.alpine.tensor.io.TableBuilder;
@@ -67,7 +67,7 @@ class CubicNetwork implements ManipulateProvider {
         netChain.back(d);
         netChain.update();
         if (epoch % SKIP == 0)
-          consumer.accept(Join.of(Tensors.of(RealScalar.of(epoch)), netChain.parameters()));
+          consumer.accept(Tensor.of(Stream.concat(Stream.of(RealScalar.of(epoch)), netChain.parameters())));
         ++epoch;
       }
     }
