@@ -1,15 +1,16 @@
+// code by jph
 package ch.alpine.surich.net;
 
 import java.awt.Container;
+import java.util.concurrent.ThreadLocalRandom;
 
 import ch.alpine.bridge.fig.Show;
 import ch.alpine.bridge.fig.ShowGridComponent;
 import ch.alpine.bridge.fig.plt.ListLinePlot;
 import ch.alpine.bridge.pro.ManipulateProvider;
 import ch.alpine.bridge.ref.ann.ReflectionMarker;
-import ch.alpine.subare.net.LinearLayer;
-import ch.alpine.subare.net.NetChain;
 import ch.alpine.subare.net.NetChains;
+import ch.alpine.subare.net.NetLayer;
 import ch.alpine.subare.net.NetTrain;
 import ch.alpine.tensor.RealScalar;
 import ch.alpine.tensor.Scalar;
@@ -34,18 +35,16 @@ class FeedForwardDemo implements ManipulateProvider {
     Distribution distribution = NormalDistribution.standard();
     TensorUnaryOperator tuo;
     {
-      LinearLayer linearLayer = new LinearLayer();
-      linearLayer.W = RandomVariate.of(distribution, d_out, d_in);
-      linearLayer.b = RandomVariate.of(distribution, d_out);
-      NetChain netChain = NetChains.feedForward(d_in, hidden, d_out);
-      // netChain.initialize();
-      tuo = netChain::forward;
+      NetLayer netLayer = NetChains.feedForward(d_in, hidden, d_out);
+      netLayer.initialize(ThreadLocalRandom.current());
+      tuo = netLayer::forward;
     }
     Tensor xdata = RandomVariate.of(distribution, samples, d_in);
     Tensor ydata = tuo.slash(xdata);
     // ---
-    NetChain netChain = NetChains.feedForward(d_in, hidden, d_out);
-    NetTrain netTrain = new NetTrain(netChain, xdata, ydata);
+    NetLayer netLayer = NetChains.feedForward(d_in, hidden, d_out);
+    netLayer.initialize(ThreadLocalRandom.current());
+    NetTrain netTrain = new NetTrain(netLayer, xdata, ydata);
     netTrain.run(learningRate, Quantity.of(1, "s"), 100, 1);
     Show show0 = new Show();
     {

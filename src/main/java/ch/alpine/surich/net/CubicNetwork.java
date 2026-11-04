@@ -2,6 +2,7 @@
 package ch.alpine.surich.net;
 
 import java.awt.Container;
+import java.util.concurrent.ThreadLocalRandom;
 import java.util.function.Consumer;
 import java.util.stream.Stream;
 
@@ -12,8 +13,8 @@ import ch.alpine.bridge.fig.plt.Plot;
 import ch.alpine.bridge.pro.ManipulateProvider;
 import ch.alpine.bridge.ref.ann.FieldSelectionArray;
 import ch.alpine.bridge.ref.ann.ReflectionMarker;
-import ch.alpine.subare.net.NetChain;
 import ch.alpine.subare.net.NetChains;
+import ch.alpine.subare.net.NetLayer;
 import ch.alpine.tensor.RealScalar;
 import ch.alpine.tensor.Scalar;
 import ch.alpine.tensor.Scalars;
@@ -47,27 +48,28 @@ class CubicNetwork implements ManipulateProvider {
   public class Network {
     private static final int SKIP = 10;
     private final ScalarUnaryOperator power = s -> Power.function(3).apply(s.multiply(scale));
-    private final NetChain netChain = NetChains.linTanhLin(1, hiddenSize, 1);
+    private final NetLayer netLayer = NetChains.linTanhLin(1, hiddenSize, 1);
     private final TableBuilder tableBuilder = new TableBuilder();
 
     void train() {
-      netChain.setL2(l2);
+      netLayer.initialize(ThreadLocalRandom.current());
+      // netChain.setL2(l2);
       Consumer<Tensor> consumer = tableBuilder::appendRow;
       int epoch = 0;
       Timing timing = Timing.started();
       Distribution distribution = ArcSinDistribution.INSTANCE;
       while (Scalars.lessThan(timing.seconds(), timeout) && epoch < maxEpoch) {
         Tensor x = Tensors.of(RandomVariate.of(distribution));
-        Tensor y = netChain.forward(x);
+        Tensor y = netLayer.forward(x);
         //
         Tensor diff = x.maps(power).subtract(y).multiply(learningRate);
         // Tensor loss = Entrywise.mul().apply(diff, diff);
         Tensor d = diff.add(diff);
         //
-        netChain.back(d);
-        netChain.update();
+        netLayer.back(d);
+        netLayer.update();
         if (epoch % SKIP == 0)
-          consumer.accept(Tensor.of(Stream.concat(Stream.of(RealScalar.of(epoch)), netChain.parameters())));
+          consumer.accept(Tensor.of(Stream.concat(Stream.of(RealScalar.of(epoch)), netLayer.parameters())));
         ++epoch;
       }
     }
@@ -75,7 +77,7 @@ class CubicNetwork implements ManipulateProvider {
     Scalar evaluate() {
       Tensor errors = Tensors.empty();
       for (Tensor x : Subdivide.increasing(CLIP, 20).maps(Tensors::of)) {
-        Tensor y = netChain.forward(x);
+        Tensor y = netLayer.forward(x);
         Tensor t = x.maps(power);
         Tensor e = t.subtract(y).Get(0);
         errors.append(e);
@@ -99,7 +101,7 @@ class CubicNetwork implements ManipulateProvider {
     Show show2 = new Show();
     show2.setShowLabel("Infty error: " + error.maps(Round._3));
     show2.add(Plot.of(network.power, CLIP)).setLabel("cubic");
-    show2.add(Plot.of(x -> network.netChain.forward(Tensors.of(x)).Get(0), CLIP)).setLabel("network");
+    show2.add(Plot.of(x -> network.netLayer.forward(Tensors.of(x)).Get(0), CLIP)).setLabel("network");
     return ShowGridComponent.of(show1, show2);
   }
 

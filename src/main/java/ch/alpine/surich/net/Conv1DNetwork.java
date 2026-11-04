@@ -8,8 +8,8 @@ import ch.alpine.bridge.fig.ShowGridComponent;
 import ch.alpine.bridge.fig.plt.ListLinePlot;
 import ch.alpine.bridge.pro.ManipulateProvider;
 import ch.alpine.bridge.ref.ann.ReflectionMarker;
-import ch.alpine.subare.net.NetChain;
 import ch.alpine.subare.net.NetChains;
+import ch.alpine.subare.net.NetLayer;
 import ch.alpine.subare.net.NetTrain;
 import ch.alpine.tensor.RealScalar;
 import ch.alpine.tensor.Scalar;
@@ -39,7 +39,7 @@ class Conv1DNetwork implements ManipulateProvider {
 
   public class Network {
     private static final int SKIP = 2;
-    private final NetChain netChain = NetChains.cnnRelu(3);
+    private final NetLayer netChain = NetChains.cnnRelu(3);
     private final NetTrain netTrain;
     Scalar error;
 

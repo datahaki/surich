@@ -2,6 +2,7 @@
 package ch.alpine.surich.net;
 
 import java.awt.Container;
+import java.util.concurrent.ThreadLocalRandom;
 
 import ch.alpine.bridge.fig.Show;
 import ch.alpine.bridge.fig.ShowGridComponent;
@@ -9,8 +10,8 @@ import ch.alpine.bridge.fig.plt.ListLinePlot;
 import ch.alpine.bridge.pro.ManipulateProvider;
 import ch.alpine.bridge.ref.ann.FieldSelectionArray;
 import ch.alpine.bridge.ref.ann.ReflectionMarker;
-import ch.alpine.subare.net.NetChain;
 import ch.alpine.subare.net.NetChains;
+import ch.alpine.subare.net.NetLayer;
 import ch.alpine.subare.net.NetTrain;
 import ch.alpine.tensor.RealScalar;
 import ch.alpine.tensor.Scalar;
@@ -56,15 +57,15 @@ class XORNeuralNetwork implements ManipulateProvider {
 
   public class Network {
     private static final int SKIP = 10;
-    private final NetChain netChain = NetChains.binary(2, hiddenSize, 1);
+    private final NetLayer netLayer = NetChains.binary(2, hiddenSize, 1);
     private final NetTrain netTrain;
     Scalar error;
 
     /** @param Y
      * @return error */
     Network(Tensor Y) {
-      netChain.setL2(l2);
-      netTrain = new NetTrain(netChain, X, Y);
+      netLayer.initialize(ThreadLocalRandom.current());
+      netTrain = new NetTrain(netLayer, X, Y);
       netTrain.run(learningRate, timeout, maxEpoch, SKIP);
       // ---
       error = FrobeniusNorm.of(netTrain.error());
