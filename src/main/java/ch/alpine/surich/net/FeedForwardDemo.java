@@ -34,15 +34,12 @@ class FeedForwardDemo implements ManipulateProvider {
   public Container getContainer() {
     Distribution distribution = NormalDistribution.standard();
     TensorUnaryOperator tuo;
-    {
-      NetLayer netLayer = NetChains.feedForward(d_in, hidden, d_out);
-      netLayer.initialize(ThreadLocalRandom.current());
-      tuo = netLayer::forward;
-    }
+    NetLayer netLayer = NetChains.feedForward(d_in, hidden, d_out);
+    netLayer.initialize(ThreadLocalRandom.current());
+    tuo = netLayer::forward;
     Tensor xdata = RandomVariate.of(distribution, samples, d_in);
     Tensor ydata = tuo.slash(xdata);
     // ---
-    NetLayer netLayer = NetChains.feedForward(d_in, hidden, d_out);
     netLayer.initialize(ThreadLocalRandom.current());
     NetTrain netTrain = new NetTrain(netLayer, xdata, ydata);
     netTrain.run(learningRate, Quantity.of(1, "s"), 100, 1);
