@@ -1,15 +1,19 @@
 // code by jph
 package ch.alpine.surich.net;
 
+import java.awt.BasicStroke;
 import java.awt.Container;
+import java.awt.Stroke;
 import java.util.concurrent.ThreadLocalRandom;
 
 import ch.alpine.bridge.fig.Show;
 import ch.alpine.bridge.fig.ShowGridComponent;
+import ch.alpine.bridge.fig.Showable;
 import ch.alpine.bridge.fig.plt.ListLinePlot;
 import ch.alpine.bridge.fig.plt.ListPlot;
 import ch.alpine.bridge.fig.plt.Plot;
 import ch.alpine.bridge.pro.ManipulateProvider;
+import ch.alpine.bridge.ref.ann.FieldFuse;
 import ch.alpine.bridge.ref.ann.ReflectionMarker;
 import ch.alpine.subare.net.NetChain;
 import ch.alpine.subare.net.NetChains;
@@ -35,10 +39,28 @@ import ch.alpine.tensor.sca.Clips;
 
 @ReflectionMarker
 class Interp1dDemo implements ManipulateProvider {
+  private static final Stroke STROKE = //
+      new BasicStroke(1.5f, BasicStroke.CAP_BUTT, BasicStroke.JOIN_BEVEL, 0, new float[] { 3 }, 0);
   public Integer hidden = 10;
   public Integer samples = 10;
   public Integer maxEpoch = 1000;
   public Scalar learningRate = RealScalar.of(0.1);
+  @FieldFuse
+  public transient Boolean retrain = false;
+  Tensor xdata;
+  Tensor ydata;
+
+  class NetLayerWrap {
+    final NetLayer netLayer;
+    final NetTrain netTrain;
+
+    public NetLayerWrap(NetLayer netLayer) {
+      this.netLayer = netLayer;
+      netLayer.initialize(ThreadLocalRandom.current());
+      netTrain = new NetTrain(netLayer, xdata, ydata);
+      netTrain.run(learningRate, Quantity.of(1, "s"), maxEpoch, 10);
+    }
+  }
 
   @Override
   public Container getContainer() {
@@ -46,29 +68,33 @@ class Interp1dDemo implements ManipulateProvider {
     Tensor disY = RandomVariate.of(NormalDistribution.standard(), samples);
     ScalarTensorFunction stf = BSplineFunctionString.of(3, disY);
     ScalarUnaryOperator lin = LinearInterpolation.of(Clips.positive(samples - 1));
-    Tensor xdata = RandomVariate.of(UniformDistribution.of(domain), samples);
+    xdata = RandomVariate.of(UniformDistribution.of(domain), samples);
     ScalarUnaryOperator suo = s -> (Scalar) stf.apply(lin.apply(domain.rescale(s)));
-    Tensor ydata = xdata.maps(suo);
+    ydata = xdata.maps(suo);
     // ---
-    NetLayer netLayer = NetChain.of( //
+    NetLayerWrap netLayerWrap0 = new NetLayerWrap(NetChain.of( //
         new ScalarILayer(), //
         NetChains.feedForward(1, hidden, 1), //
         new ScalarOLayer() //
-    );
-    netLayer.initialize(ThreadLocalRandom.current());
-    NetTrain netTrain = new NetTrain(netLayer, xdata, ydata);
-    netTrain.run(learningRate, Quantity.of(1, "s"), maxEpoch, 1);
+    ));
+    NetLayerWrap netLayerWrap1 = new NetLayerWrap(NetChain.of( //
+        new ScalarILayer(), //
+        NetChains.linTanhLin(1, hidden, 1), //
+        new ScalarOLayer() //
+    ));
     Show showF = new Show();
     {
       showF.setShowLabel("function");
-      showF.add(Plot.of(suo, domain));
-      showF.add(Plot.of(NetLayers.asSUO(netLayer), domain));
+      Showable showable = showF.add(Plot.of(suo, domain));
+      showable.setStroke(STROKE);
+      showF.add(Plot.of(NetLayers.asSUO(netLayerWrap0.netLayer), domain)).setLabel("gelu");
+      showF.add(Plot.of(NetLayers.asSUO(netLayerWrap1.netLayer), domain)).setLabel("tanh");
       showF.add(ListPlot.of(xdata, ydata));
     }
     Show show0 = new Show();
     {
       show0.setShowLabel("net param");
-      TableBuilder table = netTrain.tparam;
+      TableBuilder table = netLayerWrap0.netTrain.tparam;
       int n = table.getRow(0).length();
       for (int i = 1; i < n; ++i)
         show0.add(ListLinePlot.of(table.getColumns(0, i)));
@@ -76,7 +102,7 @@ class Interp1dDemo implements ManipulateProvider {
     Show show1 = new Show();
     {
       show1.setShowLabel("loss");
-      TableBuilder table = netTrain.tloss;
+      TableBuilder table = netLayerWrap0.netTrain.tloss;
       int n = table.getRow(0).length();
       for (int i = 1; i < n; ++i)
         show1.add(ListLinePlot.of(table.getColumns(0, i)));
@@ -86,5 +112,7 @@ class Interp1dDemo implements ManipulateProvider {
 
   static void main() {
     new Interp1dDemo().runStandalone();
+    // Path user_dir = Path.of(System.getProperty("user.dir"));
+    // IO.println(user_dir);
   }
 }
