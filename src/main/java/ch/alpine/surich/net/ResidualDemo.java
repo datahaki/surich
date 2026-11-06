@@ -9,6 +9,7 @@ import ch.alpine.bridge.fig.ShowGridComponent;
 import ch.alpine.bridge.fig.plt.ListLinePlot;
 import ch.alpine.bridge.pro.ManipulateProvider;
 import ch.alpine.bridge.ref.ann.ReflectionMarker;
+import ch.alpine.subare.net.ElementwiseLayer;
 import ch.alpine.subare.net.NetChain;
 import ch.alpine.subare.net.NetChains;
 import ch.alpine.subare.net.NetLayer;
@@ -35,7 +36,7 @@ class ResidualDemo implements ManipulateProvider {
   @Override
   public Container getContainer() {
     NetLayer netLayer = NetChain.of( //
-        new ResidualLayer(NetChains.feedForward(dinout, hidden, dinout)), //
+        new ResidualLayer(NetChains.sequence(() -> ElementwiseLayer.gelu(), dinout, hidden, dinout)), //
         new SoftArgMax());
     netLayer.initialize(ThreadLocalRandom.current());
     Tensor xdata = RandomVariate.of(NormalDistribution.standard(), samples, dinout);

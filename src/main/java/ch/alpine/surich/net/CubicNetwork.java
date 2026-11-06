@@ -13,6 +13,7 @@ import ch.alpine.bridge.fig.plt.Plot;
 import ch.alpine.bridge.pro.ManipulateProvider;
 import ch.alpine.bridge.ref.ann.FieldSelectionArray;
 import ch.alpine.bridge.ref.ann.ReflectionMarker;
+import ch.alpine.subare.net.ElementwiseLayer;
 import ch.alpine.subare.net.NetChains;
 import ch.alpine.subare.net.NetLayer;
 import ch.alpine.tensor.RealScalar;
@@ -48,7 +49,7 @@ class CubicNetwork implements ManipulateProvider {
   public class Network {
     private static final int SKIP = 10;
     private final ScalarUnaryOperator power = s -> Power.function(3).apply(s.multiply(scale));
-    private final NetLayer netLayer = NetChains.linTanhLin(1, hiddenSize, 1);
+    private final NetLayer netLayer = NetChains.sequence(() -> ElementwiseLayer.tanh(), 1, hiddenSize, 1);
     private final TableBuilder tableBuilder = new TableBuilder();
 
     void train() {

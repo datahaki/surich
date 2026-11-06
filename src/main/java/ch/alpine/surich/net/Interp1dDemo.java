@@ -15,6 +15,7 @@ import ch.alpine.bridge.fig.plt.Plot;
 import ch.alpine.bridge.pro.ManipulateProvider;
 import ch.alpine.bridge.ref.ann.FieldFuse;
 import ch.alpine.bridge.ref.ann.ReflectionMarker;
+import ch.alpine.subare.net.ElementwiseLayer;
 import ch.alpine.subare.net.NetChain;
 import ch.alpine.subare.net.NetChains;
 import ch.alpine.subare.net.NetLayer;
@@ -41,7 +42,7 @@ import ch.alpine.tensor.sca.Clips;
 class Interp1dDemo implements ManipulateProvider {
   private static final Stroke STROKE = //
       new BasicStroke(1.5f, BasicStroke.CAP_BUTT, BasicStroke.JOIN_BEVEL, 0, new float[] { 3 }, 0);
-  public Integer hidden = 10;
+  public Integer hidden = 16;
   public Integer samples = 10;
   public Integer maxEpoch = 1000;
   public Scalar learningRate = RealScalar.of(0.1);
@@ -74,12 +75,12 @@ class Interp1dDemo implements ManipulateProvider {
     // ---
     NetLayerWrap netLayerWrap0 = new NetLayerWrap(NetChain.of( //
         new ScalarILayer(), //
-        NetChains.feedForward(1, hidden, 1), //
+        NetChains.sequence(() -> ElementwiseLayer.gelu(), 1, hidden, hidden, hidden, 1), //
         new ScalarOLayer() //
     ));
     NetLayerWrap netLayerWrap1 = new NetLayerWrap(NetChain.of( //
         new ScalarILayer(), //
-        NetChains.linTanhLin(1, hidden, 1), //
+        NetChains.sequence(() -> ElementwiseLayer.tanh(), 1, hidden, hidden, hidden, 1), //
         new ScalarOLayer() //
     ));
     Show showF = new Show();

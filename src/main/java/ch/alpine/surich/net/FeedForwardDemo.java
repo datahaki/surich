@@ -9,6 +9,7 @@ import ch.alpine.bridge.fig.ShowGridComponent;
 import ch.alpine.bridge.fig.plt.ListLinePlot;
 import ch.alpine.bridge.pro.ManipulateProvider;
 import ch.alpine.bridge.ref.ann.ReflectionMarker;
+import ch.alpine.subare.net.ElementwiseLayer;
 import ch.alpine.subare.net.NetChains;
 import ch.alpine.subare.net.NetLayer;
 import ch.alpine.subare.net.NetTrain;
@@ -34,7 +35,7 @@ class FeedForwardDemo implements ManipulateProvider {
   public Container getContainer() {
     Distribution distribution = NormalDistribution.standard();
     TensorUnaryOperator tuo;
-    NetLayer netLayer = NetChains.feedForward(d_in, hidden, d_out);
+    NetLayer netLayer = NetChains.sequence(() -> ElementwiseLayer.gelu(), d_in, hidden, d_out);
     netLayer.initialize(ThreadLocalRandom.current());
     tuo = netLayer::forward;
     Tensor xdata = RandomVariate.of(distribution, samples, d_in);
