@@ -16,16 +16,14 @@ import ch.alpine.bridge.pro.ManipulateProvider;
 import ch.alpine.bridge.ref.ann.FieldFuse;
 import ch.alpine.bridge.ref.ann.ReflectionMarker;
 import ch.alpine.subare.net.ElementwiseLayer;
-import ch.alpine.subare.net.NetChain;
 import ch.alpine.subare.net.NetChains;
 import ch.alpine.subare.net.NetLayer;
 import ch.alpine.subare.net.NetLayers;
 import ch.alpine.subare.net.NetTrain;
-import ch.alpine.subare.net.ScalarILayer;
-import ch.alpine.subare.net.ScalarOLayer;
 import ch.alpine.tensor.RealScalar;
 import ch.alpine.tensor.Scalar;
 import ch.alpine.tensor.Tensor;
+import ch.alpine.tensor.alg.Join;
 import ch.alpine.tensor.api.ScalarTensorFunction;
 import ch.alpine.tensor.api.ScalarUnaryOperator;
 import ch.alpine.tensor.io.TableBuilder;
@@ -42,10 +40,13 @@ import ch.alpine.tensor.sca.Clips;
 class Interp1dDemo implements ManipulateProvider {
   private static final Stroke STROKE = //
       new BasicStroke(1.5f, BasicStroke.CAP_BUTT, BasicStroke.JOIN_BEVEL, 0, new float[] { 3 }, 0);
+  public Integer dom = 10;
+  public Integer samples = 25;
   public Integer hidden = 16;
-  public Integer samples = 10;
+  public Integer batch_size = 5;
   public Integer maxEpoch = 1000;
   public Scalar learningRate = RealScalar.of(0.1);
+  public Scalar timeout = Quantity.of(0.5, "s");
   @FieldFuse
   public transient Boolean retrain = false;
   Tensor xdata;
@@ -59,38 +60,32 @@ class Interp1dDemo implements ManipulateProvider {
       this.netLayer = netLayer;
       netLayer.initialize(ThreadLocalRandom.current());
       netTrain = new NetTrain(netLayer, xdata, ydata);
-      netTrain.run(learningRate, Quantity.of(1, "s"), maxEpoch, 10);
+      netTrain.runAsBatches(learningRate, batch_size, maxEpoch, timeout);
     }
   }
 
   @Override
   public Container getContainer() {
     Clip domain = Clips.absoluteOne();
-    Tensor disY = RandomVariate.of(NormalDistribution.standard(), samples);
+    Tensor disY = RandomVariate.of(NormalDistribution.standard(), dom);
     ScalarTensorFunction stf = BSplineFunctionString.of(3, disY);
-    ScalarUnaryOperator lin = LinearInterpolation.of(Clips.positive(samples - 1));
-    xdata = RandomVariate.of(UniformDistribution.of(domain), samples);
+    ScalarUnaryOperator lin = LinearInterpolation.of(Clips.positive(dom - 1));
+    xdata = RandomVariate.of(UniformDistribution.of(domain), samples, 1);
     ScalarUnaryOperator suo = s -> (Scalar) stf.apply(lin.apply(domain.rescale(s)));
     ydata = xdata.maps(suo);
     // ---
-    NetLayerWrap netLayerWrap0 = new NetLayerWrap(NetChain.of( //
-        new ScalarILayer(), //
-        NetChains.sequence(() -> ElementwiseLayer.gelu(), 1, hidden, hidden, hidden, 1), //
-        new ScalarOLayer() //
-    ));
-    NetLayerWrap netLayerWrap1 = new NetLayerWrap(NetChain.of( //
-        new ScalarILayer(), //
-        NetChains.sequence(() -> ElementwiseLayer.tanh(), 1, hidden, hidden, hidden, 1), //
-        new ScalarOLayer() //
-    ));
+    NetLayerWrap netLayerWrap0 = new NetLayerWrap(NetChains.sequence( //
+        () -> ElementwiseLayer.gelu(), 1, hidden, hidden, hidden, 1));
+    NetLayerWrap netLayerWrap1 = new NetLayerWrap(NetChains.sequence( //
+        () -> ElementwiseLayer.tanh(), 1, hidden, hidden, hidden, 1));
     Show showF = new Show();
     {
       showF.setShowLabel("function");
       Showable showable = showF.add(Plot.of(suo, domain));
       showable.setStroke(STROKE);
-      showF.add(Plot.of(NetLayers.asSUO(netLayerWrap0.netLayer), domain)).setLabel("gelu");
-      showF.add(Plot.of(NetLayers.asSUO(netLayerWrap1.netLayer), domain)).setLabel("tanh");
-      showF.add(ListPlot.of(xdata, ydata));
+      showF.add(Plot.of(NetLayers.asSUO11(netLayerWrap0.netLayer), domain)).setLabel("gelu");
+      showF.add(Plot.of(NetLayers.asSUO11(netLayerWrap1.netLayer), domain)).setLabel("tanh");
+      showF.add(ListPlot.of(Join.of(1, xdata, ydata)));
     }
     Show show0 = new Show();
     {
@@ -109,6 +104,7 @@ class Interp1dDemo implements ManipulateProvider {
         show1.add(ListLinePlot.of(table.getColumns(0, i)));
     }
     return ShowGridComponent.of(showF, show0, show1);
+    // return new JLabel();
   }
 
   static void main() {

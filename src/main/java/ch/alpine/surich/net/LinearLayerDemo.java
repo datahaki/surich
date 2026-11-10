@@ -35,14 +35,14 @@ class LinearLayerDemo implements ManipulateProvider {
     Distribution distribution = NormalDistribution.standard();
     TensorUnaryOperator tuo;
     {
-      NetLayer netLayer = NetChain.of(new LinearLayer(d_out, d_in));
+      NetLayer netLayer = NetChain.of(new LinearLayer(d_in, d_out));
       netLayer.initialize(ThreadLocalRandom.current());
       tuo = netLayer::forward;
     }
     Tensor xdata = RandomVariate.of(distribution, samples, d_in);
     Tensor ydata = tuo.slash(xdata);
     // ---
-    NetLayer netLayer = NetChain.of(new LinearLayer(d_out, d_in));
+    NetLayer netLayer = NetChain.of(new LinearLayer(d_in, d_out));
     netLayer.initialize(ThreadLocalRandom.current());
     NetTrain netTrain = new NetTrain(netLayer, xdata, ydata);
     netTrain.run(learningRate, Quantity.of(1, "s"), 100, 1);
