@@ -18,7 +18,6 @@ import ch.alpine.tensor.Scalar;
 import ch.alpine.tensor.Tensor;
 import ch.alpine.tensor.Tensors;
 import ch.alpine.tensor.io.TableBuilder;
-import ch.alpine.tensor.nrm.FrobeniusNorm;
 import ch.alpine.tensor.pdf.Distribution;
 import ch.alpine.tensor.pdf.c.UniformDistribution;
 import ch.alpine.tensor.qty.Quantity;
@@ -52,11 +51,11 @@ class XORNeuralNetwork implements ManipulateProvider {
   public Integer hiddenSize = 4;
   public Scalar l2 = RealScalar.of(0.00001);
   public Scalar learningRate = RealScalar.of(1.6);
+  public Integer batch_size = 1;
   public Integer maxEpoch = 8000;
   public Scalar timeout = Quantity.of(1, "s");
 
   public class Network {
-    private static final int SKIP = 10;
     private final NetLayer netLayer = NetChains.binary(2, hiddenSize, 1);
     private final NetTrain netTrain;
     Scalar error;
@@ -66,9 +65,7 @@ class XORNeuralNetwork implements ManipulateProvider {
     Network(Tensor Y) {
       netLayer.initialize(ThreadLocalRandom.current());
       netTrain = new NetTrain(netLayer, X, Y);
-      netTrain.run(learningRate, timeout, maxEpoch, SKIP);
-      // ---
-      error = FrobeniusNorm.of(netTrain.error());
+      netTrain.runAsBatches(learningRate, batch_size, maxEpoch, timeout);
     }
   }
 

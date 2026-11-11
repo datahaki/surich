@@ -40,23 +40,21 @@ import ch.alpine.tensor.sca.Clips;
 class Interp1dDemo implements ManipulateProvider {
   private static final Stroke STROKE = //
       new BasicStroke(1.5f, BasicStroke.CAP_BUTT, BasicStroke.JOIN_BEVEL, 0, new float[] { 3 }, 0);
-  public Integer dom = 10;
-  public Integer samples = 25;
-  public Integer hidden = 16;
-  public Integer batch_size = 5;
+  public Integer dom = 5;
+  public Integer samples = 30;
+  public Integer hidden = 7;
+  public Integer batch_size = 6;
+  public Scalar learningRate = RealScalar.of(0.2);
   public Integer maxEpoch = 1000;
-  public Scalar learningRate = RealScalar.of(0.1);
-  public Scalar timeout = Quantity.of(0.5, "s");
+  public Scalar timeout = Quantity.of(1, "s");
   @FieldFuse
   public transient Boolean retrain = false;
-  Tensor xdata;
-  Tensor ydata;
 
   class NetLayerWrap {
     final NetLayer netLayer;
     final NetTrain netTrain;
 
-    public NetLayerWrap(NetLayer netLayer) {
+    public NetLayerWrap(NetLayer netLayer, Tensor xdata, Tensor ydata) {
       this.netLayer = netLayer;
       netLayer.initialize(ThreadLocalRandom.current());
       netTrain = new NetTrain(netLayer, xdata, ydata);
@@ -70,18 +68,19 @@ class Interp1dDemo implements ManipulateProvider {
     Tensor disY = RandomVariate.of(NormalDistribution.standard(), dom);
     ScalarTensorFunction stf = BSplineFunctionString.of(3, disY);
     ScalarUnaryOperator lin = LinearInterpolation.of(Clips.positive(dom - 1));
-    xdata = RandomVariate.of(UniformDistribution.of(domain), samples, 1);
+    Tensor xdata = RandomVariate.of(UniformDistribution.of(domain), samples, 1);
     ScalarUnaryOperator suo = s -> (Scalar) stf.apply(lin.apply(domain.rescale(s)));
-    ydata = xdata.maps(suo);
+    Tensor ydata = xdata.maps(suo);
     // ---
     NetLayerWrap netLayerWrap0 = new NetLayerWrap(NetChains.sequence( //
-        () -> ElementwiseLayer.gelu(), 1, hidden, hidden, hidden, 1));
+        () -> ElementwiseLayer.gelu(), 1, hidden, hidden, hidden, 1), xdata, ydata);
     NetLayerWrap netLayerWrap1 = new NetLayerWrap(NetChains.sequence( //
-        () -> ElementwiseLayer.tanh(), 1, hidden, hidden, hidden, 1));
+        () -> ElementwiseLayer.tanh(), 1, hidden, hidden, hidden, 1), xdata, ydata);
     Show showF = new Show();
     {
       showF.setShowLabel("function");
       Showable showable = showF.add(Plot.of(suo, domain));
+      showable.setLabel("truth");
       showable.setStroke(STROKE);
       showF.add(Plot.of(NetLayers.asSUO11(netLayerWrap0.netLayer), domain)).setLabel("gelu");
       showF.add(Plot.of(NetLayers.asSUO11(netLayerWrap1.netLayer), domain)).setLabel("tanh");
@@ -98,18 +97,13 @@ class Interp1dDemo implements ManipulateProvider {
     Show show1 = new Show();
     {
       show1.setShowLabel("loss");
-      TableBuilder table = netLayerWrap0.netTrain.tloss;
-      int n = table.getRow(0).length();
-      for (int i = 1; i < n; ++i)
-        show1.add(ListLinePlot.of(table.getColumns(0, i)));
+      show1.add(ListLinePlot.of(netLayerWrap0.netTrain.tloss.getTable())).setLabel("gelu");
+      show1.add(ListLinePlot.of(netLayerWrap1.netTrain.tloss.getTable())).setLabel("tanh");
     }
     return ShowGridComponent.of(showF, show0, show1);
-    // return new JLabel();
   }
 
   static void main() {
     new Interp1dDemo().runStandalone();
-    // Path user_dir = Path.of(System.getProperty("user.dir"));
-    // IO.println(user_dir);
   }
 }

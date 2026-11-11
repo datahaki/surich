@@ -63,12 +63,12 @@ class CubicNetwork implements ManipulateProvider {
         Tensor x = Tensors.of(RandomVariate.of(distribution));
         Tensor y = netLayer.forward(x);
         //
-        Tensor diff = x.maps(power).subtract(y).multiply(learningRate);
+        Tensor diff = x.maps(power).subtract(y);
         // Tensor loss = Entrywise.mul().apply(diff, diff);
         Tensor d = diff.add(diff);
         //
         netLayer.back(d);
-        netLayer.update();
+        netLayer.update(learningRate);
         if (epoch % SKIP == 0)
           consumer.accept(Tensor.of(Stream.concat(Stream.of(RealScalar.of(epoch)), netLayer.parameters())));
         ++epoch;

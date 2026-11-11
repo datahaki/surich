@@ -20,7 +20,8 @@ import ch.alpine.tensor.sca.Clips;
 class Interp2dDemo implements ManipulateProvider {
   public Integer hidden = 10;
   public Integer samples = 10;
-  public Integer maxEpoch = 1000;
+  public Integer batch_size = 1000;
+  public Integer max_epochs = 1000;
   public Scalar learningRate = RealScalar.of(0.1);
   @FieldFuse
   public transient Boolean retrain = false;
@@ -35,7 +36,7 @@ class Interp2dDemo implements ManipulateProvider {
       this.netLayer = netLayer;
       netLayer.initialize(ThreadLocalRandom.current());
       netTrain = new NetTrain(netLayer, xdata, ydata);
-      netTrain.run(learningRate, Quantity.of(1, "s"), maxEpoch, 10);
+      netTrain.runAsBatches(learningRate, batch_size, max_epochs, Quantity.of(1, "s"));
     }
   }
 

@@ -30,6 +30,7 @@ class ResidualDemo implements ManipulateProvider {
   public Integer dinout = 4;
   public Integer hidden = 10;
   public Integer samples = 20;
+  public Integer batch_size = 5;
   public Integer maxEpoch = 200;
   public Scalar learningRate = RealScalar.of(0.1);
 
@@ -45,7 +46,7 @@ class ResidualDemo implements ManipulateProvider {
     // ---
     netLayer.initialize(ThreadLocalRandom.current());
     NetTrain netTrain = new NetTrain(netLayer, xdata, ydata);
-    netTrain.run(learningRate, Quantity.of(1, "s"), maxEpoch, 1);
+    netTrain.runAsBatches(learningRate, batch_size, maxEpoch, Quantity.of(1, "s"));
     Show show0 = new Show();
     {
       show0.setShowLabel("net param");

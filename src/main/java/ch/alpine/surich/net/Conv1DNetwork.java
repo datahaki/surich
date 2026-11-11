@@ -34,36 +34,31 @@ class Conv1DNetwork implements ManipulateProvider {
   // ---
   // public Scalar l2 = RealScalar.of(0.00001);
   public Scalar learningRate = RealScalar.of(0.1);
+  public Integer batch_size = 100;
   public Integer maxEpoch = 100;
   public Scalar timeout = Quantity.of(1, "s");
 
   public class Network {
-    private static final int SKIP = 2;
     private final NetLayer netChain = NetChains.cnnRelu(3);
     private final NetTrain netTrain;
-    Scalar error;
 
     /** @param Y */
     Network(Tensor Y) {
       // netChain.setL2(l2);
       netTrain = new NetTrain(netChain, X, Y);
-      netTrain.run(learningRate, timeout, maxEpoch, SKIP);
-      // ---
-      error = FrobeniusNorm.of(netTrain.error());
+      netTrain.runAsBatches(learningRate, batch_size, maxEpoch, timeout);
     }
   }
 
   @Override
   public Container getContainer() {
     Network network = new Network(Y);
-    Scalar error = network.error;
     Show show1 = new Show();
     {
       TableBuilder table = network.netTrain.tparam;
       int n = table.getRow(0).length();
       for (int i = 1; i < n; ++i)
         show1.add(ListLinePlot.of(table.getColumns(0, i)));
-      show1.setShowLabel("Error: " + error.maps(Round._3));
     }
     Show show2 = new Show();
     {
@@ -71,7 +66,6 @@ class Conv1DNetwork implements ManipulateProvider {
       int n = table.getRow(0).length();
       for (int i = 1; i < n; ++i)
         show2.add(ListLinePlot.of(table.getColumns(0, i)));
-      show2.setShowLabel("Error: " + error.maps(Round._3));
     }
     return ShowGridComponent.of(show1, show2);
   }

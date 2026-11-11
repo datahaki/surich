@@ -28,6 +28,7 @@ class LinearLayerDemo implements ManipulateProvider {
   public Integer d_in = 1;
   public Integer d_out = 1;
   public Integer samples = 20;
+  public Integer batch_size = 5;
   public Scalar learningRate = RealScalar.of(0.01);
 
   @Override
@@ -45,7 +46,7 @@ class LinearLayerDemo implements ManipulateProvider {
     NetLayer netLayer = NetChain.of(new LinearLayer(d_in, d_out));
     netLayer.initialize(ThreadLocalRandom.current());
     NetTrain netTrain = new NetTrain(netLayer, xdata, ydata);
-    netTrain.run(learningRate, Quantity.of(1, "s"), 100, 1);
+    netTrain.runAsBatches(learningRate, batch_size, 100, Quantity.of(1, "s"));
     Show show0 = new Show();
     {
       show0.setShowLabel("net param");

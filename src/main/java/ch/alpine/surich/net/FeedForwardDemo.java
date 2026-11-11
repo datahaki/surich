@@ -29,6 +29,8 @@ class FeedForwardDemo implements ManipulateProvider {
   public Integer hidden = 10;
   public Integer d_out = 3;
   public Integer samples = 20;
+  public Integer batch_size = 5;
+  public Integer max_epochs = 1000;
   public Scalar learningRate = RealScalar.of(0.1);
 
   @Override
@@ -43,7 +45,7 @@ class FeedForwardDemo implements ManipulateProvider {
     // ---
     netLayer.initialize(ThreadLocalRandom.current());
     NetTrain netTrain = new NetTrain(netLayer, xdata, ydata);
-    netTrain.run(learningRate, Quantity.of(1, "s"), 100, 1);
+    netTrain.runAsBatches(learningRate, batch_size, max_epochs, Quantity.of(1, "s"));
     Show show0 = new Show();
     {
       show0.setShowLabel("net param");
