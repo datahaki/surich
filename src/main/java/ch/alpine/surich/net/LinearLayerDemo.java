@@ -11,6 +11,7 @@ import ch.alpine.bridge.pro.ManipulateProvider;
 import ch.alpine.bridge.ref.ann.ReflectionMarker;
 import ch.alpine.subare.net.LinearLayer;
 import ch.alpine.subare.net.NetChain;
+import ch.alpine.subare.net.NetInitialize;
 import ch.alpine.subare.net.NetLayer;
 import ch.alpine.subare.net.NetParamTracker;
 import ch.alpine.subare.net.NetTrain;
@@ -39,14 +40,14 @@ class LinearLayerDemo implements ManipulateProvider {
     TensorUnaryOperator tuo;
     {
       NetLayer netLayer = NetChain.of(new LinearLayer(d_in, d_out));
-      netLayer.initialize(ThreadLocalRandom.current());
+      NetInitialize.of(netLayer);
       tuo = netLayer::forward;
     }
     Tensor xdata = RandomVariate.of(distribution, samples, d_in);
     Tensor ydata = tuo.slash(xdata);
     // ---
     NetLayer netLayer = NetChain.of(new LinearLayer(d_in, d_out));
-    netLayer.initialize(ThreadLocalRandom.current());
+    NetInitialize.of(netLayer);
     TrainingData trainingData = new TrainingData(xdata, ydata);
     NetTrain netTrain = new NetTrain(netLayer, trainingData);
     NetParamTracker netParamTracker = new NetParamTracker();

@@ -16,6 +16,7 @@ import ch.alpine.bridge.ref.ann.FieldFuse;
 import ch.alpine.bridge.ref.ann.ReflectionMarker;
 import ch.alpine.subare.net.ElementwiseLayer;
 import ch.alpine.subare.net.NetChains;
+import ch.alpine.subare.net.NetInitialize;
 import ch.alpine.subare.net.NetLayer;
 import ch.alpine.subare.net.NetLayers;
 import ch.alpine.subare.net.NetParamTracker;
@@ -50,7 +51,7 @@ class Interp1dDemo implements ManipulateProvider {
 
     public NetLayerWrap(NetLayer netLayer, TrainingData trainingdata) {
       this.netLayer = netLayer;
-      netLayer.initialize(ThreadLocalRandom.current());
+      NetInitialize.of(netLayer);
       netTrain = new NetTrain(netLayer, trainingdata);
       netTrain.addListener(netParamTracker);
       netTrain.runAsBatches(learningRate, batch_size, maxEpoch, timeout);

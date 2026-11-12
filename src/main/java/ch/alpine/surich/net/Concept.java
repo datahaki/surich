@@ -19,6 +19,7 @@ import ch.alpine.bridge.ref.ann.FieldFuse;
 import ch.alpine.bridge.ref.ann.ReflectionMarker;
 import ch.alpine.subare.net.ElementwiseLayer;
 import ch.alpine.subare.net.NetChains;
+import ch.alpine.subare.net.NetInitialize;
 import ch.alpine.subare.net.NetLayer;
 import ch.alpine.subare.net.NetLayers;
 import ch.alpine.subare.net.NetTrain;
@@ -96,7 +97,7 @@ class Concept implements ManipulateProvider, NetTrainListener {
       // ---
       NetLayer netLayer = NetChains.linear( //
           () -> ElementwiseLayer.gelu(), 1, hidden, hidden, hidden, 1);
-      netLayer.initialize(ThreadLocalRandom.current());
+      NetInitialize.of(netLayer);
       NetTrain netTrain = new NetTrain(netLayer, trainingdata);
       netTrain.addListener(this);
       thread = new Thread(() -> {

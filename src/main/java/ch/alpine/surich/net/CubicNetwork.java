@@ -2,7 +2,6 @@
 package ch.alpine.surich.net;
 
 import java.awt.Container;
-import java.util.concurrent.ThreadLocalRandom;
 import java.util.function.Consumer;
 import java.util.stream.Stream;
 
@@ -15,6 +14,7 @@ import ch.alpine.bridge.ref.ann.FieldSelectionArray;
 import ch.alpine.bridge.ref.ann.ReflectionMarker;
 import ch.alpine.subare.net.ElementwiseLayer;
 import ch.alpine.subare.net.NetChains;
+import ch.alpine.subare.net.NetInitialize;
 import ch.alpine.subare.net.NetLayer;
 import ch.alpine.tensor.RealScalar;
 import ch.alpine.tensor.Scalar;
@@ -53,7 +53,7 @@ class CubicNetwork implements ManipulateProvider {
     private final TableBuilder tableBuilder = new TableBuilder();
 
     void train() {
-      netLayer.initialize(ThreadLocalRandom.current());
+      NetInitialize.of(netLayer);
       // netChain.setL2(l2);
       Consumer<Tensor> consumer = tableBuilder::appendRow;
       int epoch = 0;

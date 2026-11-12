@@ -12,6 +12,7 @@ import ch.alpine.bridge.ref.ann.FieldSelectionArray;
 import ch.alpine.bridge.ref.ann.ReflectionMarker;
 import ch.alpine.subare.net.ElementwiseLayer;
 import ch.alpine.subare.net.NetChains;
+import ch.alpine.subare.net.NetInitialize;
 import ch.alpine.subare.net.NetLayer;
 import ch.alpine.subare.net.NetParamTracker;
 import ch.alpine.subare.net.NetTrain;
@@ -67,7 +68,7 @@ class XORNeuralNetwork implements ManipulateProvider {
 
     /** @param Y */
     Network(Tensor Y) {
-      netLayer.initialize(ThreadLocalRandom.current());
+      NetInitialize.of(netLayer);
       netTrain = new NetTrain(netLayer, TRAINING_DATA);
       netTrain.addListener(netParamTracker);
       netTrain.runAsBatches(learningRate, batch_size, maxEpoch, timeout);

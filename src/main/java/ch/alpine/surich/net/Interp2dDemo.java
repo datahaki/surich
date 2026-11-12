@@ -7,6 +7,7 @@ import java.util.concurrent.ThreadLocalRandom;
 import ch.alpine.bridge.pro.ManipulateProvider;
 import ch.alpine.bridge.ref.ann.FieldFuse;
 import ch.alpine.bridge.ref.ann.ReflectionMarker;
+import ch.alpine.subare.net.NetInitialize;
 import ch.alpine.subare.net.NetLayer;
 import ch.alpine.subare.net.NetTrain;
 import ch.alpine.subare.net.TrainingData;
@@ -35,7 +36,8 @@ class Interp2dDemo implements ManipulateProvider {
 
     public NetLayerWrap(NetLayer netLayer) {
       this.netLayer = netLayer;
-      netLayer.initialize(ThreadLocalRandom.current());
+      NetInitialize.of(netLayer);
+
       TrainingData trainingData = new TrainingData(xdata, ydata);
       netTrain = new NetTrain(netLayer, trainingData);
       netTrain.runAsBatches(learningRate, batch_size, max_epochs, Quantity.of(1, "s"));
