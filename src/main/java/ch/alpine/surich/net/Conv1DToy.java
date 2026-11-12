@@ -1,7 +1,7 @@
 // code by jph
 package ch.alpine.surich.net;
 
-import ch.alpine.subare.net.Conv1DLayer;
+import ch.alpine.subare.net.lay.Conv1DLayer;
 import ch.alpine.tensor.Tensor;
 import ch.alpine.tensor.api.TensorUnaryOperator;
 import ch.alpine.tensor.mat.Tolerance;

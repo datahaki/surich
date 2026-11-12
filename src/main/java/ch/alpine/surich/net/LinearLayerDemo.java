@@ -2,20 +2,21 @@
 package ch.alpine.surich.net;
 
 import java.awt.Container;
-import java.util.concurrent.ThreadLocalRandom;
 
 import ch.alpine.bridge.fig.Show;
 import ch.alpine.bridge.fig.ShowGridComponent;
 import ch.alpine.bridge.fig.plt.ListLinePlot;
 import ch.alpine.bridge.pro.ManipulateProvider;
 import ch.alpine.bridge.ref.ann.ReflectionMarker;
-import ch.alpine.subare.net.LinearLayer;
-import ch.alpine.subare.net.NetChain;
-import ch.alpine.subare.net.NetInitialize;
-import ch.alpine.subare.net.NetLayer;
 import ch.alpine.subare.net.NetParamTracker;
-import ch.alpine.subare.net.NetTrain;
 import ch.alpine.subare.net.TrainingData;
+import ch.alpine.subare.net.lay.LinearLayer;
+import ch.alpine.subare.net.lay.NetChain;
+import ch.alpine.subare.net.lay.NetLayer;
+import ch.alpine.subare.net.opt.NetOptimizer;
+import ch.alpine.subare.net.opt.NetSimpleGradientDescent;
+import ch.alpine.subare.net.run.NetInitialize;
+import ch.alpine.subare.net.run.NetTrain;
 import ch.alpine.tensor.RealScalar;
 import ch.alpine.tensor.Scalar;
 import ch.alpine.tensor.Tensor;
@@ -48,11 +49,12 @@ class LinearLayerDemo implements ManipulateProvider {
     // ---
     NetLayer netLayer = NetChain.of(new LinearLayer(d_in, d_out));
     NetInitialize.of(netLayer);
-    TrainingData trainingData = new TrainingData(xdata, ydata);
-    NetTrain netTrain = new NetTrain(netLayer, trainingData);
+    NetOptimizer netOptimize = new NetSimpleGradientDescent(netLayer, learningRate);
+    NetTrain netTrain = new NetTrain(netLayer, netOptimize);
     NetParamTracker netParamTracker = new NetParamTracker();
     netTrain.addListener(netParamTracker);
-    netTrain.runAsBatches(learningRate, batch_size, 100, Quantity.of(1, "s"));
+    TrainingData trainingData = new TrainingData(xdata, ydata);
+    netTrain.runAsBatches(trainingData, batch_size, 100, Quantity.of(1, "s"));
     Show show0 = new Show();
     {
       show0.setShowLabel("net param");

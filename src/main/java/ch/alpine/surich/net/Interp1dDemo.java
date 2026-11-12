@@ -4,7 +4,6 @@ package ch.alpine.surich.net;
 import java.awt.BasicStroke;
 import java.awt.Container;
 import java.awt.Stroke;
-import java.util.concurrent.ThreadLocalRandom;
 
 import ch.alpine.bridge.fig.Show;
 import ch.alpine.bridge.fig.ShowGridComponent;
@@ -14,14 +13,16 @@ import ch.alpine.bridge.fig.plt.Plot;
 import ch.alpine.bridge.pro.ManipulateProvider;
 import ch.alpine.bridge.ref.ann.FieldFuse;
 import ch.alpine.bridge.ref.ann.ReflectionMarker;
-import ch.alpine.subare.net.ElementwiseLayer;
-import ch.alpine.subare.net.NetChains;
-import ch.alpine.subare.net.NetInitialize;
-import ch.alpine.subare.net.NetLayer;
-import ch.alpine.subare.net.NetLayers;
 import ch.alpine.subare.net.NetParamTracker;
-import ch.alpine.subare.net.NetTrain;
+import ch.alpine.subare.net.NetWrap;
 import ch.alpine.subare.net.TrainingData;
+import ch.alpine.subare.net.lay.ElementwiseLayer;
+import ch.alpine.subare.net.lay.NetChains;
+import ch.alpine.subare.net.lay.NetLayer;
+import ch.alpine.subare.net.opt.NetMomentumGradientDescent;
+import ch.alpine.subare.net.opt.NetOptimizer;
+import ch.alpine.subare.net.run.NetInitialize;
+import ch.alpine.subare.net.run.NetTrain;
 import ch.alpine.tensor.RealScalar;
 import ch.alpine.tensor.Scalar;
 import ch.alpine.tensor.Tensor;
@@ -37,7 +38,8 @@ class Interp1dDemo implements ManipulateProvider {
       new BasicStroke(1.5f, BasicStroke.CAP_BUTT, BasicStroke.JOIN_BEVEL, 0, new float[] { 3 }, 0);
   public final Interp1Param interp1Param = new Interp1Param();
   public Integer hidden = 7;
-  public Scalar learningRate = RealScalar.of(0.2);
+  public Scalar beta = RealScalar.of(0.9);
+  public Scalar eta = RealScalar.of(0.03);
   public Integer batch_size = 6;
   public Integer maxEpoch = 1000;
   public Scalar timeout = Quantity.of(1, "s");
@@ -52,9 +54,10 @@ class Interp1dDemo implements ManipulateProvider {
     public NetLayerWrap(NetLayer netLayer, TrainingData trainingdata) {
       this.netLayer = netLayer;
       NetInitialize.of(netLayer);
-      netTrain = new NetTrain(netLayer, trainingdata);
+      NetOptimizer netOptimize = new NetMomentumGradientDescent(netLayer, beta, eta);
+      netTrain = new NetTrain(netLayer, netOptimize);
       netTrain.addListener(netParamTracker);
-      netTrain.runAsBatches(learningRate, batch_size, maxEpoch, timeout);
+      netTrain.runAsBatches(trainingdata, batch_size, maxEpoch, timeout);
     }
   }
 
@@ -75,8 +78,8 @@ class Interp1dDemo implements ManipulateProvider {
       // Showable showable = showF.add(Plot.of(suo, domain));
       // showable.setLabel("truth");
       // showable.setStroke(STROKE);
-      showF.add(Plot.of(NetLayers.asSUO11(netLayerWrap0.netLayer), domain)).setLabel("gelu");
-      showF.add(Plot.of(NetLayers.asSUO11(netLayerWrap1.netLayer), domain)).setLabel("tanh");
+      showF.add(Plot.of(NetWrap.asSUO11(netLayerWrap0.netLayer), domain)).setLabel("gelu");
+      showF.add(Plot.of(NetWrap.asSUO11(netLayerWrap1.netLayer), domain)).setLabel("tanh");
       showF.add(ListPlot.of(Join.of(1, xdata, ydata)));
     }
     Show show0 = new Show();

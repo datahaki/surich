@@ -8,11 +8,13 @@ import ch.alpine.bridge.fig.ShowGridComponent;
 import ch.alpine.bridge.fig.plt.ListLinePlot;
 import ch.alpine.bridge.pro.ManipulateProvider;
 import ch.alpine.bridge.ref.ann.ReflectionMarker;
-import ch.alpine.subare.net.NetChains;
-import ch.alpine.subare.net.NetLayer;
 import ch.alpine.subare.net.NetParamTracker;
-import ch.alpine.subare.net.NetTrain;
 import ch.alpine.subare.net.TrainingData;
+import ch.alpine.subare.net.lay.NetChains;
+import ch.alpine.subare.net.lay.NetLayer;
+import ch.alpine.subare.net.opt.NetOptimizer;
+import ch.alpine.subare.net.opt.NetSimpleGradientDescent;
+import ch.alpine.subare.net.run.NetTrain;
 import ch.alpine.tensor.RealScalar;
 import ch.alpine.tensor.Scalar;
 import ch.alpine.tensor.Tensor;
@@ -47,9 +49,10 @@ class Conv1DNetwork implements ManipulateProvider {
     /** @param Y */
     Network(Tensor Y) {
       // netChain.setL2(l2);
-      netTrain = new NetTrain(netChain, TRAINING_DATA);
+      NetOptimizer netOptimize = new NetSimpleGradientDescent(netChain, learningRate);
+      netTrain = new NetTrain(netChain, netOptimize);
       netTrain.addListener(netParamTracker);
-      netTrain.runAsBatches(learningRate, batch_size, maxEpoch, timeout);
+      netTrain.runAsBatches(TRAINING_DATA, batch_size, maxEpoch, timeout);
     }
   }
 

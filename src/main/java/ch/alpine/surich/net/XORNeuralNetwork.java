@@ -2,21 +2,23 @@
 package ch.alpine.surich.net;
 
 import java.awt.Container;
-import java.util.concurrent.ThreadLocalRandom;
 
 import ch.alpine.bridge.fig.Show;
 import ch.alpine.bridge.fig.ShowGridComponent;
 import ch.alpine.bridge.fig.plt.ListLinePlot;
 import ch.alpine.bridge.pro.ManipulateProvider;
+import ch.alpine.bridge.ref.ann.FieldClip;
 import ch.alpine.bridge.ref.ann.FieldSelectionArray;
 import ch.alpine.bridge.ref.ann.ReflectionMarker;
-import ch.alpine.subare.net.ElementwiseLayer;
-import ch.alpine.subare.net.NetChains;
-import ch.alpine.subare.net.NetInitialize;
-import ch.alpine.subare.net.NetLayer;
 import ch.alpine.subare.net.NetParamTracker;
-import ch.alpine.subare.net.NetTrain;
 import ch.alpine.subare.net.TrainingData;
+import ch.alpine.subare.net.lay.ElementwiseLayer;
+import ch.alpine.subare.net.lay.NetChains;
+import ch.alpine.subare.net.lay.NetLayer;
+import ch.alpine.subare.net.opt.NetMomentumGradientDescent;
+import ch.alpine.subare.net.opt.NetOptimizer;
+import ch.alpine.subare.net.run.NetInitialize;
+import ch.alpine.subare.net.run.NetTrain;
 import ch.alpine.tensor.RealScalar;
 import ch.alpine.tensor.Scalar;
 import ch.alpine.tensor.Tensor;
@@ -55,7 +57,9 @@ class XORNeuralNetwork implements ManipulateProvider {
   @FieldSelectionArray({ "4", "5", "6", "7" })
   public Integer hiddenSize = 4;
   public Scalar l2 = RealScalar.of(0.00001);
-  public Scalar learningRate = RealScalar.of(1.6);
+  public Scalar beta = RealScalar.of(0.9);
+  public Scalar eta = RealScalar.of(0.02);
+  @FieldClip(min = "1", max = "4")
   public Integer batch_size = 1;
   public Integer maxEpoch = 8000;
   public Scalar timeout = Quantity.of(1, "s");
@@ -69,9 +73,10 @@ class XORNeuralNetwork implements ManipulateProvider {
     /** @param Y */
     Network(Tensor Y) {
       NetInitialize.of(netLayer);
-      netTrain = new NetTrain(netLayer, TRAINING_DATA);
+      NetOptimizer netOptimize = new NetMomentumGradientDescent(netLayer, beta, eta);
+      netTrain = new NetTrain(netLayer, netOptimize);
       netTrain.addListener(netParamTracker);
-      netTrain.runAsBatches(learningRate, batch_size, maxEpoch, timeout);
+      netTrain.runAsBatches(TRAINING_DATA, batch_size, maxEpoch, timeout);
     }
   }
 
