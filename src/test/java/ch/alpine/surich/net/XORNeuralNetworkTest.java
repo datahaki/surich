@@ -10,6 +10,7 @@ import ch.alpine.tensor.RealScalar;
 import ch.alpine.tensor.Scalar;
 import ch.alpine.tensor.Scalars;
 import ch.alpine.tensor.Tensor;
+import ch.alpine.tensor.sca.exp.Exp;
 
 class XORNeuralNetworkTest {
   @Test
@@ -18,8 +19,9 @@ class XORNeuralNetworkTest {
     for (int attempt = 0; attempt < 3; ++attempt) {
       XORNeuralNetwork xorNeuralNetwork = new XORNeuralNetwork();
       Network network = xorNeuralNetwork.new Network(y);
-      Scalar error = network.error;
-      if (Scalars.lessThan(error, RealScalar.of(0.2)))
+      Scalar error = Exp.FUNCTION.apply(network.netTrain.log_loss());
+      // IO.println(error);
+      if (Scalars.lessThan(error, RealScalar.of(0.02)))
         return;
     }
     fail();

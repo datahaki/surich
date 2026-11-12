@@ -12,7 +12,9 @@ import ch.alpine.bridge.ref.ann.ReflectionMarker;
 import ch.alpine.subare.net.ElementwiseLayer;
 import ch.alpine.subare.net.NetChains;
 import ch.alpine.subare.net.NetLayer;
+import ch.alpine.subare.net.NetParamTracker;
 import ch.alpine.subare.net.NetTrain;
+import ch.alpine.subare.net.TrainingData;
 import ch.alpine.tensor.RealScalar;
 import ch.alpine.tensor.Scalar;
 import ch.alpine.tensor.Tensor;
@@ -37,19 +39,22 @@ class FeedForwardDemo implements ManipulateProvider {
   public Container getContainer() {
     Distribution distribution = NormalDistribution.standard();
     TensorUnaryOperator tuo;
-    NetLayer netLayer = NetChains.sequence(() -> ElementwiseLayer.gelu(), d_in, hidden, d_out);
+    NetLayer netLayer = NetChains.linear(() -> ElementwiseLayer.gelu(), d_in, hidden, d_out);
     netLayer.initialize(ThreadLocalRandom.current());
     tuo = netLayer::forward;
     Tensor xdata = RandomVariate.of(distribution, samples, d_in);
     Tensor ydata = tuo.slash(xdata);
     // ---
     netLayer.initialize(ThreadLocalRandom.current());
-    NetTrain netTrain = new NetTrain(netLayer, xdata, ydata);
+    TrainingData trainingData = new TrainingData(xdata, ydata);
+    NetTrain netTrain = new NetTrain(netLayer, trainingData);
+    NetParamTracker netParamTracker = new NetParamTracker();
+    netTrain.addListener(netParamTracker);
     netTrain.runAsBatches(learningRate, batch_size, max_epochs, Quantity.of(1, "s"));
     Show show0 = new Show();
     {
       show0.setShowLabel("net param");
-      TableBuilder table = netTrain.tparam;
+      TableBuilder table = netParamTracker.tparam;
       int n = table.getRow(0).length();
       for (int i = 1; i < n; ++i)
         show0.add(ListLinePlot.of(table.getColumns(0, i)));

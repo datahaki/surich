@@ -10,9 +10,12 @@ import ch.alpine.bridge.fig.plt.ListLinePlot;
 import ch.alpine.bridge.pro.ManipulateProvider;
 import ch.alpine.bridge.ref.ann.FieldSelectionArray;
 import ch.alpine.bridge.ref.ann.ReflectionMarker;
+import ch.alpine.subare.net.ElementwiseLayer;
 import ch.alpine.subare.net.NetChains;
 import ch.alpine.subare.net.NetLayer;
+import ch.alpine.subare.net.NetParamTracker;
 import ch.alpine.subare.net.NetTrain;
+import ch.alpine.subare.net.TrainingData;
 import ch.alpine.tensor.RealScalar;
 import ch.alpine.tensor.Scalar;
 import ch.alpine.tensor.Tensor;
@@ -46,6 +49,7 @@ class XORNeuralNetwork implements ManipulateProvider {
   static final Distribution DISTRIBUTION = UniformDistribution.of(Clips.absolute(0.5));
   public static final Tensor X = Tensors.matrixInt(new int[][] { { 0, 0 }, { 0, 1 }, { 1, 0 }, { 1, 1 } }).unmodifiable();
   public static final Tensor XOR = Tensors.matrixInt(new int[][] { { 0 }, { 1 }, { 1 }, { 0 } }).unmodifiable();
+  public static final TrainingData TRAINING_DATA = new TrainingData(X, XOR);
   // ---
   @FieldSelectionArray({ "4", "5", "6", "7" })
   public Integer hiddenSize = 4;
@@ -56,15 +60,16 @@ class XORNeuralNetwork implements ManipulateProvider {
   public Scalar timeout = Quantity.of(1, "s");
 
   public class Network {
-    private final NetLayer netLayer = NetChains.binary(2, hiddenSize, 1);
-    private final NetTrain netTrain;
-    Scalar error;
+    final NetLayer netLayer = //
+        NetChains.binary(NetChains.linear(() -> ElementwiseLayer.gelu(), 2, hiddenSize, 1));
+    final NetTrain netTrain;
+    final NetParamTracker netParamTracker = new NetParamTracker();
 
-    /** @param Y
-     * @return error */
+    /** @param Y */
     Network(Tensor Y) {
       netLayer.initialize(ThreadLocalRandom.current());
-      netTrain = new NetTrain(netLayer, X, Y);
+      netTrain = new NetTrain(netLayer, TRAINING_DATA);
+      netTrain.addListener(netParamTracker);
       netTrain.runAsBatches(learningRate, batch_size, maxEpoch, timeout);
     }
   }
@@ -72,14 +77,14 @@ class XORNeuralNetwork implements ManipulateProvider {
   @Override
   public Container getContainer() {
     Network network = new Network(XOR);
-    Scalar error = network.error;
+    Scalar log_loss = network.netTrain.log_loss();
     Show show1 = new Show();
     {
-      TableBuilder table = network.netTrain.tparam;
+      TableBuilder table = network.netParamTracker.tparam;
       int n = table.getRow(0).length();
       for (int i = 1; i < n; ++i)
         show1.add(ListLinePlot.of(table.getColumns(0, i)));
-      show1.setShowLabel("Error: " + error.maps(Round._3));
+      show1.setShowLabel("Log[Loss] = " + log_loss.maps(Round._3));
     }
     Show show2 = new Show();
     {
@@ -87,7 +92,7 @@ class XORNeuralNetwork implements ManipulateProvider {
       int n = table.getRow(0).length();
       for (int i = 1; i < n; ++i)
         show2.add(ListLinePlot.of(table.getColumns(0, i)));
-      show2.setShowLabel("Error: " + error.maps(Round._3));
+      show2.setShowLabel("Log[Loss] = " + log_loss.maps(Round._3));
     }
     return ShowGridComponent.of(show1, show2);
   }

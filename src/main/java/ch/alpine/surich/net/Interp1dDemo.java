@@ -8,7 +8,6 @@ import java.util.concurrent.ThreadLocalRandom;
 
 import ch.alpine.bridge.fig.Show;
 import ch.alpine.bridge.fig.ShowGridComponent;
-import ch.alpine.bridge.fig.Showable;
 import ch.alpine.bridge.fig.plt.ListLinePlot;
 import ch.alpine.bridge.fig.plt.ListPlot;
 import ch.alpine.bridge.fig.plt.Plot;
@@ -19,19 +18,14 @@ import ch.alpine.subare.net.ElementwiseLayer;
 import ch.alpine.subare.net.NetChains;
 import ch.alpine.subare.net.NetLayer;
 import ch.alpine.subare.net.NetLayers;
+import ch.alpine.subare.net.NetParamTracker;
 import ch.alpine.subare.net.NetTrain;
+import ch.alpine.subare.net.TrainingData;
 import ch.alpine.tensor.RealScalar;
 import ch.alpine.tensor.Scalar;
 import ch.alpine.tensor.Tensor;
 import ch.alpine.tensor.alg.Join;
-import ch.alpine.tensor.api.ScalarTensorFunction;
-import ch.alpine.tensor.api.ScalarUnaryOperator;
 import ch.alpine.tensor.io.TableBuilder;
-import ch.alpine.tensor.itp.BSplineFunctionString;
-import ch.alpine.tensor.itp.LinearInterpolation;
-import ch.alpine.tensor.pdf.RandomVariate;
-import ch.alpine.tensor.pdf.c.NormalDistribution;
-import ch.alpine.tensor.pdf.c.UniformDistribution;
 import ch.alpine.tensor.qty.Quantity;
 import ch.alpine.tensor.sca.Clip;
 import ch.alpine.tensor.sca.Clips;
@@ -40,11 +34,10 @@ import ch.alpine.tensor.sca.Clips;
 class Interp1dDemo implements ManipulateProvider {
   private static final Stroke STROKE = //
       new BasicStroke(1.5f, BasicStroke.CAP_BUTT, BasicStroke.JOIN_BEVEL, 0, new float[] { 3 }, 0);
-  public Integer dom = 5;
-  public Integer samples = 30;
+  public final Interp1Param interp1Param = new Interp1Param();
   public Integer hidden = 7;
-  public Integer batch_size = 6;
   public Scalar learningRate = RealScalar.of(0.2);
+  public Integer batch_size = 6;
   public Integer maxEpoch = 1000;
   public Scalar timeout = Quantity.of(1, "s");
   @FieldFuse
@@ -53,35 +46,34 @@ class Interp1dDemo implements ManipulateProvider {
   class NetLayerWrap {
     final NetLayer netLayer;
     final NetTrain netTrain;
+    final NetParamTracker netParamTracker = new NetParamTracker();
 
-    public NetLayerWrap(NetLayer netLayer, Tensor xdata, Tensor ydata) {
+    public NetLayerWrap(NetLayer netLayer, TrainingData trainingdata) {
       this.netLayer = netLayer;
       netLayer.initialize(ThreadLocalRandom.current());
-      netTrain = new NetTrain(netLayer, xdata, ydata);
+      netTrain = new NetTrain(netLayer, trainingdata);
+      netTrain.addListener(netParamTracker);
       netTrain.runAsBatches(learningRate, batch_size, maxEpoch, timeout);
     }
   }
 
   @Override
   public Container getContainer() {
-    Clip domain = Clips.absoluteOne();
-    Tensor disY = RandomVariate.of(NormalDistribution.standard(), dom);
-    ScalarTensorFunction stf = BSplineFunctionString.of(3, disY);
-    ScalarUnaryOperator lin = LinearInterpolation.of(Clips.positive(dom - 1));
-    Tensor xdata = RandomVariate.of(UniformDistribution.of(domain), samples, 1);
-    ScalarUnaryOperator suo = s -> (Scalar) stf.apply(lin.apply(domain.rescale(s)));
-    Tensor ydata = xdata.maps(suo);
+    TrainingData trainingdata = interp1Param.generate();
+    Tensor xdata = trainingdata.xdata();
+    Tensor ydata = trainingdata.ydata();
     // ---
-    NetLayerWrap netLayerWrap0 = new NetLayerWrap(NetChains.sequence( //
-        () -> ElementwiseLayer.gelu(), 1, hidden, hidden, hidden, 1), xdata, ydata);
-    NetLayerWrap netLayerWrap1 = new NetLayerWrap(NetChains.sequence( //
-        () -> ElementwiseLayer.tanh(), 1, hidden, hidden, hidden, 1), xdata, ydata);
+    NetLayerWrap netLayerWrap0 = new NetLayerWrap(NetChains.linear( //
+        () -> ElementwiseLayer.gelu(), 1, hidden, hidden, hidden, 1), trainingdata);
+    NetLayerWrap netLayerWrap1 = new NetLayerWrap(NetChains.linear( //
+        () -> ElementwiseLayer.tanh(), 1, hidden, hidden, hidden, 1), trainingdata);
     Show showF = new Show();
     {
+      Clip domain = Clips.absoluteOne();
       showF.setShowLabel("function");
-      Showable showable = showF.add(Plot.of(suo, domain));
-      showable.setLabel("truth");
-      showable.setStroke(STROKE);
+      // Showable showable = showF.add(Plot.of(suo, domain));
+      // showable.setLabel("truth");
+      // showable.setStroke(STROKE);
       showF.add(Plot.of(NetLayers.asSUO11(netLayerWrap0.netLayer), domain)).setLabel("gelu");
       showF.add(Plot.of(NetLayers.asSUO11(netLayerWrap1.netLayer), domain)).setLabel("tanh");
       showF.add(ListPlot.of(Join.of(1, xdata, ydata)));
@@ -89,7 +81,7 @@ class Interp1dDemo implements ManipulateProvider {
     Show show0 = new Show();
     {
       show0.setShowLabel("net param");
-      TableBuilder table = netLayerWrap0.netTrain.tparam;
+      TableBuilder table = netLayerWrap0.netParamTracker.tparam;
       int n = table.getRow(0).length();
       for (int i = 1; i < n; ++i)
         show0.add(ListLinePlot.of(table.getColumns(0, i)));

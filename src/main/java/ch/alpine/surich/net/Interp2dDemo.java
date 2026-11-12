@@ -9,6 +9,7 @@ import ch.alpine.bridge.ref.ann.FieldFuse;
 import ch.alpine.bridge.ref.ann.ReflectionMarker;
 import ch.alpine.subare.net.NetLayer;
 import ch.alpine.subare.net.NetTrain;
+import ch.alpine.subare.net.TrainingData;
 import ch.alpine.tensor.RealScalar;
 import ch.alpine.tensor.Scalar;
 import ch.alpine.tensor.Tensor;
@@ -35,7 +36,8 @@ class Interp2dDemo implements ManipulateProvider {
     public NetLayerWrap(NetLayer netLayer) {
       this.netLayer = netLayer;
       netLayer.initialize(ThreadLocalRandom.current());
-      netTrain = new NetTrain(netLayer, xdata, ydata);
+      TrainingData trainingData = new TrainingData(xdata, ydata);
+      netTrain = new NetTrain(netLayer, trainingData);
       netTrain.runAsBatches(learningRate, batch_size, max_epochs, Quantity.of(1, "s"));
     }
   }

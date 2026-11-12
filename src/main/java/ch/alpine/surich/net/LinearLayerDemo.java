@@ -12,7 +12,9 @@ import ch.alpine.bridge.ref.ann.ReflectionMarker;
 import ch.alpine.subare.net.LinearLayer;
 import ch.alpine.subare.net.NetChain;
 import ch.alpine.subare.net.NetLayer;
+import ch.alpine.subare.net.NetParamTracker;
 import ch.alpine.subare.net.NetTrain;
+import ch.alpine.subare.net.TrainingData;
 import ch.alpine.tensor.RealScalar;
 import ch.alpine.tensor.Scalar;
 import ch.alpine.tensor.Tensor;
@@ -45,12 +47,15 @@ class LinearLayerDemo implements ManipulateProvider {
     // ---
     NetLayer netLayer = NetChain.of(new LinearLayer(d_in, d_out));
     netLayer.initialize(ThreadLocalRandom.current());
-    NetTrain netTrain = new NetTrain(netLayer, xdata, ydata);
+    TrainingData trainingData = new TrainingData(xdata, ydata);
+    NetTrain netTrain = new NetTrain(netLayer, trainingData);
+    NetParamTracker netParamTracker = new NetParamTracker();
+    netTrain.addListener(netParamTracker);
     netTrain.runAsBatches(learningRate, batch_size, 100, Quantity.of(1, "s"));
     Show show0 = new Show();
     {
       show0.setShowLabel("net param");
-      TableBuilder table = netTrain.tparam;
+      TableBuilder table = netParamTracker.tparam;
       int n = table.getRow(0).length();
       for (int i = 1; i < n; ++i)
         show0.add(ListLinePlot.of(table.getColumns(0, i)));

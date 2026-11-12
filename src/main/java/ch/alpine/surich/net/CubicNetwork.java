@@ -49,7 +49,7 @@ class CubicNetwork implements ManipulateProvider {
   public class Network {
     private static final int SKIP = 10;
     private final ScalarUnaryOperator power = s -> Power.function(3).apply(s.multiply(scale));
-    private final NetLayer netLayer = NetChains.sequence(() -> ElementwiseLayer.tanh(), 1, hiddenSize, 1);
+    private final NetLayer netLayer = NetChains.linear(() -> ElementwiseLayer.tanh(), 1, hiddenSize, 1);
     private final TableBuilder tableBuilder = new TableBuilder();
 
     void train() {
