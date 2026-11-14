@@ -24,7 +24,7 @@ import ch.alpine.tensor.col.ColorDataGradient;
 import ch.alpine.tensor.col.ColorDataGradients;
 import ch.alpine.tensor.sca.Clips;
 
-// TODO SUBARE all non-terminal function should be package visibility
+// TODO all non-terminal function should be package visibility
 public enum StateActionRasters {
   ;
   /** @param stateActionRaster

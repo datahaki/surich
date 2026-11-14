@@ -71,7 +71,7 @@ class Charger extends DeterministicStandardModel implements TerminalInterface {
     final int time = Scalars.intValueExact(state.Get(0));
     Scalar total = tripProfile.costPerUnit(time).multiply((Scalar) action).negate();
     if (capacity == 0)
-      // TODO SURICH possibly make terminal
+      // TODO possibly make terminal
       total = total.add(RealScalar.of(-20));
     return total;
   }

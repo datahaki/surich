@@ -16,17 +16,17 @@ import ch.alpine.tensor.sca.Clip;
 import ch.alpine.tensor.sca.Clips;
 
 @ReflectionMarker
-public class Interp1Param {
+class Interp1Param {
+  public static final Clip DOMAIN = Clips.absoluteOne();
   public Integer dom = 5;
   public Integer samples = 30;
 
   TrainingData generate() {
-    Clip domain = Clips.absoluteOne();
     Tensor disY = RandomVariate.of(NormalDistribution.standard(), dom);
     ScalarTensorFunction stf = BSplineFunctionString.of(3, disY);
     ScalarUnaryOperator lin = LinearInterpolation.of(Clips.positive(dom - 1));
-    Tensor xdata = RandomVariate.of(UniformDistribution.of(domain), samples, 1);
-    ScalarUnaryOperator suo = s -> (Scalar) stf.apply(lin.apply(domain.rescale(s)));
+    Tensor xdata = RandomVariate.of(UniformDistribution.of(DOMAIN), samples, 1);
+    ScalarUnaryOperator suo = s -> (Scalar) stf.apply(lin.apply(DOMAIN.rescale(s)));
     Tensor ydata = xdata.maps(suo);
     return new TrainingData(xdata, ydata);
   }
