@@ -6,7 +6,6 @@ import java.awt.Dimension;
 import java.awt.Graphics;
 import java.awt.Rectangle;
 import java.util.Objects;
-import java.util.concurrent.ThreadLocalRandom;
 
 import javax.swing.JComponent;
 

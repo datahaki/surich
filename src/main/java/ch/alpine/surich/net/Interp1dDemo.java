@@ -94,7 +94,8 @@ class Interp1dDemo implements ManipulateProvider {
     {
       show1.setShowLabel("loss");
       show1.add(ListLinePlot.of(netLayerWrap0.netTrain.tloss.getTable())).setLabel("gelu");
-      show1.add(ListLinePlot.of(netLayerWrap1.netTrain.tloss.getTable())).setLabel("tanh");
+      show1.add(ListLinePlot.of(netLayerWrap0.netTrain.rloss.getTable())).setLabel("gelu_r");
+      // show1.add(ListLinePlot.of(netLayerWrap1.netTrain.tloss.getTable())).setLabel("tanh");
     }
     return ShowGridComponent.of(showF, show0, show1);
   }

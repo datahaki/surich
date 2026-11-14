@@ -51,7 +51,7 @@ class ResidualDemo implements ManipulateProvider {
     Tensor ydata = tuo.slash(xdata);
     // ---
     NetInitialize.of(netLayer);
-    NetOptimizer netOptimize = new NetSimpleGradientDescent(netLayer,learningRate);
+    NetOptimizer netOptimize = new NetSimpleGradientDescent(netLayer, learningRate);
     NetTrain netTrain = new NetTrain(netLayer, netOptimize);
     NetParamTracker netParamTracker = new NetParamTracker();
     netTrain.addListener(netParamTracker);
