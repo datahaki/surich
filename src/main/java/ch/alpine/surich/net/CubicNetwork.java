@@ -65,9 +65,10 @@ class CubicNetwork implements ManipulateProvider {
       Timing timing = Timing.started();
       Distribution distribution = ArcSinDistribution.INSTANCE;
       while (Scalars.lessThan(timing.seconds(), timeout) && epoch < maxEpoch) {
-        Tensor x = RandomVariate.of(distribution, batch_size, 1);
-        Tensor target = x.maps(power);
-        netTrain.runAsEpoch(new TrainingData(x, target));
+        Tensor xdata = RandomVariate.of(distribution, batch_size, 1);
+        Tensor ydata = xdata.maps(power);
+        netTrain.setMaxEpochs(1000);
+        netTrain.runAsBatches(new TrainingData(xdata, ydata), batch_size);
         if (epoch % SKIP == 0)
           consumer.accept(Tensor.of(Stream.concat(Stream.of(RealScalar.of(epoch)), new NetExtract(netLayer).all())));
         ++epoch;
@@ -95,7 +96,7 @@ class CubicNetwork implements ManipulateProvider {
     }
     Show show2 = new Show();
     {
-      show2.add(ListLinePlot.of(network.vloss.getTable()));
+      show2.add(ListLinePlot.of(network.vloss.getColumns(0, 1)));
     }
     return ShowGridComponent.of(show0, show1, show2);
   }

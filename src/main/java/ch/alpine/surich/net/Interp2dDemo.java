@@ -15,7 +15,6 @@ import ch.alpine.subare.net.run.NetTrain;
 import ch.alpine.tensor.RealScalar;
 import ch.alpine.tensor.Scalar;
 import ch.alpine.tensor.Tensor;
-import ch.alpine.tensor.qty.Quantity;
 import ch.alpine.tensor.sca.Clip;
 import ch.alpine.tensor.sca.Clips;
 
@@ -41,7 +40,8 @@ class Interp2dDemo implements ManipulateProvider {
       NetOptimizer netOptimize = new NetSimpleGradientDescent(netLayer, learningRate);
       netTrain = new NetTrain(netLayer, netOptimize);
       TrainingData trainingData = new TrainingData(xdata, ydata);
-      netTrain.runAsBatches(trainingData, batch_size, max_epochs, Quantity.of(1, "s"));
+      netTrain.setMaxEpochs(max_epochs);
+      netTrain.runAsBatches(trainingData, batch_size);
     }
   }
 

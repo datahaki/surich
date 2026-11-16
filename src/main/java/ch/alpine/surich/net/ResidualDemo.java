@@ -28,7 +28,6 @@ import ch.alpine.tensor.api.TensorUnaryOperator;
 import ch.alpine.tensor.io.TableBuilder;
 import ch.alpine.tensor.pdf.RandomVariate;
 import ch.alpine.tensor.pdf.c.NormalDistribution;
-import ch.alpine.tensor.qty.Quantity;
 
 @ReflectionMarker
 class ResidualDemo implements ManipulateProvider {
@@ -56,7 +55,8 @@ class ResidualDemo implements ManipulateProvider {
     NetParamTracker netParamTracker = new NetParamTracker();
     netTrain.addListener(netParamTracker);
     TrainingData trainingData = new TrainingData(xdata, ydata);
-    netTrain.runAsBatches(trainingData, batch_size, maxEpoch, Quantity.of(1, "s"));
+    netTrain.setMaxEpochs(maxEpoch);
+    netTrain.runAsBatches(trainingData, batch_size);
     Show show0 = new Show();
     {
       show0.setShowLabel("net param");

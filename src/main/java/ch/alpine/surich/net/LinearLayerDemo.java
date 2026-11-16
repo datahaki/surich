@@ -25,7 +25,6 @@ import ch.alpine.tensor.io.TableBuilder;
 import ch.alpine.tensor.pdf.Distribution;
 import ch.alpine.tensor.pdf.RandomVariate;
 import ch.alpine.tensor.pdf.c.NormalDistribution;
-import ch.alpine.tensor.qty.Quantity;
 
 @ReflectionMarker
 class LinearLayerDemo implements ManipulateProvider {
@@ -54,7 +53,8 @@ class LinearLayerDemo implements ManipulateProvider {
     NetParamTracker netParamTracker = new NetParamTracker();
     netTrain.addListener(netParamTracker);
     TrainingData trainingData = new TrainingData(xdata, ydata);
-    netTrain.runAsBatches(trainingData, batch_size, 100, Quantity.of(1, "s"));
+    netTrain.setMaxEpochs(100);
+    netTrain.runAsBatches(trainingData, batch_size);
     Show show0 = new Show();
     {
       show0.setShowLabel("net param");

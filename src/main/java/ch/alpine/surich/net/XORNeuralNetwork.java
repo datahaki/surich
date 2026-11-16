@@ -61,7 +61,7 @@ class XORNeuralNetwork implements ManipulateProvider {
   public Scalar eta = RealScalar.of(0.02);
   @FieldClip(min = "1", max = "4")
   public Integer batch_size = 1;
-  public Integer maxEpoch = 8000;
+  public Integer maxEpoch = 2000;
   public Scalar timeout = Quantity.of(1, "s");
 
   public class Network {
@@ -76,7 +76,8 @@ class XORNeuralNetwork implements ManipulateProvider {
       NetOptimizer netOptimize = new NetMomentumGradientDescent(netLayer, beta, eta);
       netTrain = new NetTrain(netLayer, netOptimize);
       netTrain.addListener(netParamTracker);
-      netTrain.runAsBatches(TRAINING_DATA, batch_size, maxEpoch, timeout);
+      netTrain.setMaxEpochs(maxEpoch);
+      netTrain.runAsBatches(TRAINING_DATA, batch_size);
     }
   }
 

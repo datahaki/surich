@@ -1,5 +1,5 @@
 // code by jph
-package ch.alpine.surich.net;
+package ch.alpine.surich.net.it1;
 
 import ch.alpine.bridge.ref.ann.ReflectionMarker;
 import ch.alpine.subare.net.TrainingData;
@@ -18,13 +18,13 @@ import ch.alpine.tensor.sca.Clips;
 @ReflectionMarker
 class Interp1Param {
   public static final Clip DOMAIN = Clips.absoluteOne();
-  public Integer dom = 5;
+  public Integer variability = 5;
   public Integer samples = 30;
 
-  TrainingData generate() {
-    Tensor disY = RandomVariate.of(NormalDistribution.standard(), dom);
+  public TrainingData generate() {
+    Tensor disY = RandomVariate.of(NormalDistribution.standard(), variability);
     ScalarTensorFunction stf = BSplineFunctionString.of(3, disY);
-    ScalarUnaryOperator lin = LinearInterpolation.of(Clips.positive(dom - 1));
+    ScalarUnaryOperator lin = LinearInterpolation.of(Clips.positive(variability - 1));
     Tensor xdata = RandomVariate.of(UniformDistribution.of(DOMAIN), samples, 1);
     ScalarUnaryOperator suo = s -> (Scalar) stf.apply(lin.apply(DOMAIN.rescale(s)));
     Tensor ydata = xdata.maps(suo);

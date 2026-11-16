@@ -52,7 +52,8 @@ class Conv1DNetwork implements ManipulateProvider {
       NetOptimizer netOptimize = new NetSimpleGradientDescent(netChain, learningRate);
       netTrain = new NetTrain(netChain, netOptimize);
       netTrain.addListener(netParamTracker);
-      netTrain.runAsBatches(TRAINING_DATA, batch_size, maxEpoch, timeout);
+      netTrain.setMaxEpochs(maxEpoch);
+      netTrain.runAsBatches(TRAINING_DATA, batch_size);
     }
   }
 
