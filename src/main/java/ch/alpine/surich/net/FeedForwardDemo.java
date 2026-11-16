@@ -43,7 +43,7 @@ class FeedForwardDemo implements ManipulateProvider {
     TensorUnaryOperator tuo;
     NetLayer netLayer = NetChains.linear(() -> ElementwiseLayer.gelu(), d_in, hidden, d_out);
     NetInitialize.of(netLayer);
-    tuo = netLayer::forward;
+    tuo = netLayer::forwardBatch;
     Tensor xdata = RandomVariate.of(distribution, samples, d_in);
     Tensor ydata = tuo.slash(xdata);
     // ---

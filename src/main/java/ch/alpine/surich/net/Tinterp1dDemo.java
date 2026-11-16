@@ -53,8 +53,6 @@ class Tinterp1dDemo implements ManipulateProvider {
   public Scalar timeout = Quantity.of(1, "s");
   @FieldFuse
   public transient Boolean retrain = false;
-
-
   private final InterruptibleSingleTaskExecutor iste = new InterruptibleSingleTaskExecutor();
 
   class NetLayerWrap {
