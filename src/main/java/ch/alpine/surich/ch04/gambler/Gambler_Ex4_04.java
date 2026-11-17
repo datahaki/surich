@@ -13,7 +13,7 @@ import ch.alpine.tensor.Tensor;
 import ch.alpine.tensor.Tensors;
 import ch.alpine.tensor.alg.Last;
 import ch.alpine.tensor.ext.HomeDirectory;
-import ch.alpine.tensor.io.Put;
+import ch.alpine.tensor.io.MathematicaFormat;
 
 enum Gambler_Ex4_04 {
   ;
@@ -29,11 +29,11 @@ enum Gambler_Ex4_04 {
     Tensor values = Last.of(record);
     // .untilBelow(RealScalar.of(1e-10));
     // System.out.println(values);
-    Put.of(path.resolve("ex403_values"), values);
-    Put.of(path.resolve("ex403_record"), record);
+    MathematicaFormat.Put.of(path.resolve("ex403_values"), values);
+    MathematicaFormat.Put.of(path.resolve("ex403_record"), record);
     PolicyBase policy = PolicyType.GREEDY.bestEquiprobable(gamblerModel, vi.vs(), null);
     Policies.print(policy, gamblerModel.states());
     Tensor greedy = Policies.flatten(policy, gamblerModel.states());
-    Put.of(path.resolve("ex403_greedy"), greedy);
+    MathematicaFormat.Put.of(path.resolve("ex403_greedy"), greedy);
   }
 }

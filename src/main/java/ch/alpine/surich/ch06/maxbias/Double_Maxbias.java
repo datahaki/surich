@@ -20,7 +20,7 @@ import ch.alpine.subare.val.DiscreteQsa;
 import ch.alpine.subare.val.DiscreteVs;
 import ch.alpine.tensor.Tensor;
 import ch.alpine.tensor.ext.HomeDirectory;
-import ch.alpine.tensor.io.Put;
+import ch.alpine.tensor.io.MathematicaFormat;
 
 /** Double Sarsa for maximization bias */
 enum Double_Maxbias {
@@ -49,7 +49,7 @@ enum Double_Maxbias {
     // qsa.print(Round.toMultipleOf(DecimalScalar.of(.01)));
     System.out.println("---");
     DiscreteVs vs = DiscreteUtils.createVs(maxbias, qsa1);
-    Put.of(HomeDirectory.Ephemeral.resolve("gridworld_" + sarsaType), vs.values());
+    MathematicaFormat.Put.of(HomeDirectory.Ephemeral.resolve("gridworld_" + sarsaType), vs.values());
     Policy policy = PolicyType.GREEDY.bestEquiprobable(maxbias, doubleSarsa.qsa(), doubleSarsa.sac());
     EpisodeInterface ei = EpisodeKickoff.single(maxbias, policy);
     while (ei.hasNext()) {

@@ -19,7 +19,7 @@ import ch.alpine.tensor.col.ColorDataGradients;
 import ch.alpine.tensor.ext.HomeDirectory;
 import ch.alpine.tensor.img.Raster;
 import ch.alpine.tensor.io.Export;
-import ch.alpine.tensor.io.Put;
+import ch.alpine.tensor.io.MathematicaFormat;
 
 // FIXME crashes
 class UCBsExact extends AbstractExact {
@@ -64,6 +64,6 @@ class UCBsExact extends AbstractExact {
       Tensor image = Raster.of(rescale, ColorDataGradients.CLASSIC);
       Export.of(path.resolve("ucbs.png"), image);
     }
-    Put.of(path.resolve("ucb"), res);
+    MathematicaFormat.Put.of(path.resolve("ucb"), res);
   }
 }
