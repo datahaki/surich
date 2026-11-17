@@ -1,17 +1,15 @@
 // code by jph
-package ch.alpine.surich.net.it2;
+package ch.alpine.surich.net.bin;
 
 import java.util.function.Supplier;
 
-import javax.swing.JFrame;
-
-import ch.alpine.bridge.awt.WindowClosed;
 import ch.alpine.bridge.ref.ann.ReflectionMarker;
 import ch.alpine.surich.net.BaseNetDemo;
 import ch.alpine.surich.net.NetTrainComponent;
 
 @ReflectionMarker
 class SigmoidDemo extends BaseNetDemo {
+  // parameters of supplier are introduced to the gui
   public final Supplier<NetTrainComponent> supplier = new SigmoidComponent();
 
   @Override
@@ -20,8 +18,6 @@ class SigmoidDemo extends BaseNetDemo {
   }
 
   static void main() {
-    BaseNetDemo baseNetDemo = new SigmoidDemo();
-    JFrame jFrame = baseNetDemo.runStandalone();
-    WindowClosed.runs(jFrame, baseNetDemo::cancel);
+    new SigmoidDemo().run();
   }
 }

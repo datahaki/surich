@@ -9,7 +9,6 @@ import java.util.Random;
 import java.util.function.Supplier;
 
 import ch.alpine.bridge.fig.Show;
-import ch.alpine.bridge.fig.Showable;
 import ch.alpine.bridge.fig.plt.ListLinePlot;
 import ch.alpine.bridge.fig.plt.ListPlot;
 import ch.alpine.bridge.fig.plt.Plot;
@@ -31,7 +30,6 @@ import ch.alpine.tensor.Tensor;
 import ch.alpine.tensor.alg.Join;
 import ch.alpine.tensor.api.ScalarTensorFunction;
 import ch.alpine.tensor.api.ScalarUnaryOperator;
-import ch.alpine.tensor.io.TableBuilder;
 import ch.alpine.tensor.itp.BSplineFunctionString;
 import ch.alpine.tensor.itp.LinearInterpolation;
 import ch.alpine.tensor.pdf.RandomVariate;
@@ -78,9 +76,9 @@ class Interp1Component implements Supplier<NetTrainComponent> {
     public void runAsBatches() {
       int[] dims = new int[depth + 2];
       dims[0] = 1;
-      dims[dims.length - 1] = 1;
       for (int i = 1; i <= depth; ++i)
         dims[i] = hidden;
+      dims[dims.length - 1] = 1;
       NetLayer netLayer = NetChains.linear(between.supplier(), dims);
       NetInitialize.of(netLayer);
       NetOptimizer netOptimize = new NetMomentumGradientDescent(netLayer, beta, eta);
@@ -96,8 +94,7 @@ class Interp1Component implements Supplier<NetTrainComponent> {
       NetLayer copy = Interp1TrainComponent.this.copy;
       if (Objects.nonNull(copy)) {
         {
-          Show show = new Show();
-          show.setShowLabel("interpolation");
+          Show show = new Show("interpolation");
           show.add(Plot.of(NetWrap.asSUO11(copy), DOMAIN)).setLabel("gelu");
           Tensor xdata = trainingData.xdata();
           Tensor ydata = trainingData.ydata();
@@ -105,18 +102,14 @@ class Interp1Component implements Supplier<NetTrainComponent> {
           show.render_autoIndent(graphics, new Rectangle(0, 0, dimension.width / 2, dimension.height / 2));
         }
         {
-          Show show = new Show();
-          show.setShowLabel("parameter stats");
-          TableBuilder tableBuilder = netParamStatTracker.getTableCopy();
-          for (int i = 1; i < NetParamStatTracker.LABELS.length; ++i) {
-            Showable showable = show.add(ListLinePlot.of(tableBuilder.getColumns(0, i)));
-            showable.setLabel(NetParamStatTracker.LABELS[i]);
-          }
+          Show show = new Show("parameter stats");
+          Tensor[] tensors = netParamStatTracker.tableBuilder().oneToMany();
+          for (int i = 0; i < tensors.length; ++i)
+            show.add(ListLinePlot.of(tensors[i])).setLabel(NetParamStatTracker.LABELS[i]);
           show.render_autoIndent(graphics, new Rectangle(dimension.width / 2, 0, dimension.width / 2, dimension.height / 2));
         }
         {
-          Show show = new Show();
-          show.setShowLabel("losses");
+          Show show = new Show("losses");
           show.add(ListLinePlot.of(netTrain.tloss.getColumns(0, 1))).setLabel("log loss_data");
           show.add(ListLinePlot.of(netTrain.tloss.getColumns(0, 2))).setLabel("log loss_reg");
           // show1.add(ListLinePlot.of(netLayerWrap1.netTrain.tloss.getTable())).setLabel("tanh");

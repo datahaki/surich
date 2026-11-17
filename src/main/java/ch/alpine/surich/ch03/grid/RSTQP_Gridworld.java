@@ -35,7 +35,6 @@ class RSTQP_Gridworld implements ShowProvider {
         break;
     }
     Show show = new Show();
-    tableBuilder.getTable();
     show.add(ListLinePlot.of(LOGY.slash(tableBuilder.getColumns(0, 1)))).setLabel("error");
     show.add(ListLinePlot.of(LOGY.slash(tableBuilder.getColumns(0, 2)))).setLabel("loss");
     return show;

@@ -3,15 +3,13 @@ package ch.alpine.surich.net.it1;
 
 import java.util.function.Supplier;
 
-import javax.swing.JFrame;
-
-import ch.alpine.bridge.awt.WindowClosed;
 import ch.alpine.bridge.ref.ann.ReflectionMarker;
 import ch.alpine.surich.net.BaseNetDemo;
 import ch.alpine.surich.net.NetTrainComponent;
 
 @ReflectionMarker
 class Interp1Demo extends BaseNetDemo {
+  // parameters of supplier are introduced to the gui
   public final Supplier<NetTrainComponent> supplier = new Interp1Component();
 
   @Override
@@ -20,8 +18,6 @@ class Interp1Demo extends BaseNetDemo {
   }
 
   static void main() {
-    BaseNetDemo baseNetDemo = new Interp1Demo();
-    JFrame jFrame = baseNetDemo.runStandalone();
-    WindowClosed.runs(jFrame, baseNetDemo::cancel);
+    new Interp1Demo().run();
   }
 }

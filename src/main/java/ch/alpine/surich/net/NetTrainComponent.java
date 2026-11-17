@@ -1,3 +1,4 @@
+// code by jph
 package ch.alpine.surich.net;
 
 import java.awt.Graphics;
@@ -5,14 +6,18 @@ import java.awt.Graphics;
 import javax.swing.JComponent;
 
 import ch.alpine.bridge.ref.ann.ReflectionMarker;
+import ch.alpine.bridge.wdog.SoftWatchdog;
+import ch.alpine.bridge.wdog.Watchdog;
 import ch.alpine.subare.net.lay.NetLayer;
 import ch.alpine.subare.net.run.NetTrain;
 import ch.alpine.subare.net.run.NetTrainListener;
 import ch.alpine.tensor.ext.Serialization;
+import ch.alpine.tensor.qty.Quantity;
 
 @ReflectionMarker
 public abstract class NetTrainComponent extends JComponent implements NetTrainListener {
-  protected volatile boolean running = true;
+  private final Watchdog watchdog = SoftWatchdog.barking(Quantity.of(50, "ms"));
+  private volatile boolean running = true;
   protected NetLayer copy;
 
   public abstract void runAsBatches();
@@ -22,8 +27,8 @@ public abstract class NetTrainComponent extends JComponent implements NetTrainLi
 
   @Override
   public final boolean epoch(NetTrain netTrain) {
-    int epoch = netTrain.getTotalEpochs();
-    if (epoch % 50 == 1) {
+    if (watchdog.isBarking()) {
+      watchdog.notifyWatchdog();
       copy = Serialization.copy(netTrain.netLayer);
       repaint();
     }

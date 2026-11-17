@@ -1,5 +1,5 @@
 // code by jph
-package ch.alpine.surich.net.it2;
+package ch.alpine.surich.net.arg;
 
 import java.awt.Dimension;
 import java.awt.Graphics;
@@ -10,14 +10,12 @@ import java.util.function.Supplier;
 import java.util.stream.IntStream;
 
 import ch.alpine.bridge.fig.Show;
-import ch.alpine.bridge.fig.Showable;
 import ch.alpine.bridge.fig.plt.DensityPlot;
 import ch.alpine.bridge.fig.plt.ListLinePlot;
 import ch.alpine.bridge.fig.plt.ListPlot;
 import ch.alpine.bridge.ref.ann.ReflectionMarker;
 import ch.alpine.subare.net.NetParamStatTracker;
 import ch.alpine.subare.net.TrainingData;
-import ch.alpine.subare.net.lay.ElementwiseLayer;
 import ch.alpine.subare.net.lay.ElementwiseLayers;
 import ch.alpine.subare.net.lay.NetChains;
 import ch.alpine.subare.net.lay.NetLayer;
@@ -28,25 +26,23 @@ import ch.alpine.subare.net.run.NetTrain;
 import ch.alpine.surich.net.NetTrainComponent;
 import ch.alpine.tensor.RealScalar;
 import ch.alpine.tensor.Scalar;
-import ch.alpine.tensor.Scalars;
 import ch.alpine.tensor.Tensor;
 import ch.alpine.tensor.Tensors;
 import ch.alpine.tensor.col.ColorDataGradients;
-import ch.alpine.tensor.io.TableBuilder;
 import ch.alpine.tensor.opt.nd.BoxRandomSample;
 import ch.alpine.tensor.opt.nd.CoordinateBoundingBox;
 import ch.alpine.tensor.pdf.RandomSample;
 import ch.alpine.tensor.pdf.RandomVariate;
-import ch.alpine.tensor.pdf.d.BernoulliDistribution;
+import ch.alpine.tensor.pdf.d.DiscreteUniformDistribution;
 import ch.alpine.tensor.sca.Clip;
 import ch.alpine.tensor.sca.Clips;
 
 @ReflectionMarker
-class SigmoidComponent implements Supplier<NetTrainComponent> {
+class ClassifyComponent implements Supplier<NetTrainComponent> {
   public static final Clip DOMAIN = Clips.absoluteOne();
   public Integer seed = 0;
-  public Integer variability = 5;
   public Integer samples = 30;
+  public Integer labels = 3;
   public Integer depth = 2;
   public Integer hidden = 7;
   public ElementwiseLayers between = ElementwiseLayers.RELU;
@@ -68,24 +64,20 @@ class SigmoidComponent implements Supplier<NetTrainComponent> {
 
     public Interp1TrainComponent() {
       Random random = new Random(seed);
-      Tensor xdata = RandomSample.of(new BoxRandomSample(cbb), random, samples);
       // assignment of random labels to points
-      // Tensor ydata = Tensor.of(xdata.stream() //
-      // .map(SimplexContinuousNoise.FUNCTION) //
-      // .map(UnitStep.FUNCTION) //
-      // .map(Tensors::of));
-      Tensor ydata = RandomVariate.of(BernoulliDistribution.of(0.5), random, samples, 1);
-      trainingData = new TrainingData(xdata, ydata);
+      trainingData = new TrainingData( //
+          RandomSample.of(new BoxRandomSample(cbb), random, samples), //
+          RandomVariate.of(DiscreteUniformDistribution.forArray(labels), random, samples, 1));
     }
 
     @Override
     public void runAsBatches() {
       int[] dims = new int[depth + 2];
       dims[0] = 2;
-      dims[dims.length - 1] = 1;
       for (int i = 1; i <= depth; ++i)
         dims[i] = hidden;
-      NetLayer netLayer = NetChains.binary(NetChains.linear(() -> ElementwiseLayer.gelu(), dims));
+      dims[dims.length - 1] = labels;
+      NetLayer netLayer = NetChains.argMax(NetChains.linear(between.supplier(), dims));
       NetInitialize.of(netLayer);
       NetOptimizer netOptimize = new NetMomentumGradientDescent(netLayer, beta, eta);
       netTrain = new NetTrain(netLayer, netOptimize);
@@ -104,26 +96,19 @@ class SigmoidComponent implements Supplier<NetTrainComponent> {
           show.add(DensityPlot.of((x, y) -> copy.forward(Tensors.of(x, y)).Get(0), cbb, cdg));
           Tensor xdata = trainingData.xdata();
           Tensor ydata = trainingData.ydata();
-          Tensor p0 = Tensor.of(IntStream.range(0, xdata.length()).filter(i -> Scalars.isZero(ydata.Get(i, 0))).mapToObj(xdata::get));
-          Tensor p1 = Tensor.of(IntStream.range(0, xdata.length()).filter(i -> !Scalars.isZero(ydata.Get(i, 0))).mapToObj(xdata::get));
-          show.add(ListPlot.of(p0));
-          show.add(ListPlot.of(p1));
+          for (int k = 0; k < labels; ++k) {
+            Scalar label = RealScalar.of(k);
+            Tensor p0 = Tensor.of(IntStream.range(0, xdata.length()) //
+                .filter(i -> ydata.Get(i, 0).equals(label)).mapToObj(xdata::get));
+            show.add(ListPlot.of(p0));
+          }
           show.render_autoIndent(graphics, new Rectangle(0, 0, dimension.width / 2, dimension.height / 2));
-          //
-          // Show show = new Show();
-          // show.setShowLabel("interpolation");
-          // show.add(Plot.of(NetWrap.asSUO11(copy), DOMAIN)).setLabel("gelu");
-          // show.add(ListPlot.of(Join.of(1, xdata, ydata)));
-          // show.render_autoIndent(graphics, new Rectangle(0, 0, dimension.width / 2, dimension.height / 2));
         }
         {
-          Show show = new Show();
-          show.setShowLabel("parameter stats");
-          TableBuilder tableBuilder = netParamStatTracker.getTableCopy();
-          for (int i = 1; i < NetParamStatTracker.LABELS.length; ++i) {
-            Showable showable = show.add(ListLinePlot.of(tableBuilder.getColumns(0, i)));
-            showable.setLabel(NetParamStatTracker.LABELS[i]);
-          }
+          Show show = new Show("parameter stats");
+          Tensor[] tensors = netParamStatTracker.tableBuilder().oneToMany();
+          for (int i = 0; i < tensors.length; ++i)
+            show.add(ListLinePlot.of(tensors[i])).setLabel(NetParamStatTracker.LABELS[i]);
           show.render_autoIndent(graphics, new Rectangle(dimension.width / 2, 0, dimension.width / 2, dimension.height / 2));
         }
         {
