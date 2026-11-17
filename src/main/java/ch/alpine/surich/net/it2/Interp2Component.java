@@ -19,8 +19,7 @@ import ch.alpine.subare.net.TrainingData;
 import ch.alpine.subare.net.lay.ElementwiseLayers;
 import ch.alpine.subare.net.lay.NetChains;
 import ch.alpine.subare.net.lay.NetLayer;
-import ch.alpine.subare.net.opt.NetMomentumGradientDescent;
-import ch.alpine.subare.net.opt.NetOptimizer;
+import ch.alpine.subare.net.opt.NetOptimizers;
 import ch.alpine.subare.net.run.NetInitialize;
 import ch.alpine.subare.net.run.NetTrain;
 import ch.alpine.surich.net.NetTrainComponent;
@@ -52,8 +51,10 @@ class Interp2Component implements Supplier<NetTrainComponent> {
   public Integer depth = 2;
   public Integer hidden = 7;
   public ElementwiseLayers between = ElementwiseLayers.RELU;
-  public Scalar beta = RealScalar.of(0.9);
+  public NetOptimizers GD = NetOptimizers.MOMENT;
   public Scalar eta = RealScalar.of(0.01);
+  public Scalar beta1 = RealScalar.of(0.9);
+  public Scalar beta2 = RealScalar.of(0.99);
   public Integer batch_size = 10;
   public ColorDataGradients cdg = ColorDataGradients.COPPER;
 
@@ -89,8 +90,7 @@ class Interp2Component implements Supplier<NetTrainComponent> {
       dims[dims.length - 1] = 1;
       NetLayer netLayer = NetChains.linear(between.supplier(), dims);
       NetInitialize.of(netLayer);
-      NetOptimizer netOptimize = new NetMomentumGradientDescent(netLayer, beta, eta);
-      netTrain = new NetTrain(netLayer, netOptimize);
+      netTrain = new NetTrain(netLayer, GD.create(netLayer, eta, beta1, beta2));
       netTrain.addListener(netParamStatTracker);
       netTrain.addListener(this);
       netTrain.runAsBatches(trainingData, batch_size);

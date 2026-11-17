@@ -18,7 +18,7 @@ import ch.alpine.subare.net.lay.NetLayer;
 import ch.alpine.subare.net.lay.ResidualLayer;
 import ch.alpine.subare.net.lay.SoftmaxLayer;
 import ch.alpine.subare.net.opt.NetOptimizer;
-import ch.alpine.subare.net.opt.NetSimpleGradientDescent;
+import ch.alpine.subare.net.opt.NetOptimizers;
 import ch.alpine.subare.net.run.NetInitialize;
 import ch.alpine.subare.net.run.NetTrain;
 import ch.alpine.tensor.RealScalar;
@@ -50,7 +50,7 @@ class ResidualDemo implements ManipulateProvider {
     Tensor ydata = tuo.slash(xdata);
     // ---
     NetInitialize.of(netLayer);
-    NetOptimizer netOptimize = new NetSimpleGradientDescent(netLayer, learningRate);
+    NetOptimizer netOptimize = NetOptimizers.SIMPLE.create(netLayer, learningRate);
     NetTrain netTrain = new NetTrain(netLayer, netOptimize);
     NetParamTracker netParamTracker = new NetParamTracker();
     netTrain.addListener(netParamTracker);

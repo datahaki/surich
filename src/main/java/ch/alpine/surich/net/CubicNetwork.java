@@ -17,7 +17,7 @@ import ch.alpine.subare.net.lay.ElementwiseLayer;
 import ch.alpine.subare.net.lay.NetChains;
 import ch.alpine.subare.net.lay.NetLayer;
 import ch.alpine.subare.net.opt.NetOptimizer;
-import ch.alpine.subare.net.opt.NetSimpleGradientDescent;
+import ch.alpine.subare.net.opt.NetOptimizers;
 import ch.alpine.subare.net.run.NetExtract;
 import ch.alpine.subare.net.run.NetInitialize;
 import ch.alpine.subare.net.run.NetTrain;
@@ -58,7 +58,7 @@ class CubicNetwork implements ManipulateProvider {
 
     void train() {
       NetInitialize.of(netLayer);
-      NetOptimizer netOptimizer = new NetSimpleGradientDescent(netLayer, learningRate);
+      NetOptimizer netOptimizer = NetOptimizers.SIMPLE.create(netLayer, learningRate);
       NetTrain netTrain = new NetTrain(netLayer, netOptimizer);
       Consumer<Tensor> consumer = tableBuilder::appendRow;
       int epoch = 0;

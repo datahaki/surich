@@ -15,8 +15,8 @@ import ch.alpine.subare.net.TrainingData;
 import ch.alpine.subare.net.lay.ElementwiseLayer;
 import ch.alpine.subare.net.lay.NetChains;
 import ch.alpine.subare.net.lay.NetLayer;
-import ch.alpine.subare.net.opt.NetMomentumGradientDescent;
 import ch.alpine.subare.net.opt.NetOptimizer;
+import ch.alpine.subare.net.opt.NetOptimizers;
 import ch.alpine.subare.net.run.NetInitialize;
 import ch.alpine.subare.net.run.NetTrain;
 import ch.alpine.tensor.RealScalar;
@@ -73,7 +73,7 @@ class XORNeuralNetwork implements ManipulateProvider {
     /** @param Y */
     Network(Tensor Y) {
       NetInitialize.of(netLayer);
-      NetOptimizer netOptimize = new NetMomentumGradientDescent(netLayer, beta, eta);
+      NetOptimizer netOptimize = NetOptimizers.MOMENT.create(netLayer, beta, eta);
       netTrain = new NetTrain(netLayer, netOptimize);
       netTrain.addListener(netParamTracker);
       netTrain.setMaxEpochs(maxEpoch);
