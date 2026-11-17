@@ -32,7 +32,13 @@ public abstract class BaseNetDemo implements ManipulateProvider {
       retrain = false;
       if (Objects.isNull(netTrainComponent) || !netTrainComponent.isRunning()) {
         netTrainComponent = supplier().get();
-        executorService.submit(netTrainComponent::runAsBatches);
+        executorService.submit(() -> {
+          try {
+            netTrainComponent.runAsBatches();
+          } catch (Exception exception) {
+            exception.printStackTrace();
+          }
+        });
       } else {
         netTrainComponent.cancel();
       }
