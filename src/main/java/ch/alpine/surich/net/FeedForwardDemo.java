@@ -20,7 +20,6 @@ import ch.alpine.subare.net.run.NetTrain;
 import ch.alpine.tensor.RealScalar;
 import ch.alpine.tensor.Scalar;
 import ch.alpine.tensor.Tensor;
-import ch.alpine.tensor.api.TensorUnaryOperator;
 import ch.alpine.tensor.io.TableBuilder;
 import ch.alpine.tensor.pdf.Distribution;
 import ch.alpine.tensor.pdf.RandomVariate;
@@ -39,19 +38,18 @@ class FeedForwardDemo implements ManipulateProvider {
   @Override
   public Container getContainer() {
     Distribution distribution = NormalDistribution.standard();
-    TensorUnaryOperator tuo;
     NetLayer netLayer = NetChains.linear(() -> ElementwiseLayer.gelu(), d_in, hidden, d_out);
     NetInitialize.of(netLayer);
-    tuo = netLayer::forwardBatch;
     Tensor xdata = RandomVariate.of(distribution, samples, d_in);
-    Tensor ydata = tuo.slash(xdata);
+    TrainingData trainingData = new TrainingData( //
+        xdata, //
+        netLayer.forwardBatch(xdata));
     // ---
     NetInitialize.of(netLayer);
     NetOptimizer netOptimize = new NetSimpleGradientDescent(netLayer, learningRate);
     NetTrain netTrain = new NetTrain(netLayer, netOptimize);
     NetParamTracker netParamTracker = new NetParamTracker();
     netTrain.addListener(netParamTracker);
-    TrainingData trainingData = new TrainingData(xdata, ydata);
     netTrain.setMaxEpochs(max_epochs);
     netTrain.runAsBatches(trainingData, batch_size);
     Show show0 = new Show();

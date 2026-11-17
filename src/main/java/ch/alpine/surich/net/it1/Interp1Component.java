@@ -1,14 +1,15 @@
 // code by jph
 package ch.alpine.surich.net.it1;
 
-import java.awt.Dimension;
 import java.awt.Graphics;
 import java.awt.Rectangle;
+import java.util.List;
 import java.util.Objects;
 import java.util.Random;
 import java.util.function.Supplier;
 
 import ch.alpine.bridge.fig.Show;
+import ch.alpine.bridge.fig.ShowGridComponent;
 import ch.alpine.bridge.fig.plt.ListLinePlot;
 import ch.alpine.bridge.fig.plt.ListPlot;
 import ch.alpine.bridge.fig.plt.Plot;
@@ -53,22 +54,23 @@ class Interp1Component implements Supplier<NetTrainComponent> {
 
   @Override
   public NetTrainComponent get() {
-    return new Interp1TrainComponent();
+    return new InnerComponent();
   }
 
-  class Interp1TrainComponent extends NetTrainComponent {
+  class InnerComponent extends NetTrainComponent {
+    final ScalarUnaryOperator truth;
     final TrainingData trainingData;
     final NetParamStatTracker netParamStatTracker = new NetParamStatTracker();
     NetTrain netTrain;
 
-    public Interp1TrainComponent() {
+    public InnerComponent() {
       Random random = new Random(seed);
       Tensor disY = RandomVariate.of(NormalDistribution.standard(), random, variability);
       ScalarTensorFunction stf = BSplineFunctionString.of(3, disY);
       ScalarUnaryOperator lin = LinearInterpolation.of(Clips.positive(variability - 1));
       Tensor xdata = RandomVariate.of(UniformDistribution.of(DOMAIN), random, samples, 1);
-      ScalarUnaryOperator suo = s -> (Scalar) stf.apply(lin.apply(DOMAIN.rescale(s)));
-      Tensor ydata = xdata.maps(suo);
+      truth = s -> (Scalar) stf.apply(lin.apply(DOMAIN.rescale(s)));
+      Tensor ydata = xdata.maps(truth);
       trainingData = new TrainingData(xdata, ydata);
     }
 
@@ -90,30 +92,31 @@ class Interp1Component implements Supplier<NetTrainComponent> {
 
     @Override
     protected void paintComponent(Graphics graphics) {
-      Dimension dimension = getSize();
-      NetLayer copy = Interp1TrainComponent.this.copy;
+      NetLayer copy = InnerComponent.this.copy;
       if (Objects.nonNull(copy)) {
+        List<Rectangle> list = ShowGridComponent.rectangles(3, getSize());
         {
           Show show = new Show("interpolation");
+          show.add(Plot.of(truth, DOMAIN));
           show.add(Plot.of(NetWrap.asSUO11(copy), DOMAIN)).setLabel("gelu");
           Tensor xdata = trainingData.xdata();
           Tensor ydata = trainingData.ydata();
           show.add(ListPlot.of(Join.of(1, xdata, ydata)));
-          show.render_autoIndent(graphics, new Rectangle(0, 0, dimension.width / 2, dimension.height / 2));
+          show.render_autoIndent(graphics, list.get(0));
         }
         {
           Show show = new Show("parameter stats");
           Tensor[] tensors = netParamStatTracker.tableBuilder().oneToMany();
           for (int i = 0; i < tensors.length; ++i)
             show.add(ListLinePlot.of(tensors[i])).setLabel(NetParamStatTracker.LABELS[i]);
-          show.render_autoIndent(graphics, new Rectangle(dimension.width / 2, 0, dimension.width / 2, dimension.height / 2));
+          show.render_autoIndent(graphics, list.get(1));
         }
         {
           Show show = new Show("losses");
           show.add(ListLinePlot.of(netTrain.tloss.getColumns(0, 1))).setLabel("log loss_data");
           show.add(ListLinePlot.of(netTrain.tloss.getColumns(0, 2))).setLabel("log loss_reg");
           // show1.add(ListLinePlot.of(netLayerWrap1.netTrain.tloss.getTable())).setLabel("tanh");
-          show.render_autoIndent(graphics, new Rectangle(0, dimension.height / 2, dimension.width / 2, dimension.height / 2));
+          show.render_autoIndent(graphics, list.get(2));
         }
       }
     };

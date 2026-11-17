@@ -1,15 +1,16 @@
 // code by jph
 package ch.alpine.surich.net.bin;
 
-import java.awt.Dimension;
 import java.awt.Graphics;
 import java.awt.Rectangle;
+import java.util.List;
 import java.util.Objects;
 import java.util.Random;
 import java.util.function.Supplier;
 import java.util.stream.IntStream;
 
 import ch.alpine.bridge.fig.Show;
+import ch.alpine.bridge.fig.ShowGridComponent;
 import ch.alpine.bridge.fig.plt.DensityPlot;
 import ch.alpine.bridge.fig.plt.ListLinePlot;
 import ch.alpine.bridge.fig.plt.ListPlot;
@@ -29,6 +30,7 @@ import ch.alpine.tensor.Scalar;
 import ch.alpine.tensor.Scalars;
 import ch.alpine.tensor.Tensor;
 import ch.alpine.tensor.Tensors;
+import ch.alpine.tensor.api.ScalarBinaryOperator;
 import ch.alpine.tensor.col.ColorDataGradients;
 import ch.alpine.tensor.opt.nd.BoxRandomSample;
 import ch.alpine.tensor.opt.nd.CoordinateBoundingBox;
@@ -53,16 +55,16 @@ class SigmoidComponent implements Supplier<NetTrainComponent> {
 
   @Override
   public NetTrainComponent get() {
-    return new Interp1TrainComponent();
+    return new InnerComponent();
   }
 
-  class Interp1TrainComponent extends NetTrainComponent {
+  class InnerComponent extends NetTrainComponent {
     final CoordinateBoundingBox cbb = CoordinateBoundingBox.of(Clips.absolute(2), Clips.absolute(2));
     final TrainingData trainingData;
     final NetParamStatTracker netParamStatTracker = new NetParamStatTracker();
     NetTrain netTrain;
 
-    public Interp1TrainComponent() {
+    public InnerComponent() {
       Random random = new Random(seed);
       // assignment of random labels to points
       trainingData = new TrainingData( //
@@ -88,32 +90,27 @@ class SigmoidComponent implements Supplier<NetTrainComponent> {
 
     @Override
     protected void paintComponent(Graphics graphics) {
-      Dimension dimension = getSize();
-      NetLayer copy = Interp1TrainComponent.this.copy;
+      NetLayer copy = InnerComponent.this.copy;
       if (Objects.nonNull(copy)) {
+        List<Rectangle> list = ShowGridComponent.rectangles(3, getSize());
         {
           Show show = new Show();
-          show.add(DensityPlot.of((x, y) -> copy.forward(Tensors.of(x, y)).Get(0), cbb, cdg));
+          ScalarBinaryOperator sbo = (x, y) -> copy.forward(Tensors.of(x, y)).Get(0);
+          show.add(DensityPlot.of(sbo, cbb, cdg));
           Tensor xdata = trainingData.xdata();
           Tensor ydata = trainingData.ydata();
           Tensor p0 = Tensor.of(IntStream.range(0, xdata.length()).filter(i -> Scalars.isZero(ydata.Get(i, 0))).mapToObj(xdata::get));
           Tensor p1 = Tensor.of(IntStream.range(0, xdata.length()).filter(i -> !Scalars.isZero(ydata.Get(i, 0))).mapToObj(xdata::get));
           show.add(ListPlot.of(p0));
           show.add(ListPlot.of(p1));
-          show.render_autoIndent(graphics, new Rectangle(0, 0, dimension.width / 2, dimension.height / 2));
-          //
-          // Show show = new Show();
-          // show.setShowLabel("interpolation");
-          // show.add(Plot.of(NetWrap.asSUO11(copy), DOMAIN)).setLabel("gelu");
-          // show.add(ListPlot.of(Join.of(1, xdata, ydata)));
-          // show.render_autoIndent(graphics, new Rectangle(0, 0, dimension.width / 2, dimension.height / 2));
+          show.render_autoIndent(graphics, list.get(0));
         }
         {
           Show show = new Show("parameter stats");
           Tensor[] tensors = netParamStatTracker.tableBuilder().oneToMany();
           for (int i = 0; i < tensors.length; ++i)
             show.add(ListLinePlot.of(tensors[i])).setLabel(NetParamStatTracker.LABELS[i]);
-          show.render_autoIndent(graphics, new Rectangle(dimension.width / 2, 0, dimension.width / 2, dimension.height / 2));
+          show.render_autoIndent(graphics, list.get(1));
         }
         {
           Show show = new Show();
@@ -121,7 +118,7 @@ class SigmoidComponent implements Supplier<NetTrainComponent> {
           show.add(ListLinePlot.of(netTrain.tloss.getColumns(0, 1))).setLabel("log loss_data");
           show.add(ListLinePlot.of(netTrain.tloss.getColumns(0, 2))).setLabel("log loss_reg");
           // show1.add(ListLinePlot.of(netLayerWrap1.netTrain.tloss.getTable())).setLabel("tanh");
-          show.render_autoIndent(graphics, new Rectangle(0, dimension.height / 2, dimension.width / 2, dimension.height / 2));
+          show.render_autoIndent(graphics, list.get(2));
         }
       }
     };
