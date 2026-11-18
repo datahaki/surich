@@ -5,6 +5,7 @@ import java.awt.Container;
 
 import ch.alpine.bridge.fig.Show;
 import ch.alpine.bridge.fig.ShowGridComponent;
+import ch.alpine.bridge.fig.grd.AxisMap;
 import ch.alpine.bridge.fig.plt.ListLinePlot;
 import ch.alpine.bridge.pro.ManipulateProvider;
 import ch.alpine.bridge.ref.ann.ReflectionMarker;
@@ -13,16 +14,10 @@ import ch.alpine.subare.net.NetParamTracker;
 import ch.alpine.subare.net.TrainingData;
 import ch.alpine.subare.net.api.NetLayer;
 import ch.alpine.subare.net.api.NetOptimizer;
-import ch.alpine.subare.net.lay.ArgMaxLayer;
 import ch.alpine.subare.net.lay.ElementwiseLayer;
-import ch.alpine.subare.net.lay.NetChain;
 import ch.alpine.subare.net.lay.NetChains;
 import ch.alpine.subare.net.lay.ResidualLayer;
-import ch.alpine.subare.net.lay.SoftmaxLayer;
-import ch.alpine.subare.net.opt.NetOptimizers;
 import ch.alpine.subare.net.run.NetTrain;
-import ch.alpine.tensor.RealScalar;
-import ch.alpine.tensor.Scalar;
 import ch.alpine.tensor.Tensor;
 import ch.alpine.tensor.api.TensorUnaryOperator;
 import ch.alpine.tensor.io.TableBuilder;
@@ -36,21 +31,19 @@ class ResidualDemo implements ManipulateProvider {
   public Integer samples = 20;
   public Integer batch_size = 5;
   public Integer maxEpoch = 200;
-  public Scalar learningRate = RealScalar.of(0.1);
+  public final OptParam optParam = new OptParam();
 
   @Override
   public Container getContainer() {
-    NetLayer netLayer = NetChain.of( //
-        new ResidualLayer(NetChains.linear(() -> ElementwiseLayer.gelu(), dinout, hidden, dinout)), //
-        SoftmaxLayer.INSTANCE, //
-        new ArgMaxLayer());
+    NetLayer netLayer = NetChains.argMax( //
+        new ResidualLayer(NetChains.linear(() -> ElementwiseLayer.gelu(), dinout, hidden, dinout)));
     NetInitialize.of(netLayer);
     Tensor xdata = RandomVariate.of(NormalDistribution.standard(), samples, dinout);
     TensorUnaryOperator tuo = netLayer::forward;
     Tensor ydata = tuo.slash(xdata);
     // ---
     NetInitialize.of(netLayer);
-    NetOptimizer netOptimize = NetOptimizers.SIMPLE.create(netLayer, learningRate);
+    NetOptimizer netOptimize = optParam.create(netLayer);
     NetTrain netTrain = new NetTrain(netLayer, netOptimize);
     NetParamTracker netParamTracker = new NetParamTracker();
     netTrain.addListener(netParamTracker);
@@ -72,6 +65,7 @@ class ResidualDemo implements ManipulateProvider {
       int n = table.getRow(0).length();
       for (int i = 1; i < n; ++i)
         show1.add(ListLinePlot.of(table.getColumns(0, i)));
+      show1.showOptions.axisOptionsY.axisMap = AxisMap.LOG;
     }
     return ShowGridComponent.of(show0, show1);
   }

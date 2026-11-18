@@ -5,6 +5,7 @@ import java.awt.Container;
 
 import ch.alpine.bridge.fig.Show;
 import ch.alpine.bridge.fig.ShowGridComponent;
+import ch.alpine.bridge.fig.grd.AxisMap;
 import ch.alpine.bridge.fig.plt.ListLinePlot;
 import ch.alpine.bridge.pro.ManipulateProvider;
 import ch.alpine.bridge.ref.ann.FieldClip;
@@ -17,7 +18,6 @@ import ch.alpine.subare.net.api.NetLayer;
 import ch.alpine.subare.net.api.NetOptimizer;
 import ch.alpine.subare.net.lay.ElementwiseLayer;
 import ch.alpine.subare.net.lay.NetChains;
-import ch.alpine.subare.net.opt.NetOptimizers;
 import ch.alpine.subare.net.run.NetTrain;
 import ch.alpine.tensor.RealScalar;
 import ch.alpine.tensor.Scalar;
@@ -57,8 +57,7 @@ class XORNeuralNetwork implements ManipulateProvider {
   @FieldSelectionArray({ "4", "5", "6", "7" })
   public Integer hiddenSize = 4;
   public Scalar l2 = RealScalar.of(0.00001);
-  public Scalar beta = RealScalar.of(0.9);
-  public Scalar eta = RealScalar.of(0.02);
+  public final OptParam optParam = new OptParam();
   @FieldClip(min = "1", max = "4")
   public Integer batch_size = 1;
   public Integer maxEpoch = 2000;
@@ -73,7 +72,7 @@ class XORNeuralNetwork implements ManipulateProvider {
     /** @param Y */
     Network(Tensor Y) {
       NetInitialize.of(netLayer);
-      NetOptimizer netOptimize = NetOptimizers.MOMENT.create(netLayer, beta, eta);
+      NetOptimizer netOptimize = optParam.create(netLayer);
       netTrain = new NetTrain(netLayer, netOptimize);
       netTrain.addListener(netParamTracker);
       netTrain.setMaxEpochs(maxEpoch);
@@ -100,6 +99,7 @@ class XORNeuralNetwork implements ManipulateProvider {
       for (int i = 1; i < n; ++i)
         show2.add(ListLinePlot.of(table.getColumns(0, i)));
       show2.setShowLabel("Log[Loss] = " + log_loss.maps(Round._3));
+      show2.showOptions.axisOptionsY.axisMap = AxisMap.LOG;
     }
     return ShowGridComponent.of(show1, show2);
   }
