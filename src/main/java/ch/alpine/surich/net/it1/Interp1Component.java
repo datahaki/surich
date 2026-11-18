@@ -10,21 +10,21 @@ import java.util.function.Supplier;
 
 import ch.alpine.bridge.fig.Show;
 import ch.alpine.bridge.fig.ShowGridComponent;
+import ch.alpine.bridge.fig.grd.AxisMap;
 import ch.alpine.bridge.fig.plt.ListLinePlot;
 import ch.alpine.bridge.fig.plt.ListPlot;
 import ch.alpine.bridge.fig.plt.Plot;
 import ch.alpine.bridge.ref.ann.ReflectionMarker;
+import ch.alpine.subare.net.NetInitialize;
 import ch.alpine.subare.net.NetParamStatTracker;
 import ch.alpine.subare.net.NetWrap;
 import ch.alpine.subare.net.TrainingData;
+import ch.alpine.subare.net.api.NetLayer;
 import ch.alpine.subare.net.lay.ElementwiseLayers;
 import ch.alpine.subare.net.lay.NetChains;
-import ch.alpine.subare.net.lay.NetLayer;
-import ch.alpine.subare.net.opt.NetOptimizers;
-import ch.alpine.subare.net.run.NetInitialize;
 import ch.alpine.subare.net.run.NetTrain;
 import ch.alpine.surich.net.NetTrainComponent;
-import ch.alpine.tensor.RealScalar;
+import ch.alpine.surich.net.OptParam;
 import ch.alpine.tensor.Scalar;
 import ch.alpine.tensor.Tensor;
 import ch.alpine.tensor.alg.Join;
@@ -47,10 +47,7 @@ class Interp1Component implements Supplier<NetTrainComponent> {
   public Integer depth = 2;
   public Integer hidden = 7;
   public ElementwiseLayers between = ElementwiseLayers.RELU;
-  public NetOptimizers GD = NetOptimizers.MOMENT;
-  public Scalar eta = RealScalar.of(0.01);
-  public Scalar beta1 = RealScalar.of(0.9);
-  public Scalar beta2 = RealScalar.of(0.99);
+  public final OptParam optParam = new OptParam();
   public Integer batch_size = 6;
 
   @Override
@@ -84,7 +81,7 @@ class Interp1Component implements Supplier<NetTrainComponent> {
       dims[dims.length - 1] = 1;
       NetLayer netLayer = NetChains.linear(between.supplier(), dims);
       NetInitialize.of(netLayer);
-      netTrain = new NetTrain(netLayer, GD.create(netLayer, eta, beta1, beta2));
+      netTrain = new NetTrain(netLayer, optParam.create(netLayer));
       netTrain.addListener(netParamStatTracker);
       netTrain.addListener(this);
       netTrain.runAsBatches(trainingData, batch_size);
@@ -115,7 +112,7 @@ class Interp1Component implements Supplier<NetTrainComponent> {
           Show show = new Show("losses");
           show.add(ListLinePlot.of(netTrain.tloss.getColumns(0, 1))).setLabel("log loss_data");
           show.add(ListLinePlot.of(netTrain.tloss.getColumns(0, 2))).setLabel("log loss_reg");
-          // show1.add(ListLinePlot.of(netLayerWrap1.netTrain.tloss.getTable())).setLabel("tanh");
+          show.showOptions.axisOptionsY.axisMap = AxisMap.LOG;
           show.render_autoIndent(graphics, list.get(2));
         }
       }

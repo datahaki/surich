@@ -8,7 +8,7 @@ import javax.swing.JComponent;
 import ch.alpine.bridge.ref.ann.ReflectionMarker;
 import ch.alpine.bridge.wdog.SoftWatchdog;
 import ch.alpine.bridge.wdog.Watchdog;
-import ch.alpine.subare.net.lay.NetLayer;
+import ch.alpine.subare.net.api.NetLayer;
 import ch.alpine.subare.net.run.NetTrain;
 import ch.alpine.subare.net.run.NetTrainListener;
 import ch.alpine.tensor.ext.Serialization;
