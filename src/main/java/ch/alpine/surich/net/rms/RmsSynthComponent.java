@@ -10,7 +10,7 @@ import java.util.function.Supplier;
 
 import ch.alpine.bridge.fig.Show;
 import ch.alpine.bridge.fig.ShowGridComponent;
-import ch.alpine.bridge.fig.plt.DiscretePlot;
+import ch.alpine.bridge.fig.plt.ListDiscretePlot;
 import ch.alpine.bridge.ref.ann.ReflectionMarker;
 import ch.alpine.subare.net.NetInitialize;
 import ch.alpine.subare.net.NetParamStatTracker;
@@ -30,6 +30,8 @@ import ch.alpine.tensor.RealScalar;
 import ch.alpine.tensor.Scalar;
 import ch.alpine.tensor.Tensor;
 import ch.alpine.tensor.Tensors;
+import ch.alpine.tensor.alg.Flatten;
+import ch.alpine.tensor.alg.Range;
 import ch.alpine.tensor.pdf.RandomVariate;
 import ch.alpine.tensor.pdf.c.NormalDistribution;
 import ch.alpine.tensor.pdf.d.DiscreteUniformDistribution;
@@ -104,7 +106,7 @@ class RmsSynthComponent implements Supplier<NetTrainComponent> {
           Show show = new Show("error");
           Tensor Y = copy.forwardBatch(trainingData.xdata());
           Tensor d = Y.subtract(trainingData.ydata());
-          show.add(DiscretePlot.of(x -> d.Get(x.number().intValue(), 0), Clips.positive(samples - 1)));
+          show.add(ListDiscretePlot.of(Range.of(0, d.length()), Flatten.of(d)));
           show.render_autoIndent(graphics, list.get(0));
         }
         {
