@@ -10,7 +10,7 @@ import java.util.function.Supplier;
 
 import ch.alpine.bridge.fig.Show;
 import ch.alpine.bridge.fig.ShowGridComponent;
-import ch.alpine.bridge.fig.grd.AxisMap;
+import ch.alpine.bridge.fig.grd.AxisMaps;
 import ch.alpine.bridge.fig.plt.ListLinePlot;
 import ch.alpine.bridge.fig.plt.ListPlot;
 import ch.alpine.bridge.fig.plt.Plot;
@@ -112,7 +112,7 @@ class Interp1Component implements Supplier<NetTrainComponent> {
           Show show = new Show("losses");
           show.add(ListLinePlot.of(netTrain.tloss.getColumns(0, 1))).setLabel("log loss_data");
           show.add(ListLinePlot.of(netTrain.tloss.getColumns(0, 2))).setLabel("log loss_reg");
-          show.showOptions.axisOptionsY.axisMap = AxisMap.LOG;
+          show.showOptions.axisOptionsY.axisMap = AxisMaps.LOG;
           show.render_autoIndent(graphics, list.get(2));
         }
       }

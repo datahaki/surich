@@ -10,7 +10,7 @@ import java.util.function.Supplier;
 import java.util.stream.IntStream;
 
 import ch.alpine.bridge.fig.Show;
-import ch.alpine.bridge.fig.grd.AxisMap;
+import ch.alpine.bridge.fig.grd.AxisMaps;
 import ch.alpine.bridge.fig.plt.DensityPlot;
 import ch.alpine.bridge.fig.plt.ListLinePlot;
 import ch.alpine.bridge.fig.plt.ListPlot;
@@ -114,7 +114,7 @@ class ClassifyComponent implements Supplier<NetTrainComponent> {
           show.setShowLabel("losses");
           show.add(ListLinePlot.of(netTrain.tloss.getColumns(0, 1))).setLabel("log loss_data");
           show.add(ListLinePlot.of(netTrain.tloss.getColumns(0, 2))).setLabel("log loss_reg");
-          show.showOptions.axisOptionsY.axisMap = AxisMap.LOG;
+          show.showOptions.axisOptionsY.axisMap = AxisMaps.LOG;
           show.render_autoIndent(graphics, new Rectangle(0, dimension.height / 2, dimension.width / 2, dimension.height / 2));
         }
       }

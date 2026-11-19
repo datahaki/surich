@@ -5,7 +5,7 @@ import java.awt.Container;
 
 import ch.alpine.bridge.fig.Show;
 import ch.alpine.bridge.fig.ShowGridComponent;
-import ch.alpine.bridge.fig.grd.AxisMap;
+import ch.alpine.bridge.fig.grd.AxisMaps;
 import ch.alpine.bridge.fig.plt.ListLinePlot;
 import ch.alpine.bridge.pro.ManipulateProvider;
 import ch.alpine.bridge.ref.ann.ReflectionMarker;
@@ -65,7 +65,7 @@ class ResidualDemo implements ManipulateProvider {
       int n = table.getRow(0).length();
       for (int i = 1; i < n; ++i)
         show1.add(ListLinePlot.of(table.getColumns(0, i)));
-      show1.showOptions.axisOptionsY.axisMap = AxisMap.LOG;
+      show1.showOptions.axisOptionsY.axisMap = AxisMaps.LOG;
     }
     return ShowGridComponent.of(show0, show1);
   }

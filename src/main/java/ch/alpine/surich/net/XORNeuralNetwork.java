@@ -5,7 +5,7 @@ import java.awt.Container;
 
 import ch.alpine.bridge.fig.Show;
 import ch.alpine.bridge.fig.ShowGridComponent;
-import ch.alpine.bridge.fig.grd.AxisMap;
+import ch.alpine.bridge.fig.grd.AxisMaps;
 import ch.alpine.bridge.fig.plt.ListLinePlot;
 import ch.alpine.bridge.pro.ManipulateProvider;
 import ch.alpine.bridge.ref.ann.FieldClip;
@@ -99,7 +99,7 @@ class XORNeuralNetwork implements ManipulateProvider {
       for (int i = 1; i < n; ++i)
         show2.add(ListLinePlot.of(table.getColumns(0, i)));
       show2.setShowLabel("Log[Loss] = " + log_loss.maps(Round._3));
-      show2.showOptions.axisOptionsY.axisMap = AxisMap.LOG;
+      show2.showOptions.axisOptionsY.axisMap = AxisMaps.LOG;
     }
     return ShowGridComponent.of(show1, show2);
   }
