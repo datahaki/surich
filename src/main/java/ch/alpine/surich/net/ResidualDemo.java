@@ -5,7 +5,6 @@ import java.awt.Container;
 
 import ch.alpine.bridge.fig.Show;
 import ch.alpine.bridge.fig.ShowGridComponent;
-import ch.alpine.bridge.fig.grd.AxisMaps;
 import ch.alpine.bridge.fig.plt.ListLinePlot;
 import ch.alpine.bridge.pro.ManipulateProvider;
 import ch.alpine.bridge.ref.ann.ReflectionMarker;
@@ -19,7 +18,6 @@ import ch.alpine.subare.net.lay.NetChains;
 import ch.alpine.subare.net.lay.ResidualLayer;
 import ch.alpine.subare.net.run.NetTrain;
 import ch.alpine.tensor.Tensor;
-import ch.alpine.tensor.api.TensorUnaryOperator;
 import ch.alpine.tensor.io.TableBuilder;
 import ch.alpine.tensor.pdf.RandomVariate;
 import ch.alpine.tensor.pdf.c.NormalDistribution;
@@ -38,9 +36,10 @@ class ResidualDemo implements ManipulateProvider {
     NetLayer netLayer = NetChains.argMax( //
         new ResidualLayer(NetChains.linear(ElementwiseLayers.GELU, dinout, hidden, dinout)));
     NetInitialize.of(netLayer);
+    IO.println(netLayer);
     Tensor xdata = RandomVariate.of(NormalDistribution.standard(), samples, dinout);
-    TensorUnaryOperator tuo = netLayer::forward;
-    Tensor ydata = tuo.slash(xdata);
+    IO.println(xdata);
+    Tensor ydata = netLayer.forwardBatch(xdata);
     // ---
     NetInitialize.of(netLayer);
     NetOptimizer netOptimize = optParam.create(netLayer);
@@ -58,15 +57,7 @@ class ResidualDemo implements ManipulateProvider {
       for (int i = 1; i < n; ++i)
         show0.add(ListLinePlot.of(table.getColumns(0, i)));
     }
-    Show show1 = new Show();
-    {
-      show1.setShowLabel("loss");
-      TableBuilder table = netTrain.tloss;
-      int n = table.getRow(0).length();
-      for (int i = 1; i < n; ++i)
-        show1.add(ListLinePlot.of(table.getColumns(0, i)));
-      show1.showOptions.axisOptionsY.axisMap = AxisMaps.LOG;
-    }
+    Show show1 = NetShows.loss(netTrain.tloss);
     return ShowGridComponent.of(show0, show1);
   }
 

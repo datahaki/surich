@@ -1,3 +1,4 @@
+// code by jph
 package ch.alpine.surich.net;
 
 import java.util.stream.Stream;
@@ -21,6 +22,7 @@ class BaseNetDemoTest {
     BaseNetDemo baseNetDemo = instanceRecord.supplier().get();
     for (NetOptimizers netOptimizers : NetOptimizers.values()) {
       NetTrainComponent netTrainComponent = baseNetDemo.supplier().get();
+      netTrainComponent.setSize(200, 200);
       OptParam optParam = netTrainComponent.optParam();
       optParam.GD = netOptimizers;
       NetTrainDataBatch netTrainDataBatch = netTrainComponent.createNetTrainDataBatch();

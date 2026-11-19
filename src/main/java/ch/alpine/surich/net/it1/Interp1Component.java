@@ -10,8 +10,6 @@ import java.util.function.Supplier;
 
 import ch.alpine.bridge.fig.Show;
 import ch.alpine.bridge.fig.ShowGridComponent;
-import ch.alpine.bridge.fig.grd.AxisMaps;
-import ch.alpine.bridge.fig.plt.ListLinePlot;
 import ch.alpine.bridge.fig.plt.ListPlot;
 import ch.alpine.bridge.fig.plt.Plot;
 import ch.alpine.bridge.ref.ann.ReflectionMarker;
@@ -23,6 +21,7 @@ import ch.alpine.subare.net.api.NetLayer;
 import ch.alpine.subare.net.lay.ElementwiseLayers;
 import ch.alpine.subare.net.lay.NetChains;
 import ch.alpine.subare.net.run.NetTrain;
+import ch.alpine.surich.net.NetShows;
 import ch.alpine.surich.net.NetTrainComponent;
 import ch.alpine.surich.net.NetTrainDataBatch;
 import ch.alpine.surich.net.OptParam;
@@ -108,18 +107,8 @@ class Interp1Component implements Supplier<NetTrainComponent> {
           show.render_autoIndent(graphics, list.get(0));
         }
         {
-          Show show = new Show("parameter stats");
-          Tensor[] tensors = netParamStatTracker.tableBuilder().oneToMany();
-          for (int i = 0; i < tensors.length; ++i)
-            show.add(ListLinePlot.of(tensors[i])).setLabel(NetParamStatTracker.LABELS[i]);
-          show.render_autoIndent(graphics, list.get(1));
-        }
-        {
-          Show show = new Show("losses");
-          show.add(ListLinePlot.of(netTrain.tloss.getColumns(0, 1))).setLabel("log loss_data");
-          show.add(ListLinePlot.of(netTrain.tloss.getColumns(0, 2))).setLabel("log loss_reg");
-          show.showOptions.axisOptionsY.axisMap = AxisMaps.LOG;
-          show.render_autoIndent(graphics, list.get(2));
+          NetShows.param(netParamStatTracker).render_autoIndent(graphics, list.get(1));
+          NetShows.loss(netTrain.tloss).render_autoIndent(graphics, list.get(2));
         }
       }
     };

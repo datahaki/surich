@@ -1,18 +1,17 @@
 // code by jph
 package ch.alpine.surich.net.arg;
 
-import java.awt.Dimension;
 import java.awt.Graphics;
 import java.awt.Rectangle;
+import java.util.List;
 import java.util.Objects;
 import java.util.Random;
 import java.util.function.Supplier;
 import java.util.stream.IntStream;
 
 import ch.alpine.bridge.fig.Show;
-import ch.alpine.bridge.fig.grd.AxisMaps;
+import ch.alpine.bridge.fig.ShowGridComponent;
 import ch.alpine.bridge.fig.plt.DensityPlot;
-import ch.alpine.bridge.fig.plt.ListLinePlot;
 import ch.alpine.bridge.fig.plt.ListPlot;
 import ch.alpine.bridge.ref.ann.ReflectionMarker;
 import ch.alpine.subare.net.NetInitialize;
@@ -22,6 +21,7 @@ import ch.alpine.subare.net.api.NetLayer;
 import ch.alpine.subare.net.lay.ElementwiseLayers;
 import ch.alpine.subare.net.lay.NetChains;
 import ch.alpine.subare.net.run.NetTrain;
+import ch.alpine.surich.net.NetShows;
 import ch.alpine.surich.net.NetTrainComponent;
 import ch.alpine.surich.net.NetTrainDataBatch;
 import ch.alpine.surich.net.OptParam;
@@ -92,9 +92,9 @@ class ClassifyComponent implements Supplier<NetTrainComponent> {
 
     @Override
     protected void paintComponent(Graphics graphics) {
-      Dimension dimension = getSize();
       NetLayer copy = Interp1TrainComponent.this.copy;
       if (Objects.nonNull(copy)) {
+        List<Rectangle> list = ShowGridComponent.rectangles(3, getSize());
         {
           Show show = new Show();
           show.add(DensityPlot.of((x, y) -> copy.forward(Tensors.of(x, y)).Get(0), cbb, cdg));
@@ -106,22 +106,11 @@ class ClassifyComponent implements Supplier<NetTrainComponent> {
                 .filter(i -> ydata.Get(i, 0).equals(label)).mapToObj(xdata::get));
             show.add(ListPlot.of(p0));
           }
-          show.render_autoIndent(graphics, new Rectangle(0, 0, dimension.width / 2, dimension.height / 2));
+          show.render_autoIndent(graphics, list.get(0));
         }
         {
-          Show show = new Show("parameter stats");
-          Tensor[] tensors = netParamStatTracker.tableBuilder().oneToMany();
-          for (int i = 0; i < tensors.length; ++i)
-            show.add(ListLinePlot.of(tensors[i])).setLabel(NetParamStatTracker.LABELS[i]);
-          show.render_autoIndent(graphics, new Rectangle(dimension.width / 2, 0, dimension.width / 2, dimension.height / 2));
-        }
-        {
-          Show show = new Show();
-          show.setShowLabel("losses");
-          show.add(ListLinePlot.of(netTrain.tloss.getColumns(0, 1))).setLabel("log loss_data");
-          show.add(ListLinePlot.of(netTrain.tloss.getColumns(0, 2))).setLabel("log loss_reg");
-          show.showOptions.axisOptionsY.axisMap = AxisMaps.LOG;
-          show.render_autoIndent(graphics, new Rectangle(0, dimension.height / 2, dimension.width / 2, dimension.height / 2));
+          NetShows.param(netParamStatTracker).render_autoIndent(graphics, list.get(1));
+          NetShows.loss(netTrain.tloss).render_autoIndent(graphics, list.get(2));
         }
       }
     };

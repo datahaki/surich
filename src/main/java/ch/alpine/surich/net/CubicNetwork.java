@@ -69,8 +69,9 @@ class CubicNetwork implements ManipulateProvider {
         Tensor ydata = xdata.maps(power);
         netTrain.setMaxEpochs(1000);
         netTrain.runAsBatches(new TrainingData(xdata, ydata), batch_size);
-        if (epoch % SKIP == 0)
-          consumer.accept(Tensor.of(Stream.concat(Stream.of(RealScalar.of(epoch)), new NetExtract(netLayer).all())));
+        if (epoch % SKIP == 0) {
+          consumer.accept(Tensor.of(Stream.concat(Stream.of(RealScalar.of(epoch)), NetExtract.parameters(netLayer))));
+        }
         ++epoch;
       }
       vloss = netTrain.tloss;
