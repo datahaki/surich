@@ -24,6 +24,7 @@ import ch.alpine.subare.net.lay.ElementwiseLayers;
 import ch.alpine.subare.net.lay.NetChains;
 import ch.alpine.subare.net.run.NetTrain;
 import ch.alpine.surich.net.NetTrainComponent;
+import ch.alpine.surich.net.NetTrainDataBatch;
 import ch.alpine.surich.net.OptParam;
 import ch.alpine.tensor.Scalar;
 import ch.alpine.tensor.Tensor;
@@ -73,7 +74,12 @@ class Interp1Component implements Supplier<NetTrainComponent> {
     }
 
     @Override
-    public void runAsBatches() {
+    public OptParam optParam() {
+      return optParam;
+    };
+
+    @Override
+    public NetTrainDataBatch createNetTrainDataBatch() {
       int[] dims = new int[depth + 2];
       dims[0] = 1;
       for (int i = 1; i <= depth; ++i)
@@ -84,7 +90,7 @@ class Interp1Component implements Supplier<NetTrainComponent> {
       netTrain = new NetTrain(netLayer, optParam.create(netLayer));
       netTrain.addListener(netParamStatTracker);
       netTrain.addListener(this);
-      netTrain.runAsBatches(trainingData, batch_size);
+      return new NetTrainDataBatch(netTrain, trainingData, batch_size);
     }
 
     @Override

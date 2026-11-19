@@ -21,6 +21,7 @@ import ch.alpine.subare.net.lay.ElementwiseLayers;
 import ch.alpine.subare.net.lay.NetChains;
 import ch.alpine.subare.net.run.NetTrain;
 import ch.alpine.surich.net.NetTrainComponent;
+import ch.alpine.surich.net.NetTrainDataBatch;
 import ch.alpine.surich.net.OptParam;
 import ch.alpine.tensor.RealScalar;
 import ch.alpine.tensor.Tensor;
@@ -66,16 +67,19 @@ class EmbedComponent implements Supplier<NetTrainComponent> {
     }
 
     @Override
-    public void runAsBatches() {
+    public OptParam optParam() {
+      return optParam;
+    };
+
+    @Override
+    public NetTrainDataBatch createNetTrainDataBatch() {
       NetLayer inner = NetChains.linear(ElementwiseLayers.RELU, S * D, 16, 8, 1);
       NetLayer netLayer = NetChains.binary(NetChains.embedding(V, D, inner));
-      // netLayer = NetChains.flatten(netLayer);
-      IO.println(netLayer);
       NetInitialize.of(netLayer);
       netTrain = new NetTrain(netLayer, optParam.create(netLayer));
       netTrain.addListener(netParamStatTracker);
       netTrain.addListener(this);
-      netTrain.runAsBatches(trainingData, batch_size);
+      return new NetTrainDataBatch(netTrain, trainingData, batch_size);
     }
 
     @Override
@@ -109,6 +113,6 @@ class EmbedComponent implements Supplier<NetTrainComponent> {
           show.render_autoIndent(graphics, list.get(2));
         }
       }
-    };
+    }
   }
 }

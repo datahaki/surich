@@ -20,7 +20,13 @@ public abstract class NetTrainComponent extends JComponent implements NetTrainLi
   private volatile boolean running = true;
   protected NetLayer copy;
 
-  public abstract void runAsBatches();
+  public abstract OptParam optParam();
+
+  public abstract NetTrainDataBatch createNetTrainDataBatch();
+
+  public final void runAsBatches() {
+    createNetTrainDataBatch().run();
+  }
 
   @Override
   protected abstract void paintComponent(Graphics graphics);
