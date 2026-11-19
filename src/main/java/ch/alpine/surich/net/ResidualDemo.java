@@ -36,9 +36,7 @@ class ResidualDemo implements ManipulateProvider {
     NetLayer netLayer = NetChains.argMax( //
         new ResidualLayer(NetChains.linear(ElementwiseLayers.GELU, dinout, hidden, dinout)));
     NetInitialize.of(netLayer);
-    IO.println(netLayer);
     Tensor xdata = RandomVariate.of(NormalDistribution.standard(), samples, dinout);
-    IO.println(xdata);
     Tensor ydata = netLayer.forwardBatch(xdata);
     // ---
     NetInitialize.of(netLayer);
