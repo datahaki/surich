@@ -17,7 +17,7 @@ import ch.alpine.subare.net.NetInitialize;
 import ch.alpine.subare.net.TrainingData;
 import ch.alpine.subare.net.api.NetLayer;
 import ch.alpine.subare.net.api.NetOptimizer;
-import ch.alpine.subare.net.lay.ElementwiseLayer;
+import ch.alpine.subare.net.lay.ElementwiseLayers;
 import ch.alpine.subare.net.lay.NetChains;
 import ch.alpine.subare.net.opt.NetOptimizers;
 import ch.alpine.subare.net.run.NetTrain;
@@ -52,7 +52,7 @@ class CubicNetwork implements ManipulateProvider {
   public class Network {
     private static final int SKIP = 10;
     private final ScalarUnaryOperator power = s -> Power.function(3).apply(s.multiply(scale));
-    private final NetLayer netLayer = NetChains.linear(() -> ElementwiseLayer.tanh(), 1, hiddenSize, 1);
+    private final NetLayer netLayer = NetChains.linear(ElementwiseLayers.TANH, 1, hiddenSize, 1);
     private final TableBuilder tableBuilder = new TableBuilder();
     private TableBuilder vloss;
 

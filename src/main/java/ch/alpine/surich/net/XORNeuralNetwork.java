@@ -16,7 +16,7 @@ import ch.alpine.subare.net.NetParamTracker;
 import ch.alpine.subare.net.TrainingData;
 import ch.alpine.subare.net.api.NetLayer;
 import ch.alpine.subare.net.api.NetOptimizer;
-import ch.alpine.subare.net.lay.ElementwiseLayer;
+import ch.alpine.subare.net.lay.ElementwiseLayers;
 import ch.alpine.subare.net.lay.NetChains;
 import ch.alpine.subare.net.run.NetTrain;
 import ch.alpine.tensor.RealScalar;
@@ -65,7 +65,7 @@ class XORNeuralNetwork implements ManipulateProvider {
 
   public class Network {
     final NetLayer netLayer = //
-        NetChains.binary(NetChains.linear(() -> ElementwiseLayer.gelu(), 2, hiddenSize, 1));
+        NetChains.binary(NetChains.linear(ElementwiseLayers.GELU, 2, hiddenSize, 1));
     final NetTrain netTrain;
     final NetParamTracker netParamTracker = new NetParamTracker();
 

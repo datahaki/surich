@@ -14,7 +14,7 @@ import ch.alpine.subare.net.NetParamTracker;
 import ch.alpine.subare.net.TrainingData;
 import ch.alpine.subare.net.api.NetLayer;
 import ch.alpine.subare.net.api.NetOptimizer;
-import ch.alpine.subare.net.lay.ElementwiseLayer;
+import ch.alpine.subare.net.lay.ElementwiseLayers;
 import ch.alpine.subare.net.lay.NetChains;
 import ch.alpine.subare.net.lay.ResidualLayer;
 import ch.alpine.subare.net.run.NetTrain;
@@ -36,7 +36,7 @@ class ResidualDemo implements ManipulateProvider {
   @Override
   public Container getContainer() {
     NetLayer netLayer = NetChains.argMax( //
-        new ResidualLayer(NetChains.linear(() -> ElementwiseLayer.gelu(), dinout, hidden, dinout)));
+        new ResidualLayer(NetChains.linear(ElementwiseLayers.GELU, dinout, hidden, dinout)));
     NetInitialize.of(netLayer);
     Tensor xdata = RandomVariate.of(NormalDistribution.standard(), samples, dinout);
     TensorUnaryOperator tuo = netLayer::forward;

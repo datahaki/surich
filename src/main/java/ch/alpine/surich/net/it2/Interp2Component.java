@@ -84,7 +84,7 @@ class Interp2Component implements Supplier<NetTrainComponent> {
       for (int i = 1; i <= depth; ++i)
         dims[i] = hidden;
       dims[dims.length - 1] = 1;
-      NetLayer netLayer = NetChains.linear(between.supplier(), dims);
+      NetLayer netLayer = NetChains.linear(between, dims);
       NetInitialize.of(netLayer);
       netTrain = new NetTrain(netLayer, optParam.create(netLayer));
       netTrain.addListener(netParamStatTracker);

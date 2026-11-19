@@ -31,7 +31,6 @@ import ch.alpine.tensor.alg.OrderedQ;
 import ch.alpine.tensor.alg.PadRight;
 import ch.alpine.tensor.alg.Range;
 import ch.alpine.tensor.alg.Tuples;
-import ch.alpine.tensor.col.ColorDataGradients;
 import ch.alpine.tensor.num.Boole;
 import ch.alpine.tensor.opt.nd.CoordinateBoundingBox;
 import ch.alpine.tensor.sca.Ceiling;
@@ -47,7 +46,6 @@ class EmbedComponent implements Supplier<NetTrainComponent> {
   public Integer D = 8;
   public final OptParam optParam = new OptParam();
   public Integer batch_size = 10;
-  public ColorDataGradients cdg = ColorDataGradients.COPPER;
 
   @Override
   public NetTrainComponent get() {
@@ -69,7 +67,10 @@ class EmbedComponent implements Supplier<NetTrainComponent> {
 
     @Override
     public void runAsBatches() {
-      NetLayer netLayer = NetChains.embedding(V, D, NetChains.linear(ElementwiseLayers.RELU.supplier(), 24, 16, 8, 1));
+      NetLayer inner = NetChains.linear(ElementwiseLayers.RELU, S * D, 16, 8, 1);
+      NetLayer netLayer = NetChains.binary(NetChains.embedding(V, D, inner));
+      // netLayer = NetChains.flatten(netLayer);
+      IO.println(netLayer);
       NetInitialize.of(netLayer);
       netTrain = new NetTrain(netLayer, optParam.create(netLayer));
       netTrain.addListener(netParamStatTracker);
