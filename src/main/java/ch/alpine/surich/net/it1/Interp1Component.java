@@ -19,6 +19,7 @@ import ch.alpine.subare.net.NetWrap;
 import ch.alpine.subare.net.TrainingData;
 import ch.alpine.subare.net.api.NetLayer;
 import ch.alpine.subare.net.lay.ElementwiseLayers;
+import ch.alpine.subare.net.lay.NetChain;
 import ch.alpine.subare.net.lay.NetChains;
 import ch.alpine.subare.net.run.NetTrain;
 import ch.alpine.surich.net.NetShows;
@@ -84,7 +85,8 @@ class Interp1Component implements Supplier<NetTrainComponent> {
       for (int i = 1; i <= depth; ++i)
         dims[i] = hidden;
       dims[dims.length - 1] = 1;
-      NetLayer netLayer = NetChains.linear(between, dims);
+      NetLayer netLayer = NetChain.join( //
+          NetChains.linear(between, dims));
       NetInitialize.of(netLayer);
       netTrain = new NetTrain(netLayer, optParam.create(netLayer));
       netTrain.addListener(netParamStatTracker);
