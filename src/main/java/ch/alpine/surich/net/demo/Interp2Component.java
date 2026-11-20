@@ -24,6 +24,7 @@ import ch.alpine.surich.net.NetShows;
 import ch.alpine.surich.net.NetTrainComponent;
 import ch.alpine.surich.net.NetTrainDataBatch;
 import ch.alpine.surich.net.OptParam;
+import ch.alpine.tensor.Slash;
 import ch.alpine.tensor.Tensor;
 import ch.alpine.tensor.Tensors;
 import ch.alpine.tensor.Unprotect;
@@ -73,7 +74,7 @@ class Interp2Component implements Supplier<NetTrainComponent> {
       Tensor xdata = RandomVariate.of(UniformDistribution.of(DOMAIN), random, samples, 2);
       // FIXME without Tensors.of(...) this should crash but doesnt !!!
       truth = xy -> Tensors.of(interpolation.get(xy.maps(s -> lin.apply(DOMAIN.rescale(s)))));
-      Tensor ydata = truth.slash(xdata);
+      Tensor ydata = Slash.of(xdata, truth);
       trainingData = new TrainingData(xdata, ydata);
     }
 

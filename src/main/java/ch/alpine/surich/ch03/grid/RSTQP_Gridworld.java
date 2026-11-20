@@ -11,6 +11,7 @@ import ch.alpine.subare.rate.ConstantLearningRate;
 import ch.alpine.subare.util.Infoline;
 import ch.alpine.subare.util.TabularSteps;
 import ch.alpine.subare.val.DiscreteQsa;
+import ch.alpine.tensor.Slash;
 import ch.alpine.tensor.Tensors;
 import ch.alpine.tensor.api.TensorUnaryOperator;
 import ch.alpine.tensor.io.TableBuilder;
@@ -35,8 +36,8 @@ class RSTQP_Gridworld implements ShowProvider {
         break;
     }
     Show show = new Show();
-    show.add(ListLinePlot.of(LOGY.slash(tableBuilder.getColumns(0, 1)))).setLabel("error");
-    show.add(ListLinePlot.of(LOGY.slash(tableBuilder.getColumns(0, 2)))).setLabel("loss");
+    show.add(ListLinePlot.of(Slash.of(tableBuilder.getColumns(0, 1), LOGY))).setLabel("error");
+    show.add(ListLinePlot.of(Slash.of(tableBuilder.getColumns(0, 2), LOGY))).setLabel("loss");
     return show;
   }
 
