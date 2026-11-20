@@ -8,17 +8,23 @@ import org.junit.jupiter.api.TestFactory;
 
 import ch.alpine.bridge.cgr.InstanceDiscovery;
 import ch.alpine.bridge.cgr.InstanceRecord;
+import ch.alpine.subare.net.TrainingData;
+import ch.alpine.subare.net.api.NetLayer;
+import ch.alpine.subare.net.api.NetLoss;
 import ch.alpine.subare.net.opt.NetOptimizers;
+import ch.alpine.subare.net.run.NetTrain;
+import ch.alpine.tensor.Tensor;
+import ch.alpine.tensor.chq.DeterminateTensorQ;
 
 class BaseNetDemoTest {
   @TestFactory
-  Stream<DynamicTest> dynamicTests() throws Exception {
+  Stream<DynamicTest> batch() throws Exception {
     return InstanceDiscovery.of(getClass().getPackageName(), BaseNetDemo.class).stream() //
         .map(instanceRecord -> DynamicTest.dynamicTest(instanceRecord.toString(), //
-            () -> accept(instanceRecord)));
+            () -> acceptBatch(instanceRecord)));
   }
 
-  private static void accept(InstanceRecord<BaseNetDemo> instanceRecord) {
+  private static void acceptBatch(InstanceRecord<BaseNetDemo> instanceRecord) {
     BaseNetDemo baseNetDemo = instanceRecord.supplier().get();
     for (NetOptimizers netOptimizers : NetOptimizers.values()) {
       NetTrainComponent netTrainComponent = baseNetDemo.supplier().get();
@@ -26,8 +32,48 @@ class BaseNetDemoTest {
       OptParam optParam = netTrainComponent.optParam();
       optParam.GD = netOptimizers;
       NetTrainDataBatch netTrainDataBatch = netTrainComponent.createNetTrainDataBatch();
-      netTrainDataBatch.netTrain().setMaxEpochs(50);
+      netTrainDataBatch.netTrain().setMaxEpochs(10);
       netTrainDataBatch.run();
+    }
+  }
+
+  @TestFactory
+  Stream<DynamicTest> single() throws Exception {
+    return InstanceDiscovery.of(getClass().getPackageName(), BaseNetDemo.class).stream() //
+        .map(instanceRecord -> DynamicTest.dynamicTest(instanceRecord.toString(), //
+            () -> acceptSingle(instanceRecord)));
+  }
+
+  private static void acceptSingle(InstanceRecord<BaseNetDemo> instanceRecord) {
+    BaseNetDemo baseNetDemo = instanceRecord.supplier().get();
+    for (NetOptimizers netOptimizers : NetOptimizers.values()) {
+      NetTrainComponent netTrainComponent = baseNetDemo.supplier().get();
+      netTrainComponent.setSize(200, 200);
+      OptParam optParam = netTrainComponent.optParam();
+      optParam.GD = netOptimizers;
+      NetTrainDataBatch netTrainDataBatch = netTrainComponent.createNetTrainDataBatch();
+      NetTrain netTrain = netTrainDataBatch.netTrain();
+      NetLayer netLayer = netTrain.netLayer();
+      TrainingData trainingData = netTrainDataBatch.trainingData();
+      for (int i = 0; i < trainingData.xdata().length(); ++i) {
+        Tensor prediction = netLayer.forward(trainingData.xdata().get(i));
+        DeterminateTensorQ.require(prediction);
+        // 2. Calculate error: Compare the prediction with the actual output.
+        Tensor target = trainingData.ydata().get(i);
+        // IO.println("T="+Dimensions.of(target));
+        NetLoss netError = netLayer.error(target);
+        // 3. Calculate loss: Apply a loss function to quantify the error.
+        /** Loss:
+         * A scalar value computed by a loss function (e.g., Mean
+         * Squared Error, Cross-Entropy) that aggregates the errors
+         * across a sample or batch. It quantifies overall model
+         * performance and serves as the objective function to
+         * minimize. */
+        // 4. Backpropagation: Calculate gradients of the loss with respect to network weights.
+        netLayer.back(netError.gradOutput());
+        // 5. Weight update: The optimizer adjusts weights to reduce the loss.
+        netTrain.netOptimizer().update();
+      }
     }
   }
 }

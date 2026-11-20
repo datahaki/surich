@@ -48,15 +48,15 @@ class FeatureComponent implements Supplier<NetTrainComponent> {
   public static final Clip DOMAIN = Clips.absoluteOne();
   public Integer seed = 0;
   public FeatureFunc featureFunc = FeatureFunc.Chebyshev_T;
-  public Integer samples = 400;
+  public Integer samples = 500;
   public Integer V = 4;
   public Integer D = 3;
   public Boolean oneHot = false;
-  public Integer depth = 2;
-  public Integer hidden = 64;
+  public Integer depth = 3;
+  public Integer hidden = 32;
   public ElementwiseLayers between = ElementwiseLayers.RELU;
   public final OptParam optParam = new OptParam();
-  public Integer batch_size = 40;
+  public Integer batch_size = 50;
 
   private int d_emb() {
     return 1 + (oneHot ? V : D);

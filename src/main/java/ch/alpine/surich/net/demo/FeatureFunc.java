@@ -1,3 +1,4 @@
+// code by jph
 package ch.alpine.surich.net.demo;
 
 import ch.alpine.tensor.api.ScalarUnaryOperator;
