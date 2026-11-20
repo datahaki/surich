@@ -1,5 +1,5 @@
 // code by jph
-package ch.alpine.surich.net.mat;
+package ch.alpine.surich.net.demo;
 
 import java.awt.Graphics;
 import java.awt.Rectangle;

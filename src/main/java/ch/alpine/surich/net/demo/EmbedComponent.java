@@ -1,18 +1,15 @@
 // code by jph
-package ch.alpine.surich.net.arg;
+package ch.alpine.surich.net.demo;
 
 import java.awt.Graphics;
 import java.awt.Rectangle;
 import java.util.List;
 import java.util.Objects;
-import java.util.Random;
 import java.util.function.Supplier;
-import java.util.stream.IntStream;
 
 import ch.alpine.bridge.fig.Show;
 import ch.alpine.bridge.fig.ShowGridComponent;
-import ch.alpine.bridge.fig.plt.DensityPlot;
-import ch.alpine.bridge.fig.plt.ListPlot;
+import ch.alpine.bridge.fig.plt.ArrayPlot;
 import ch.alpine.bridge.ref.ann.ReflectionMarker;
 import ch.alpine.subare.net.NetInitialize;
 import ch.alpine.subare.net.NetParamStatTracker;
@@ -26,48 +23,46 @@ import ch.alpine.surich.net.NetTrainComponent;
 import ch.alpine.surich.net.NetTrainDataBatch;
 import ch.alpine.surich.net.OptParam;
 import ch.alpine.tensor.RealScalar;
-import ch.alpine.tensor.Scalar;
 import ch.alpine.tensor.Tensor;
 import ch.alpine.tensor.Tensors;
-import ch.alpine.tensor.col.ColorDataGradients;
-import ch.alpine.tensor.opt.nd.BoxRandomSample;
+import ch.alpine.tensor.alg.ArrayReshape;
+import ch.alpine.tensor.alg.Flatten;
+import ch.alpine.tensor.alg.OrderedQ;
+import ch.alpine.tensor.alg.PadRight;
+import ch.alpine.tensor.alg.Range;
+import ch.alpine.tensor.alg.Tuples;
+import ch.alpine.tensor.num.Boole;
 import ch.alpine.tensor.opt.nd.CoordinateBoundingBox;
-import ch.alpine.tensor.pdf.RandomSample;
-import ch.alpine.tensor.pdf.RandomVariate;
-import ch.alpine.tensor.pdf.d.DiscreteUniformDistribution;
+import ch.alpine.tensor.sca.Ceiling;
 import ch.alpine.tensor.sca.Clip;
 import ch.alpine.tensor.sca.Clips;
+import ch.alpine.tensor.sca.pow.Sqrt;
 
 @ReflectionMarker
-class ClassifyComponent implements Supplier<NetTrainComponent> {
+class EmbedComponent implements Supplier<NetTrainComponent> {
   public static final Clip DOMAIN = Clips.absoluteOne();
-  public Integer seed = 0;
-  public Integer samples = 30;
-  public Integer labels = 3;
-  public Integer depth = 2;
-  public Integer hidden = 7;
-  public ElementwiseLayers between = ElementwiseLayers.RELU;
+  public Integer S = 3;
+  public Integer V = 4;
+  public Integer D = 8;
   public final OptParam optParam = new OptParam();
-  public Integer batch_size = 6;
-  public ColorDataGradients cdg = ColorDataGradients.COPPER;
+  public Integer batch_size = 10;
 
   @Override
   public NetTrainComponent get() {
-    return new Interp1TrainComponent();
+    return new InnerComponent();
   }
 
-  class Interp1TrainComponent extends NetTrainComponent {
+  class InnerComponent extends NetTrainComponent {
     final CoordinateBoundingBox cbb = CoordinateBoundingBox.of(Clips.absolute(2), Clips.absolute(2));
     final TrainingData trainingData;
     final NetParamStatTracker netParamStatTracker = new NetParamStatTracker();
     NetTrain netTrain;
 
-    public Interp1TrainComponent() {
-      Random random = new Random(seed);
+    public InnerComponent() {
+      Tensor xdata = Tuples.of(Range.of(0, V), S);
+      Tensor ydata = Tensor.of(xdata.stream().map(OrderedQ::of).map(Boole::of).map(Tensors::of));
       // assignment of random labels to points
-      trainingData = new TrainingData( //
-          RandomSample.of(new BoxRandomSample(cbb), random, samples), //
-          RandomVariate.of(DiscreteUniformDistribution.forArray(labels), random, samples, 1));
+      trainingData = new TrainingData(xdata, ydata);
     }
 
     @Override
@@ -77,12 +72,8 @@ class ClassifyComponent implements Supplier<NetTrainComponent> {
 
     @Override
     public NetTrainDataBatch createNetTrainDataBatch() {
-      int[] dims = new int[depth + 2];
-      dims[0] = 2;
-      for (int i = 1; i <= depth; ++i)
-        dims[i] = hidden;
-      dims[dims.length - 1] = labels;
-      NetLayer netLayer = NetChains.argMax(NetChains.linear(between, dims));
+      NetLayer inner = NetChains.linear(ElementwiseLayers.RELU, S * D, 16, 8, 1);
+      NetLayer netLayer = NetChains.binary(NetChains.embedding(V, D, inner));
       NetInitialize.of(netLayer);
       netTrain = new NetTrain(netLayer, optParam.create(netLayer));
       netTrain.addListener(netParamStatTracker);
@@ -92,20 +83,17 @@ class ClassifyComponent implements Supplier<NetTrainComponent> {
 
     @Override
     protected void paintComponent(Graphics graphics) {
-      NetLayer copy = Interp1TrainComponent.this.copy;
+      NetLayer copy = InnerComponent.this.copy;
       if (Objects.nonNull(copy)) {
         List<Rectangle> list = ShowGridComponent.rectangles(3, getSize());
         {
-          Show show = new Show();
-          show.add(DensityPlot.of((x, y) -> copy.forward(Tensors.of(x, y)).Get(0), cbb, cdg));
-          Tensor xdata = trainingData.xdata();
-          Tensor ydata = trainingData.ydata();
-          for (int k = 0; k < labels; ++k) {
-            Scalar label = RealScalar.of(k);
-            Tensor p0 = Tensor.of(IntStream.range(0, xdata.length()) //
-                .filter(i -> ydata.Get(i, 0).equals(label)).mapToObj(xdata::get));
-            show.add(ListPlot.of(p0));
-          }
+          Tensor error = Flatten.of(copy.forwardBatch(trainingData.xdata()).subtract(trainingData.ydata()));
+          int N = error.length();
+          int ceil = Ceiling.intValueExact(Sqrt.FUNCTION.apply(RealScalar.of(N)));
+          error = PadRight.zeros(ceil * ceil).apply(error);
+          Tensor matrix = ArrayReshape.of(error, ceil, ceil);
+          Show show = new Show("Error");
+          show.add(ArrayPlot.of(matrix));
           show.render_autoIndent(graphics, list.get(0));
         }
         {
@@ -113,6 +101,6 @@ class ClassifyComponent implements Supplier<NetTrainComponent> {
           NetShows.loss(netTrain.tloss).render_autoIndent(graphics, list.get(2));
         }
       }
-    };
+    }
   }
 }

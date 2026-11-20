@@ -1,67 +1,83 @@
 // code by jph
-package ch.alpine.surich.net.emb;
+package ch.alpine.surich.net.demo;
 
 import java.awt.Graphics;
 import java.awt.Rectangle;
 import java.util.List;
 import java.util.Objects;
+import java.util.Random;
 import java.util.function.Supplier;
 
 import ch.alpine.bridge.fig.Show;
 import ch.alpine.bridge.fig.ShowGridComponent;
-import ch.alpine.bridge.fig.plt.ArrayPlot;
+import ch.alpine.bridge.fig.plt.ListDiscretePlot;
 import ch.alpine.bridge.ref.ann.ReflectionMarker;
 import ch.alpine.subare.net.NetInitialize;
 import ch.alpine.subare.net.NetParamStatTracker;
 import ch.alpine.subare.net.TrainingData;
 import ch.alpine.subare.net.api.NetLayer;
-import ch.alpine.subare.net.lay.ElementwiseLayers;
+import ch.alpine.subare.net.lay.LinearLayer;
+import ch.alpine.subare.net.lay.NetChain;
 import ch.alpine.subare.net.lay.NetChains;
+import ch.alpine.subare.net.lay.RMSLayer;
+import ch.alpine.subare.net.reg.NoRegularization;
 import ch.alpine.subare.net.run.NetTrain;
 import ch.alpine.surich.net.NetShows;
 import ch.alpine.surich.net.NetTrainComponent;
 import ch.alpine.surich.net.NetTrainDataBatch;
 import ch.alpine.surich.net.OptParam;
 import ch.alpine.tensor.RealScalar;
+import ch.alpine.tensor.Scalar;
 import ch.alpine.tensor.Tensor;
 import ch.alpine.tensor.Tensors;
-import ch.alpine.tensor.alg.ArrayReshape;
 import ch.alpine.tensor.alg.Flatten;
-import ch.alpine.tensor.alg.OrderedQ;
-import ch.alpine.tensor.alg.PadRight;
 import ch.alpine.tensor.alg.Range;
-import ch.alpine.tensor.alg.Tuples;
-import ch.alpine.tensor.num.Boole;
-import ch.alpine.tensor.opt.nd.CoordinateBoundingBox;
-import ch.alpine.tensor.sca.Ceiling;
+import ch.alpine.tensor.pdf.RandomVariate;
+import ch.alpine.tensor.pdf.c.NormalDistribution;
+import ch.alpine.tensor.pdf.d.DiscreteUniformDistribution;
 import ch.alpine.tensor.sca.Clip;
 import ch.alpine.tensor.sca.Clips;
-import ch.alpine.tensor.sca.pow.Sqrt;
 
 @ReflectionMarker
-class EmbedComponent implements Supplier<NetTrainComponent> {
+class RmsSynthComponent implements Supplier<NetTrainComponent> {
   public static final Clip DOMAIN = Clips.absoluteOne();
-  public Integer S = 3;
-  public Integer V = 4;
-  public Integer D = 8;
+  public Integer seed = 0;
+  public Integer samples = 30;
+  public Tensor gamma = Tensors.vector(0.7, 0.3, 0.25);
+  public Scalar noise_sigma = RealScalar.of(0.0001);
   public final OptParam optParam = new OptParam();
-  public Integer batch_size = 10;
+  public Integer batch_size = 6;
 
   @Override
   public NetTrainComponent get() {
     return new InnerComponent();
   }
 
+  record RMSLinear(RMSLayer rmsLayer, LinearLayer linearLayer) {
+    static RMSLinear create() {
+      return new RMSLinear(new RMSLayer(), new LinearLayer(3, 1));
+    }
+
+    NetLayer consolidate() {
+      linearLayer.netRegularization = NoRegularization.INSTANCE;
+      return NetChains.binary(NetChain.join(rmsLayer, linearLayer));
+    }
+  }
+
   class InnerComponent extends NetTrainComponent {
-    final CoordinateBoundingBox cbb = CoordinateBoundingBox.of(Clips.absolute(2), Clips.absolute(2));
     final TrainingData trainingData;
     final NetParamStatTracker netParamStatTracker = new NetParamStatTracker();
     NetTrain netTrain;
 
     public InnerComponent() {
-      Tensor xdata = Tuples.of(Range.of(0, V), S);
-      Tensor ydata = Tensor.of(xdata.stream().map(OrderedQ::of).map(Boole::of).map(Tensors::of));
-      // assignment of random labels to points
+      Random random = new Random(seed);
+      RMSLinear rmsLinear = RMSLinear.create();
+      rmsLinear.rmsLayer.gamma = gamma;
+      NetLayer netLayer = rmsLinear.consolidate();
+      NetInitialize.of(netLayer);
+      Tensor xdata = RandomVariate.of(DiscreteUniformDistribution.of(-3, 10), random, samples, 3);
+      Tensor noise = RandomVariate.of(NormalDistribution.of(noise_sigma.zero(), noise_sigma), random, samples, 1);
+      Tensor ydata = netLayer.forwardBatch(xdata).add(noise);
       trainingData = new TrainingData(xdata, ydata);
     }
 
@@ -72,8 +88,8 @@ class EmbedComponent implements Supplier<NetTrainComponent> {
 
     @Override
     public NetTrainDataBatch createNetTrainDataBatch() {
-      NetLayer inner = NetChains.linear(ElementwiseLayers.RELU, S * D, 16, 8, 1);
-      NetLayer netLayer = NetChains.binary(NetChains.embedding(V, D, inner));
+      RMSLinear rmsLinear = RMSLinear.create();
+      NetLayer netLayer = rmsLinear.consolidate();
       NetInitialize.of(netLayer);
       netTrain = new NetTrain(netLayer, optParam.create(netLayer));
       netTrain.addListener(netParamStatTracker);
@@ -87,13 +103,10 @@ class EmbedComponent implements Supplier<NetTrainComponent> {
       if (Objects.nonNull(copy)) {
         List<Rectangle> list = ShowGridComponent.rectangles(3, getSize());
         {
-          Tensor error = Flatten.of(copy.forwardBatch(trainingData.xdata()).subtract(trainingData.ydata()));
-          int N = error.length();
-          int ceil = Ceiling.intValueExact(Sqrt.FUNCTION.apply(RealScalar.of(N)));
-          error = PadRight.zeros(ceil * ceil).apply(error);
-          Tensor matrix = ArrayReshape.of(error, ceil, ceil);
-          Show show = new Show("Error");
-          show.add(ArrayPlot.of(matrix));
+          Show show = new Show("error");
+          Tensor Y = copy.forwardBatch(trainingData.xdata());
+          Tensor d = Y.subtract(trainingData.ydata());
+          show.add(ListDiscretePlot.of(Range.of(0, d.length()), Flatten.of(d)));
           show.render_autoIndent(graphics, list.get(0));
         }
         {
@@ -101,6 +114,6 @@ class EmbedComponent implements Supplier<NetTrainComponent> {
           NetShows.loss(netTrain.tloss).render_autoIndent(graphics, list.get(2));
         }
       }
-    }
+    };
   }
 }

@@ -1,5 +1,5 @@
 // code by jph
-package ch.alpine.surich.net.bin;
+package ch.alpine.surich.net.demo;
 
 import java.util.function.Supplier;
 
@@ -8,9 +8,9 @@ import ch.alpine.surich.net.BaseNetDemo;
 import ch.alpine.surich.net.NetTrainComponent;
 
 @ReflectionMarker
-class SigmoidDemo extends BaseNetDemo {
+class EmbedDemo extends BaseNetDemo {
   // parameters of supplier are introduced to the gui
-  public final Supplier<NetTrainComponent> supplier = new SigmoidComponent();
+  public final Supplier<NetTrainComponent> supplier = new EmbedComponent();
 
   @Override
   protected Supplier<NetTrainComponent> supplier() {
@@ -18,6 +18,6 @@ class SigmoidDemo extends BaseNetDemo {
   }
 
   static void main() {
-    new SigmoidDemo().run();
+    new EmbedDemo().runStandalone();
   }
 }

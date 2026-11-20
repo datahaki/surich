@@ -1,5 +1,5 @@
 // code by jph
-package ch.alpine.surich.net.mat;
+package ch.alpine.surich.net.demo;
 
 import java.util.function.Supplier;
 
@@ -8,9 +8,9 @@ import ch.alpine.surich.net.BaseNetDemo;
 import ch.alpine.surich.net.NetTrainComponent;
 
 @ReflectionMarker
-class MatrixSynthDemo extends BaseNetDemo {
+class ClassifyDemo extends BaseNetDemo {
   // parameters of supplier are introduced to the gui
-  public final Supplier<NetTrainComponent> supplier = new MatrixSynthComponent();
+  public final Supplier<NetTrainComponent> supplier = new ClassifyComponent();
 
   @Override
   protected Supplier<NetTrainComponent> supplier() {
@@ -18,6 +18,6 @@ class MatrixSynthDemo extends BaseNetDemo {
   }
 
   static void main() {
-    new MatrixSynthDemo().run();
+    new ClassifyDemo().runStandalone();
   }
 }

@@ -1,5 +1,5 @@
 // code by jph
-package ch.alpine.surich.net.rms;
+package ch.alpine.surich.net.demo;
 
 import java.awt.Graphics;
 import java.awt.Rectangle;
@@ -7,20 +7,19 @@ import java.util.List;
 import java.util.Objects;
 import java.util.Random;
 import java.util.function.Supplier;
+import java.util.stream.IntStream;
 
 import ch.alpine.bridge.fig.Show;
 import ch.alpine.bridge.fig.ShowGridComponent;
-import ch.alpine.bridge.fig.plt.ListDiscretePlot;
+import ch.alpine.bridge.fig.plt.DensityPlot;
+import ch.alpine.bridge.fig.plt.ListPlot;
 import ch.alpine.bridge.ref.ann.ReflectionMarker;
 import ch.alpine.subare.net.NetInitialize;
 import ch.alpine.subare.net.NetParamStatTracker;
 import ch.alpine.subare.net.TrainingData;
 import ch.alpine.subare.net.api.NetLayer;
-import ch.alpine.subare.net.lay.LinearLayer;
-import ch.alpine.subare.net.lay.NetChain;
+import ch.alpine.subare.net.lay.ElementwiseLayers;
 import ch.alpine.subare.net.lay.NetChains;
-import ch.alpine.subare.net.lay.RMSLayer;
-import ch.alpine.subare.net.reg.NoRegularization;
 import ch.alpine.subare.net.run.NetTrain;
 import ch.alpine.surich.net.NetShows;
 import ch.alpine.surich.net.NetTrainComponent;
@@ -30,55 +29,45 @@ import ch.alpine.tensor.RealScalar;
 import ch.alpine.tensor.Scalar;
 import ch.alpine.tensor.Tensor;
 import ch.alpine.tensor.Tensors;
-import ch.alpine.tensor.alg.Flatten;
-import ch.alpine.tensor.alg.Range;
+import ch.alpine.tensor.col.ColorDataGradients;
+import ch.alpine.tensor.opt.nd.BoxRandomSample;
+import ch.alpine.tensor.opt.nd.CoordinateBoundingBox;
+import ch.alpine.tensor.pdf.RandomSample;
 import ch.alpine.tensor.pdf.RandomVariate;
-import ch.alpine.tensor.pdf.c.NormalDistribution;
 import ch.alpine.tensor.pdf.d.DiscreteUniformDistribution;
 import ch.alpine.tensor.sca.Clip;
 import ch.alpine.tensor.sca.Clips;
 
 @ReflectionMarker
-class RmsSynthComponent implements Supplier<NetTrainComponent> {
+class ClassifyComponent implements Supplier<NetTrainComponent> {
   public static final Clip DOMAIN = Clips.absoluteOne();
   public Integer seed = 0;
   public Integer samples = 30;
-  public Tensor gamma = Tensors.vector(0.7, 0.3, 0.25);
-  public Scalar noise_sigma = RealScalar.of(0.0001);
+  public Integer labels = 3;
+  public Integer depth = 2;
+  public Integer hidden = 7;
+  public ElementwiseLayers between = ElementwiseLayers.RELU;
   public final OptParam optParam = new OptParam();
   public Integer batch_size = 6;
+  public ColorDataGradients cdg = ColorDataGradients.COPPER;
 
   @Override
   public NetTrainComponent get() {
-    return new InnerComponent();
+    return new Interp1TrainComponent();
   }
 
-  record RMSLinear(RMSLayer rmsLayer, LinearLayer linearLayer) {
-    static RMSLinear create() {
-      return new RMSLinear(new RMSLayer(), new LinearLayer(3, 1));
-    }
-
-    NetLayer consolidate() {
-      linearLayer.netRegularization = NoRegularization.INSTANCE;
-      return NetChains.binary(NetChain.join(rmsLayer, linearLayer));
-    }
-  }
-
-  class InnerComponent extends NetTrainComponent {
+  class Interp1TrainComponent extends NetTrainComponent {
+    final CoordinateBoundingBox cbb = CoordinateBoundingBox.of(Clips.absolute(2), Clips.absolute(2));
     final TrainingData trainingData;
     final NetParamStatTracker netParamStatTracker = new NetParamStatTracker();
     NetTrain netTrain;
 
-    public InnerComponent() {
+    public Interp1TrainComponent() {
       Random random = new Random(seed);
-      RMSLinear rmsLinear = RMSLinear.create();
-      rmsLinear.rmsLayer.gamma = gamma;
-      NetLayer netLayer = rmsLinear.consolidate();
-      NetInitialize.of(netLayer);
-      Tensor xdata = RandomVariate.of(DiscreteUniformDistribution.of(-3, 10), random, samples, 3);
-      Tensor noise = RandomVariate.of(NormalDistribution.of(noise_sigma.zero(), noise_sigma), random, samples, 1);
-      Tensor ydata = netLayer.forwardBatch(xdata).add(noise);
-      trainingData = new TrainingData(xdata, ydata);
+      // assignment of random labels to points
+      trainingData = new TrainingData( //
+          RandomSample.of(new BoxRandomSample(cbb), random, samples), //
+          RandomVariate.of(DiscreteUniformDistribution.forArray(labels), random, samples, 1));
     }
 
     @Override
@@ -88,8 +77,12 @@ class RmsSynthComponent implements Supplier<NetTrainComponent> {
 
     @Override
     public NetTrainDataBatch createNetTrainDataBatch() {
-      RMSLinear rmsLinear = RMSLinear.create();
-      NetLayer netLayer = rmsLinear.consolidate();
+      int[] dims = new int[depth + 2];
+      dims[0] = 2;
+      for (int i = 1; i <= depth; ++i)
+        dims[i] = hidden;
+      dims[dims.length - 1] = labels;
+      NetLayer netLayer = NetChains.argMax(NetChains.linear(between, dims));
       NetInitialize.of(netLayer);
       netTrain = new NetTrain(netLayer, optParam.create(netLayer));
       netTrain.addListener(netParamStatTracker);
@@ -99,14 +92,20 @@ class RmsSynthComponent implements Supplier<NetTrainComponent> {
 
     @Override
     protected void paintComponent(Graphics graphics) {
-      NetLayer copy = InnerComponent.this.copy;
+      NetLayer copy = Interp1TrainComponent.this.copy;
       if (Objects.nonNull(copy)) {
         List<Rectangle> list = ShowGridComponent.rectangles(3, getSize());
         {
-          Show show = new Show("error");
-          Tensor Y = copy.forwardBatch(trainingData.xdata());
-          Tensor d = Y.subtract(trainingData.ydata());
-          show.add(ListDiscretePlot.of(Range.of(0, d.length()), Flatten.of(d)));
+          Show show = new Show();
+          show.add(DensityPlot.of((x, y) -> copy.forward(Tensors.of(x, y)).Get(0), cbb, cdg));
+          Tensor xdata = trainingData.xdata();
+          Tensor ydata = trainingData.ydata();
+          for (int k = 0; k < labels; ++k) {
+            Scalar label = RealScalar.of(k);
+            Tensor p0 = Tensor.of(IntStream.range(0, xdata.length()) //
+                .filter(i -> ydata.Get(i, 0).equals(label)).mapToObj(xdata::get));
+            show.add(ListPlot.of(p0));
+          }
           show.render_autoIndent(graphics, list.get(0));
         }
         {

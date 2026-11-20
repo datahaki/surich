@@ -1,5 +1,5 @@
 // code by jph
-package ch.alpine.surich.net.it2;
+package ch.alpine.surich.net.demo;
 
 import java.awt.Graphics;
 import java.awt.Rectangle;
@@ -7,6 +7,7 @@ import java.util.List;
 import java.util.Objects;
 import java.util.Random;
 import java.util.function.Supplier;
+import java.util.stream.IntStream;
 
 import ch.alpine.bridge.fig.Show;
 import ch.alpine.bridge.fig.ShowGridComponent;
@@ -24,29 +25,24 @@ import ch.alpine.surich.net.NetShows;
 import ch.alpine.surich.net.NetTrainComponent;
 import ch.alpine.surich.net.NetTrainDataBatch;
 import ch.alpine.surich.net.OptParam;
+import ch.alpine.tensor.Scalars;
 import ch.alpine.tensor.Tensor;
 import ch.alpine.tensor.Tensors;
-import ch.alpine.tensor.Unprotect;
 import ch.alpine.tensor.api.ScalarBinaryOperator;
-import ch.alpine.tensor.api.ScalarUnaryOperator;
-import ch.alpine.tensor.api.TensorUnaryOperator;
 import ch.alpine.tensor.col.ColorDataGradients;
-import ch.alpine.tensor.itp.BSplineInterpolation;
-import ch.alpine.tensor.itp.Interpolation;
-import ch.alpine.tensor.itp.LinearInterpolation;
+import ch.alpine.tensor.opt.nd.BoxRandomSample;
 import ch.alpine.tensor.opt.nd.CoordinateBoundingBox;
+import ch.alpine.tensor.pdf.RandomSample;
 import ch.alpine.tensor.pdf.RandomVariate;
-import ch.alpine.tensor.pdf.c.NormalDistribution;
-import ch.alpine.tensor.pdf.c.UniformDistribution;
+import ch.alpine.tensor.pdf.d.BernoulliDistribution;
 import ch.alpine.tensor.sca.Clip;
 import ch.alpine.tensor.sca.Clips;
 
 @ReflectionMarker
-class Interp2Component implements Supplier<NetTrainComponent> {
+class SigmoidComponent implements Supplier<NetTrainComponent> {
   public static final Clip DOMAIN = Clips.absoluteOne();
   public Integer seed = 0;
-  public Integer variability = 5;
-  public Integer samples = 50;
+  public Integer samples = 30;
   public Integer depth = 2;
   public Integer hidden = 7;
   public ElementwiseLayers between = ElementwiseLayers.RELU;
@@ -60,21 +56,17 @@ class Interp2Component implements Supplier<NetTrainComponent> {
   }
 
   class InnerComponent extends NetTrainComponent {
-    final TensorUnaryOperator truth;
+    final CoordinateBoundingBox cbb = CoordinateBoundingBox.of(Clips.absolute(2), Clips.absolute(2));
     final TrainingData trainingData;
     final NetParamStatTracker netParamStatTracker = new NetParamStatTracker();
     NetTrain netTrain;
 
     public InnerComponent() {
       Random random = new Random(seed);
-      Tensor disY = RandomVariate.of(NormalDistribution.standard(), random, variability, variability);
-      Interpolation interpolation = BSplineInterpolation.of(3, disY);
-      ScalarUnaryOperator lin = LinearInterpolation.of(Clips.positive(variability - 1));
-      Tensor xdata = RandomVariate.of(UniformDistribution.of(DOMAIN), random, samples, 2);
-      // FIXME without Tensors.of(...) this should crash but doesnt !!!
-      truth = xy -> Tensors.of(interpolation.get(xy.maps(s -> lin.apply(DOMAIN.rescale(s)))));
-      Tensor ydata = truth.slash(xdata);
-      trainingData = new TrainingData(xdata, ydata);
+      // assignment of random labels to points
+      trainingData = new TrainingData( //
+          RandomSample.of(new BoxRandomSample(cbb), random, samples), //
+          RandomVariate.of(BernoulliDistribution.of(0.5), random, samples, 1));
     }
 
     @Override
@@ -89,7 +81,7 @@ class Interp2Component implements Supplier<NetTrainComponent> {
       for (int i = 1; i <= depth; ++i)
         dims[i] = hidden;
       dims[dims.length - 1] = 1;
-      NetLayer netLayer = NetChains.linear(between, dims);
+      NetLayer netLayer = NetChains.binary(NetChains.linear(between, dims));
       NetInitialize.of(netLayer);
       netTrain = new NetTrain(netLayer, optParam.create(netLayer));
       netTrain.addListener(netParamStatTracker);
@@ -101,29 +93,22 @@ class Interp2Component implements Supplier<NetTrainComponent> {
     protected void paintComponent(Graphics graphics) {
       NetLayer copy = InnerComponent.this.copy;
       if (Objects.nonNull(copy)) {
-        List<Rectangle> list = ShowGridComponent.rectangles(4, getSize());
+        List<Rectangle> list = ShowGridComponent.rectangles(3, getSize());
         {
-          Show show = new Show("function");
-          ScalarBinaryOperator sbo = (x, y) -> truth.apply(Tensors.of(x, y)).Get(0);
-          CoordinateBoundingBox cbb = CoordinateBoundingBox.of(DOMAIN, DOMAIN);
+          Show show = new Show();
+          ScalarBinaryOperator sbo = (x, y) -> copy.forward(Tensors.of(x, y)).Get(0);
           show.add(DensityPlot.of(sbo, cbb, cdg));
-          show.add(ListPlot.of(trainingData.xdata()));
+          Tensor xdata = trainingData.xdata();
+          Tensor ydata = trainingData.ydata();
+          Tensor p0 = Tensor.of(IntStream.range(0, xdata.length()).filter(i -> Scalars.isZero(ydata.Get(i, 0))).mapToObj(xdata::get));
+          Tensor p1 = Tensor.of(IntStream.range(0, xdata.length()).filter(i -> !Scalars.isZero(ydata.Get(i, 0))).mapToObj(xdata::get));
+          show.add(ListPlot.of(p0));
+          show.add(ListPlot.of(p1));
           show.render_autoIndent(graphics, list.get(0));
         }
         {
-          Show show = new Show("interpolation error");
-          ScalarBinaryOperator sbo = (x, y) -> {
-            Tensor p = Unprotect.using(List.of(x, y));
-            return copy.forward(p).subtract(truth.apply(p)).Get(0);
-          };
-          CoordinateBoundingBox cbb = CoordinateBoundingBox.of(DOMAIN, DOMAIN);
-          show.add(DensityPlot.of(sbo, cbb, cdg));
-          show.add(ListPlot.of(trainingData.xdata()));
-          show.render_autoIndent(graphics, list.get(1));
-        }
-        {
-          NetShows.param(netParamStatTracker).render_autoIndent(graphics, list.get(2));
-          NetShows.loss(netTrain.tloss).render_autoIndent(graphics, list.get(3));
+          NetShows.param(netParamStatTracker).render_autoIndent(graphics, list.get(1));
+          NetShows.loss(netTrain.tloss).render_autoIndent(graphics, list.get(2));
         }
       }
     };

@@ -7,11 +7,9 @@ import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 import java.util.function.Supplier;
 
-import javax.swing.JFrame;
 import javax.swing.JLabel;
 import javax.swing.SwingConstants;
 
-import ch.alpine.bridge.awt.WindowClosed;
 import ch.alpine.bridge.pro.ManipulateProvider;
 import ch.alpine.bridge.ref.ann.FieldFuse;
 import ch.alpine.bridge.ref.ann.ReflectionMarker;
@@ -48,14 +46,10 @@ public abstract class BaseNetDemo implements ManipulateProvider {
         : netTrainComponent;
   }
 
-  public final void cancel() {
+  @Override
+  public final void closeOperation() {
     if (Objects.nonNull(netTrainComponent))
       netTrainComponent.cancel();
     executorService.shutdown();
-  }
-
-  protected void run() {
-    JFrame jFrame = runStandalone();
-    WindowClosed.runs(jFrame, this::cancel);
   }
 }
