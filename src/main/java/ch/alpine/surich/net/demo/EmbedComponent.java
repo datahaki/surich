@@ -44,6 +44,7 @@ class EmbedComponent implements Supplier<NetTrainComponent> {
   public Integer S = 3;
   public Integer V = 4;
   public Integer D = 8;
+  public ElementwiseLayers between = ElementwiseLayers.RELU;
   public final OptParam optParam = new OptParam();
   public Integer batch_size = 10;
 
@@ -72,7 +73,7 @@ class EmbedComponent implements Supplier<NetTrainComponent> {
 
     @Override
     public NetTrainDataBatch createNetTrainDataBatch() {
-      NetLayer inner = NetChains.linear(ElementwiseLayers.RELU, S * D, 16, 8, 1);
+      NetLayer inner = NetChains.linear(between, S * D, 16, 8, 1);
       NetLayer netLayer = NetChains.binary(NetChains.embedding(V, D, inner));
       NetInitialize.of(netLayer);
       netTrain = new NetTrain(netLayer, optParam.create(netLayer));
