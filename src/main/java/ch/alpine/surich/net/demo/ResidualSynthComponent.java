@@ -105,6 +105,7 @@ class ResidualSynthComponent implements Supplier<NetTrainComponent> {
         {
           NetShows.param(netParamStatTracker).render_autoIndent(graphics, list.get(1));
           NetShows.loss(netTrain.tloss).render_autoIndent(graphics, list.get(2));
+          NetShows.pMatrix(copy).render_autoIndent(graphics, list.get(3));
         }
       }
     };

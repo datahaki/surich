@@ -36,6 +36,7 @@ import ch.alpine.tensor.Scalar;
 import ch.alpine.tensor.Tensor;
 import ch.alpine.tensor.Tensors;
 import ch.alpine.tensor.alg.Join;
+import ch.alpine.tensor.col.ColorDataGradients;
 import ch.alpine.tensor.opt.nd.CoordinateBoundingBox;
 import ch.alpine.tensor.pdf.RandomVariate;
 import ch.alpine.tensor.pdf.c.UniformDistribution;
@@ -54,6 +55,7 @@ class FeatureComponent implements Supplier<NetTrainComponent> {
   public Boolean oneHot = false;
   public Integer depth = 3;
   public Integer hidden = 32;
+  public ColorDataGradients cdg = ColorDataGradients.THERMOMETER;
   public ElementwiseLayers between = ElementwiseLayers.RELU;
   public final OptParam optParam = new OptParam();
   public Integer batch_size = 50;
@@ -129,8 +131,9 @@ class FeatureComponent implements Supplier<NetTrainComponent> {
           show.render_autoIndent(graphics, list.get(0));
         }
         {
-          NetShows.param(netParamStatTracker).render_autoIndent(graphics, list.get(1));
-          NetShows.loss(netTrain.tloss).render_autoIndent(graphics, list.get(2));
+          NetShows.pMatrix(copy).render_autoIndent(graphics, list.get(1));
+          NetShows.param(netParamStatTracker).render_autoIndent(graphics, list.get(2));
+          NetShows.loss(netTrain.tloss).render_autoIndent(graphics, list.get(3));
         }
       }
     }

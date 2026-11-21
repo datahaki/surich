@@ -4,10 +4,14 @@ package ch.alpine.surich.net;
 import ch.alpine.bridge.fig.Show;
 import ch.alpine.bridge.fig.grd.AxisMaps;
 import ch.alpine.bridge.fig.plt.ListLinePlot;
+import ch.alpine.bridge.fig.plt.MatrixPlot;
+import ch.alpine.subare.net.NetExtract;
 import ch.alpine.subare.net.NetParamStatTracker;
+import ch.alpine.subare.net.api.NetLayer;
 import ch.alpine.subare.net.run.NetTrain;
 import ch.alpine.tensor.Tensor;
 import ch.alpine.tensor.Tensors;
+import ch.alpine.tensor.col.ColorDataGradients;
 import ch.alpine.tensor.io.TableBuilder;
 import ch.alpine.tensor.sca.Sign;
 
@@ -18,6 +22,13 @@ public enum NetShows {
     Tensor[] tensors = netParamStatTracker.tableBuilder().oneToMany();
     for (int i = 0; i < tensors.length; ++i)
       show.add(ListLinePlot.of(tensors[i])).setLabel(NetParamStatTracker.LABELS[i]);
+    return show;
+  }
+
+  public static Show pMatrix(NetLayer netLayer) {
+    Show show = new Show("parameters");
+    Tensor matrix = NetExtract.parametersAsMatrix(netLayer);
+    show.add(MatrixPlot.of(matrix, ColorDataGradients.THERMOMETER, true));
     return show;
   }
 

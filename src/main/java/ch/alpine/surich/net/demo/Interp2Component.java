@@ -102,7 +102,7 @@ class Interp2Component implements Supplier<NetTrainComponent> {
     protected void paintComponent(Graphics graphics) {
       NetLayer copy = InnerComponent.this.copy;
       if (Objects.nonNull(copy)) {
-        List<Rectangle> list = ShowGridComponent.rectangles(4, getSize());
+        List<Rectangle> list = ShowGridComponent.rectangles(5, getSize());
         {
           Show show = new Show("function");
           ScalarBinaryOperator sbo = (x, y) -> truth.apply(Tensors.of(x, y)).Get(0);
@@ -125,6 +125,7 @@ class Interp2Component implements Supplier<NetTrainComponent> {
         {
           NetShows.param(netParamStatTracker).render_autoIndent(graphics, list.get(2));
           NetShows.loss(netTrain.tloss).render_autoIndent(graphics, list.get(3));
+          NetShows.pMatrix(copy).render_autoIndent(graphics, list.get(4));
         }
       }
     };
