@@ -18,7 +18,7 @@ import ch.alpine.subare.net.NetLayer;
 import ch.alpine.subare.net.NetLayers;
 import ch.alpine.subare.net.lay.ElementwiseLayers;
 import ch.alpine.subare.net.lay.FeatureEmbeddingLayer;
-import ch.alpine.subare.net.lay.FeatureEmbeddingLayer.NetFeature;
+import ch.alpine.subare.net.lay.FeatureEmbeddingLayer.FeatureSlice;
 import ch.alpine.subare.net.lay.IdentityLayer;
 import ch.alpine.subare.net.lay.NetChain;
 import ch.alpine.subare.net.lay.NetChains;
@@ -100,10 +100,10 @@ class FeatureComponent implements Supplier<NetTrainComponent> {
       dims[dims.length - 1] = 1;
       NetLayer inner = NetChains.linear(between, dims);
       NetLayer embed = FeatureEmbeddingLayer.of( //
-          new NetFeature(1, 1, IdentityLayer.INSTANCE), //
+          new FeatureSlice(1, 1, IdentityLayer.INSTANCE), //
           oneHot //
-              ? new NetFeature(1, V, new OneHotLayer(V))
-              : new NetFeature(1, D, new ScalarEmbeddingLayer(V, D)) //
+              ? new FeatureSlice(1, V, new OneHotLayer(V))
+              : new FeatureSlice(1, D, new ScalarEmbeddingLayer(V, D)) //
       );
       NetLayer netLayer = NetChain.join(embed, inner);
       NetLayers.initialize(netLayer);

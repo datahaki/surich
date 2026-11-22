@@ -9,7 +9,9 @@ import java.util.List;
 import java.util.Map;
 import java.util.Objects;
 
-public class BytePairEncoding {
+import ch.alpine.bridge.pro.VoidProvider;
+
+public class BytePairEncoding implements VoidProvider {
   public static final String END_OF_WORD = "</w>";
   public static final String UNK_TOKEN = "<unk>";
 
@@ -198,7 +200,8 @@ public class BytePairEncoding {
     return updated;
   }
 
-  public static void main(String[] args) {
+  @Override
+  public Void runStandalone() {
     List<String> trainingData = List.of("low lower newest widest", "low lower newest widest", "newer widest low", "lowest newer widest");
     BytePairEncoding bpe = new BytePairEncoding();
     bpe.train(trainingData, 30);
@@ -210,5 +213,10 @@ public class BytePairEncoding {
     System.out.println("\nInput:  " + unseen);
     System.out.println("Tokens: " + bpe.encodeTokens(unseen));
     System.out.println("IDs:    " + bpe.encodeIds(unseen));
+    return null;
+  }
+
+  static void main() {
+    new BytePairEncoding().runStandalone();
   }
 }

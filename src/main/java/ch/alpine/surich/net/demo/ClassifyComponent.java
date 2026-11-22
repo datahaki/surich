@@ -57,7 +57,7 @@ class ClassifyComponent implements Supplier<NetTrainComponent> {
   }
 
   class Interp1TrainComponent extends NetTrainComponent {
-    final CoordinateBoundingBox cbb = CoordinateBoundingBox.of(Clips.absolute(2), Clips.absolute(2));
+    final CoordinateBoundingBox cbb = CoordinateBoundingBox.of(DOMAIN, DOMAIN);
     final TrainingData trainingData;
     final NetParamStatTracker netParamStatTracker = new NetParamStatTracker();
     NetTrain netTrain;
@@ -96,6 +96,8 @@ class ClassifyComponent implements Supplier<NetTrainComponent> {
       if (Objects.nonNull(copy)) {
         List<Rectangle> list = GraphicsGrid.rectangles(3, getSize());
         {
+          Clip eval = Clips.operator(RealScalar.of(1.2)::multiply).apply(DOMAIN);
+          CoordinateBoundingBox cbb = CoordinateBoundingBox.of(eval, eval);
           Show show = new Show();
           show.add(DensityPlot.of((x, y) -> copy.forward(Tensors.of(x, y)).Get(0), cbb, cdg));
           Tensor xdata = trainingData.xdata();
