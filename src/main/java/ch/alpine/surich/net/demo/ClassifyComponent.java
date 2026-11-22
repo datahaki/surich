@@ -9,8 +9,8 @@ import java.util.Random;
 import java.util.function.Supplier;
 import java.util.stream.IntStream;
 
+import ch.alpine.bridge.fig.GraphicsGrid;
 import ch.alpine.bridge.fig.Show;
-import ch.alpine.bridge.fig.ShowGridComponent;
 import ch.alpine.bridge.fig.plt.DensityPlot;
 import ch.alpine.bridge.fig.plt.ListPlot;
 import ch.alpine.bridge.ref.ann.ReflectionMarker;
@@ -94,7 +94,7 @@ class ClassifyComponent implements Supplier<NetTrainComponent> {
     protected void paintComponent(Graphics graphics) {
       NetLayer copy = Interp1TrainComponent.this.copy;
       if (Objects.nonNull(copy)) {
-        List<Rectangle> list = ShowGridComponent.rectangles(3, getSize());
+        List<Rectangle> list = GraphicsGrid.rectangles(3, getSize());
         {
           Show show = new Show();
           show.add(DensityPlot.of((x, y) -> copy.forward(Tensors.of(x, y)).Get(0), cbb, cdg));

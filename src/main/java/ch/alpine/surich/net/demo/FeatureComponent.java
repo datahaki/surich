@@ -8,8 +8,8 @@ import java.util.Objects;
 import java.util.Random;
 import java.util.function.Supplier;
 
+import ch.alpine.bridge.fig.GraphicsGrid;
 import ch.alpine.bridge.fig.Show;
-import ch.alpine.bridge.fig.ShowGridComponent;
 import ch.alpine.bridge.fig.Showable;
 import ch.alpine.bridge.fig.plt.ListPlot;
 import ch.alpine.bridge.fig.plt.Plot;
@@ -117,7 +117,7 @@ class FeatureComponent implements Supplier<NetTrainComponent> {
     protected void paintComponent(Graphics graphics) {
       NetLayer copy = InnerComponent.this.copy;
       if (Objects.nonNull(copy)) {
-        List<Rectangle> list = ShowGridComponent.rectangles(3, getSize());
+        List<Rectangle> list = GraphicsGrid.rectangles(3, getSize());
         {
           Show show = new Show();
           show.add(ListPlot.of( //

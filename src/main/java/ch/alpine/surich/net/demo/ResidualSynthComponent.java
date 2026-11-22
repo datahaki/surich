@@ -8,7 +8,7 @@ import java.util.Objects;
 import java.util.Random;
 import java.util.function.Supplier;
 
-import ch.alpine.bridge.fig.ShowGridComponent;
+import ch.alpine.bridge.fig.GraphicsGrid;
 import ch.alpine.bridge.ref.ann.ReflectionMarker;
 import ch.alpine.subare.net.NetLayer;
 import ch.alpine.subare.net.NetLayers;
@@ -94,7 +94,7 @@ class ResidualSynthComponent implements Supplier<NetTrainComponent> {
     protected void paintComponent(Graphics graphics) {
       NetLayer copy = InnerComponent.this.copy;
       if (Objects.nonNull(copy)) {
-        List<Rectangle> list = ShowGridComponent.rectangles(3, getSize());
+        List<Rectangle> list = GraphicsGrid.rectangles(3, getSize());
         // {
         // Show show = new Show("error");
         // Tensor Y = copy.forwardBatch(trainingData.xdata());
