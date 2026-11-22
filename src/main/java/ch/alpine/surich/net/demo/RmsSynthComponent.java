@@ -30,7 +30,6 @@ import ch.alpine.tensor.RealScalar;
 import ch.alpine.tensor.Scalar;
 import ch.alpine.tensor.Tensor;
 import ch.alpine.tensor.Tensors;
-import ch.alpine.tensor.alg.Flatten;
 import ch.alpine.tensor.alg.Range;
 import ch.alpine.tensor.pdf.RandomVariate;
 import ch.alpine.tensor.pdf.c.NormalDistribution;
@@ -76,7 +75,7 @@ class RmsSynthComponent implements Supplier<NetTrainComponent> {
       NetLayer netLayer = rmsLinear.consolidate();
       NetLayers.initialize(netLayer);
       Tensor xdata = RandomVariate.of(DiscreteUniformDistribution.of(-3, 10), random, samples, 3);
-      Tensor noise = RandomVariate.of(NormalDistribution.of(noise_sigma.zero(), noise_sigma), random, samples, 1);
+      Tensor noise = RandomVariate.of(NormalDistribution.of(noise_sigma.zero(), noise_sigma), random, samples);
       Tensor ydata = netLayer.forwardBatch(xdata).add(noise);
       trainingData = new TrainingData(xdata, ydata);
     }
@@ -106,7 +105,7 @@ class RmsSynthComponent implements Supplier<NetTrainComponent> {
           Show show = new Show("error");
           Tensor Y = copy.forwardBatch(trainingData.xdata());
           Tensor d = Y.subtract(trainingData.ydata());
-          show.add(ListDiscretePlot.of(Range.of(0, d.length()), Flatten.of(d)));
+          show.add(ListDiscretePlot.of(Range.of(0, d.length()), d));
           show.render_autoIndent(graphics, list.get(0));
         }
         {

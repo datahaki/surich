@@ -1,6 +1,10 @@
 // code by jph
 package ch.alpine.surich.net;
 
+import java.awt.Graphics;
+import java.awt.Point;
+import java.util.List;
+
 import ch.alpine.bridge.fig.Show;
 import ch.alpine.bridge.fig.grd.AxisMaps;
 import ch.alpine.bridge.fig.plt.ListLinePlot;
@@ -17,6 +21,15 @@ import ch.alpine.tensor.sca.Sign;
 
 public enum NetShows {
   ;
+  public static void layers(Graphics graphics, Point point, NetLayer netLayer) {
+    List<String> list = NetLayers.toString(netLayer);
+    int piy = 0;
+    for (String string : list) {
+      piy += 13;
+      graphics.drawString(string, point.x, point.y + piy);
+    }
+  }
+
   public static Show param(NetParamStatTracker netParamStatTracker) {
     Show show = new Show("parameter stats");
     Tensor[] tensors = netParamStatTracker.tableBuilder().oneToMany();

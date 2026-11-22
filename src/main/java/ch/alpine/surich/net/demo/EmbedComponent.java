@@ -24,9 +24,7 @@ import ch.alpine.surich.net.NetTrainDataBatch;
 import ch.alpine.surich.net.OptParam;
 import ch.alpine.tensor.RealScalar;
 import ch.alpine.tensor.Tensor;
-import ch.alpine.tensor.Tensors;
 import ch.alpine.tensor.alg.ArrayReshape;
-import ch.alpine.tensor.alg.Flatten;
 import ch.alpine.tensor.alg.OrderedQ;
 import ch.alpine.tensor.alg.PadRight;
 import ch.alpine.tensor.alg.Range;
@@ -61,7 +59,7 @@ class EmbedComponent implements Supplier<NetTrainComponent> {
 
     public InnerComponent() {
       Tensor xdata = Tuples.of(Range.of(0, V), S);
-      Tensor ydata = Tensor.of(xdata.stream().map(OrderedQ::of).map(Boole::of).map(Tensors::of));
+      Tensor ydata = Tensor.of(xdata.stream().map(OrderedQ::of).map(Boole::of));
       // assignment of random labels to points
       trainingData = new TrainingData(xdata, ydata);
     }
@@ -88,7 +86,7 @@ class EmbedComponent implements Supplier<NetTrainComponent> {
       if (Objects.nonNull(copy)) {
         List<Rectangle> list = GraphicsGrid.rectangles(3, getSize());
         {
-          Tensor error = Flatten.of(copy.forwardBatch(trainingData.xdata()).subtract(trainingData.ydata()));
+          Tensor error = copy.forwardBatch(trainingData.xdata()).subtract(trainingData.ydata());
           int N = error.length();
           int ceil = Ceiling.intValueExact(Sqrt.FUNCTION.apply(RealScalar.of(N)));
           error = PadRight.zeros(ceil * ceil).apply(error);

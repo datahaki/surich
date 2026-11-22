@@ -2,6 +2,7 @@
 package ch.alpine.surich.net.demo;
 
 import java.awt.Graphics;
+import java.awt.Point;
 import java.awt.Rectangle;
 import java.util.List;
 import java.util.Objects;
@@ -9,7 +10,7 @@ import java.util.Random;
 import java.util.function.Supplier;
 import java.util.stream.IntStream;
 
-import ch.alpine.bridge.fig.GraphicsGrid;
+import ch.alpine.bridge.awt.RenderQuality;
 import ch.alpine.bridge.fig.Show;
 import ch.alpine.bridge.fig.plt.DensityPlot;
 import ch.alpine.bridge.fig.plt.ListPlot;
@@ -17,13 +18,13 @@ import ch.alpine.bridge.ref.ann.ReflectionMarker;
 import ch.alpine.subare.net.NetChains;
 import ch.alpine.subare.net.NetLayer;
 import ch.alpine.subare.net.NetLayers;
-import ch.alpine.subare.net.lay.ElementwiseLayers;
 import ch.alpine.subare.net.run.NetParamStatTracker;
 import ch.alpine.subare.net.run.NetTrain;
 import ch.alpine.subare.net.run.TrainingData;
 import ch.alpine.surich.net.NetShows;
 import ch.alpine.surich.net.NetTrainComponent;
 import ch.alpine.surich.net.NetTrainDataBatch;
+import ch.alpine.surich.net.OptLinear;
 import ch.alpine.surich.net.OptParam;
 import ch.alpine.tensor.RealScalar;
 import ch.alpine.tensor.Scalar;
@@ -44,9 +45,7 @@ class ClassifyComponent implements Supplier<NetTrainComponent> {
   public Integer seed = 0;
   public Integer samples = 30;
   public Integer labels = 3;
-  public Integer depth = 2;
-  public Integer hidden = 7;
-  public ElementwiseLayers between = ElementwiseLayers.RELU;
+  public final OptLinear optLinear = new OptLinear();
   public final OptParam optParam = new OptParam();
   public Integer batch_size = 6;
   public ColorDataGradients cdg = ColorDataGradients.COPPER;
@@ -77,12 +76,7 @@ class ClassifyComponent implements Supplier<NetTrainComponent> {
 
     @Override
     public NetTrainDataBatch createNetTrainDataBatch() {
-      int[] dims = new int[depth + 2];
-      dims[0] = 2;
-      for (int i = 1; i <= depth; ++i)
-        dims[i] = hidden;
-      dims[dims.length - 1] = labels;
-      NetLayer netLayer = NetChains.argMax(NetChains.linear(between, dims));
+      NetLayer netLayer = NetChains.argMax(optLinear.create(2, 3));
       NetLayers.initialize(netLayer);
       netTrain = new NetTrain(netLayer, optParam.create(netLayer));
       netTrain.addListener(netParamStatTracker);
@@ -94,7 +88,11 @@ class ClassifyComponent implements Supplier<NetTrainComponent> {
     protected void paintComponent(Graphics graphics) {
       NetLayer copy = Interp1TrainComponent.this.copy;
       if (Objects.nonNull(copy)) {
-        List<Rectangle> list = GraphicsGrid.rectangles(3, getSize());
+        {
+          RenderQuality.setQuality(graphics);
+          NetShows.layers(graphics, new Point(), copy);
+        }
+        List<Rectangle> list = rectangles(4);
         {
           Clip eval = Clips.operator(RealScalar.of(1.2)::multiply).apply(DOMAIN);
           CoordinateBoundingBox cbb = CoordinateBoundingBox.of(eval, eval);

@@ -2,12 +2,13 @@
 package ch.alpine.surich.net.demo;
 
 import java.awt.Graphics;
+import java.awt.Point;
 import java.awt.Rectangle;
 import java.util.List;
 import java.util.Objects;
 import java.util.function.Supplier;
 
-import ch.alpine.bridge.fig.GraphicsGrid;
+import ch.alpine.bridge.awt.RenderQuality;
 import ch.alpine.bridge.fig.Show;
 import ch.alpine.bridge.fig.plt.ListDiscretePlot;
 import ch.alpine.bridge.ref.ann.ReflectionMarker;
@@ -54,8 +55,9 @@ class Embed1Component implements Supplier<NetTrainComponent> {
     NetTrain netTrain;
 
     public InnerComponent() {
-      Tensor xdata = Range.of(0, V).maps(Tensors::of);
-      Tensor ydata = xdata.maps(v -> Boole.of(v.number().intValue() % 2 == 0));
+      Tensor value = Range.of(0, V);
+      Tensor xdata = value.maps(Tensors::of);
+      Tensor ydata = value.maps(v -> Boole.of(v.number().intValue() % 2 == 0));
       // assignment of random labels to points
       trainingData = new TrainingData(xdata, ydata);
     }
@@ -80,12 +82,16 @@ class Embed1Component implements Supplier<NetTrainComponent> {
     protected void paintComponent(Graphics graphics) {
       NetLayer copy = InnerComponent.this.copy;
       if (Objects.nonNull(copy)) {
-        List<Rectangle> list = GraphicsGrid.rectangles(3, getSize());
+        {
+          RenderQuality.setQuality(graphics);
+          NetShows.layers(graphics, new Point(), copy);
+        }
+        List<Rectangle> list = rectangles(4);
         {
           Show show = new Show("even");
           Tensor X = trainingData.xdata();
           Tensor Y = copy.forwardBatch(X);
-          show.add(ListDiscretePlot.of(Flatten.of(X), Flatten.of(Y)));
+          show.add(ListDiscretePlot.of(Flatten.of(X), Y));
           show.render_autoIndent(graphics, list.get(0));
         }
         {

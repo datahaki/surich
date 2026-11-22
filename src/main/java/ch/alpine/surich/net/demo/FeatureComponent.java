@@ -2,23 +2,22 @@
 package ch.alpine.surich.net.demo;
 
 import java.awt.Graphics;
+import java.awt.Point;
 import java.awt.Rectangle;
 import java.util.List;
 import java.util.Objects;
 import java.util.Random;
 import java.util.function.Supplier;
 
-import ch.alpine.bridge.fig.GraphicsGrid;
+import ch.alpine.bridge.awt.RenderQuality;
 import ch.alpine.bridge.fig.Show;
 import ch.alpine.bridge.fig.Showable;
 import ch.alpine.bridge.fig.plt.ListPlot;
 import ch.alpine.bridge.fig.plt.Plot;
 import ch.alpine.bridge.ref.ann.ReflectionMarker;
 import ch.alpine.subare.net.NetChain;
-import ch.alpine.subare.net.NetChains;
 import ch.alpine.subare.net.NetLayer;
 import ch.alpine.subare.net.NetLayers;
-import ch.alpine.subare.net.lay.ElementwiseLayers;
 import ch.alpine.subare.net.lay.FeatureEmbeddingLayer;
 import ch.alpine.subare.net.lay.FeatureEmbeddingLayer.FeatureSlice;
 import ch.alpine.subare.net.lay.IdentityLayer;
@@ -30,6 +29,7 @@ import ch.alpine.subare.net.run.TrainingData;
 import ch.alpine.surich.net.NetShows;
 import ch.alpine.surich.net.NetTrainComponent;
 import ch.alpine.surich.net.NetTrainDataBatch;
+import ch.alpine.surich.net.OptLinear;
 import ch.alpine.surich.net.OptParam;
 import ch.alpine.tensor.RealScalar;
 import ch.alpine.tensor.Scalar;
@@ -53,11 +53,9 @@ class FeatureComponent implements Supplier<NetTrainComponent> {
   public Integer V = 4;
   public Integer D = 3;
   public Boolean oneHot = false;
-  public Integer depth = 3;
-  public Integer hidden = 32;
-  public ColorDataGradients cdg = ColorDataGradients.THERMOMETER;
-  public ElementwiseLayers between = ElementwiseLayers.RELU;
+  public final OptLinear optLinear = new OptLinear();
   public final OptParam optParam = new OptParam();
+  public ColorDataGradients cdg = ColorDataGradients.THERMOMETER;
   public Integer batch_size = 50;
 
   private int d_emb() {
@@ -93,19 +91,13 @@ class FeatureComponent implements Supplier<NetTrainComponent> {
 
     @Override
     public NetTrainDataBatch createNetTrainDataBatch() {
-      int[] dims = new int[depth + 2];
-      dims[0] = d_emb();
-      for (int i = 1; i <= depth; ++i)
-        dims[i] = hidden;
-      dims[dims.length - 1] = 1;
-      NetLayer inner = NetChains.linear(between, dims);
       NetLayer embed = FeatureEmbeddingLayer.of( //
           new FeatureSlice(1, 1, IdentityLayer.INSTANCE), //
           oneHot //
               ? new FeatureSlice(1, V, new OneHotLayer(V))
               : new FeatureSlice(1, D, new ScalarEmbeddingLayer(V, D)) //
       );
-      NetLayer netLayer = NetChain.join(embed, inner);
+      NetLayer netLayer = NetChain.join(embed, optLinear.create(d_emb(), 1));
       NetLayers.initialize(netLayer);
       netTrain = new NetTrain(netLayer, optParam.create(netLayer));
       netTrain.addListener(netParamStatTracker);
@@ -117,7 +109,11 @@ class FeatureComponent implements Supplier<NetTrainComponent> {
     protected void paintComponent(Graphics graphics) {
       NetLayer copy = InnerComponent.this.copy;
       if (Objects.nonNull(copy)) {
-        List<Rectangle> list = GraphicsGrid.rectangles(3, getSize());
+        {
+          RenderQuality.setQuality(graphics);
+          NetShows.layers(graphics, new Point(), copy);
+        }
+        List<Rectangle> list = rectangles(4);
         {
           Show show = new Show();
           show.add(ListPlot.of( //

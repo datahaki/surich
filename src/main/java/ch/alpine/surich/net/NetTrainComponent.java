@@ -1,10 +1,15 @@
 // code by jph
 package ch.alpine.surich.net;
 
+import java.awt.Dimension;
 import java.awt.Graphics;
+import java.awt.Point;
+import java.awt.Rectangle;
+import java.util.List;
 
 import javax.swing.JComponent;
 
+import ch.alpine.bridge.fig.GraphicsGrid;
 import ch.alpine.bridge.ref.ann.ReflectionMarker;
 import ch.alpine.bridge.wdog.SoftWatchdog;
 import ch.alpine.bridge.wdog.Watchdog;
@@ -39,6 +44,13 @@ public abstract class NetTrainComponent extends JComponent implements NetTrainLi
       repaint();
     }
     return running;
+  }
+
+  public List<Rectangle> rectangles(int n) {
+    int inset = 200;
+    Dimension dimension = getSize();
+    dimension.width -= inset;
+    return GraphicsGrid.rectangles(n, new Rectangle(new Point(inset, 0), dimension));
   }
 
   public final void cancel() {

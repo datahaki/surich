@@ -2,6 +2,7 @@
 package ch.alpine.surich.net.demo;
 
 import java.awt.Graphics;
+import java.awt.Point;
 import java.awt.Rectangle;
 import java.util.List;
 import java.util.Objects;
@@ -9,7 +10,7 @@ import java.util.Random;
 import java.util.function.Supplier;
 import java.util.stream.IntStream;
 
-import ch.alpine.bridge.fig.GraphicsGrid;
+import ch.alpine.bridge.awt.RenderQuality;
 import ch.alpine.bridge.fig.Show;
 import ch.alpine.bridge.fig.plt.DensityPlot;
 import ch.alpine.bridge.fig.plt.ListPlot;
@@ -25,6 +26,8 @@ import ch.alpine.surich.net.NetShows;
 import ch.alpine.surich.net.NetTrainComponent;
 import ch.alpine.surich.net.NetTrainDataBatch;
 import ch.alpine.surich.net.OptParam;
+import ch.alpine.tensor.RealScalar;
+import ch.alpine.tensor.Scalar;
 import ch.alpine.tensor.Scalars;
 import ch.alpine.tensor.Tensor;
 import ch.alpine.tensor.Tensors;
@@ -43,12 +46,11 @@ class SigmoidComponent implements Supplier<NetTrainComponent> {
   public static final Clip DOMAIN = Clips.absoluteOne();
   public Integer seed = 0;
   public Integer samples = 30;
-  public Integer depth = 2;
-  public Integer hidden = 7;
+  public Tensor lin_dims = Tensors.vector(10, 6, 3);
+  public Scalar dropout_p = RealScalar.of(0.3);
   public ElementwiseLayers between = ElementwiseLayers.RELU;
   public final OptParam optParam = new OptParam();
   public Integer batch_size = 10;
-  public ColorDataGradients cdg = ColorDataGradients.COPPER;
 
   @Override
   public NetTrainComponent get() {
@@ -56,7 +58,7 @@ class SigmoidComponent implements Supplier<NetTrainComponent> {
   }
 
   class InnerComponent extends NetTrainComponent {
-    final CoordinateBoundingBox cbb = CoordinateBoundingBox.of(Clips.absolute(2), Clips.absolute(2));
+    final CoordinateBoundingBox cbb = CoordinateBoundingBox.of(DOMAIN, DOMAIN);
     final TrainingData trainingData;
     final NetParamStatTracker netParamStatTracker = new NetParamStatTracker();
     NetTrain netTrain;
@@ -66,7 +68,7 @@ class SigmoidComponent implements Supplier<NetTrainComponent> {
       // assignment of random labels to points
       trainingData = new TrainingData( //
           RandomSample.of(new BoxRandomSample(cbb), random, samples), //
-          RandomVariate.of(BernoulliDistribution.of(0.5), random, samples, 1));
+          RandomVariate.of(BernoulliDistribution.of(0.5), random, samples));
     }
 
     @Override
@@ -76,12 +78,13 @@ class SigmoidComponent implements Supplier<NetTrainComponent> {
 
     @Override
     public NetTrainDataBatch createNetTrainDataBatch() {
+      int depth = lin_dims.length();
       int[] dims = new int[depth + 2];
       dims[0] = 2;
       for (int i = 1; i <= depth; ++i)
-        dims[i] = hidden;
+        dims[i] = Scalars.intValueExact(lin_dims.Get(i - 1));
       dims[dims.length - 1] = 1;
-      NetLayer netLayer = NetChains.binary(NetChains.linear(between, dims));
+      NetLayer netLayer = NetChains.binary(NetChains.linearWith(between, dropout_p, dims));
       NetLayers.initialize(netLayer);
       netTrain = new NetTrain(netLayer, optParam.create(netLayer));
       netTrain.addListener(netParamStatTracker);
@@ -93,15 +96,21 @@ class SigmoidComponent implements Supplier<NetTrainComponent> {
     protected void paintComponent(Graphics graphics) {
       NetLayer copy = InnerComponent.this.copy;
       if (Objects.nonNull(copy)) {
-        List<Rectangle> list = GraphicsGrid.rectangles(3, getSize());
+        {
+          RenderQuality.setQuality(graphics);
+          NetShows.layers(graphics, new Point(), copy);
+        }
+        List<Rectangle> list = rectangles(4);
         {
           Show show = new Show();
-          ScalarBinaryOperator sbo = (x, y) -> copy.forward(Tensors.of(x, y)).Get(0);
-          show.add(DensityPlot.of(sbo, cbb, cdg));
+          ScalarBinaryOperator sbo = (x, y) -> (Scalar) copy.forward(Tensors.of(x, y));
+          Clip clip = Clips.operator(RealScalar.of(1.2)::multiply).apply(DOMAIN);
+          CoordinateBoundingBox cbb = CoordinateBoundingBox.of(clip, clip);
+          show.add(DensityPlot.of(sbo, cbb, ColorDataGradients.COPPER));
           Tensor xdata = trainingData.xdata();
           Tensor ydata = trainingData.ydata();
-          Tensor p0 = Tensor.of(IntStream.range(0, xdata.length()).filter(i -> Scalars.isZero(ydata.Get(i, 0))).mapToObj(xdata::get));
-          Tensor p1 = Tensor.of(IntStream.range(0, xdata.length()).filter(i -> !Scalars.isZero(ydata.Get(i, 0))).mapToObj(xdata::get));
+          Tensor p0 = Tensor.of(IntStream.range(0, xdata.length()).filter(i -> Scalars.isZero(ydata.Get(i))).mapToObj(xdata::get));
+          Tensor p1 = Tensor.of(IntStream.range(0, xdata.length()).filter(i -> !Scalars.isZero(ydata.Get(i))).mapToObj(xdata::get));
           show.add(ListPlot.of(p0));
           show.add(ListPlot.of(p1));
           show.render_autoIndent(graphics, list.get(0));
