@@ -8,11 +8,11 @@ import org.junit.jupiter.api.TestFactory;
 
 import ch.alpine.bridge.cgr.InstanceDiscovery;
 import ch.alpine.bridge.cgr.InstanceRecord;
-import ch.alpine.subare.net.TrainingData;
-import ch.alpine.subare.net.api.NetLayer;
-import ch.alpine.subare.net.api.NetLoss;
+import ch.alpine.subare.net.NetLayer;
+import ch.alpine.subare.net.NetLoss;
 import ch.alpine.subare.net.opt.NetOptimizers;
 import ch.alpine.subare.net.run.NetTrain;
+import ch.alpine.subare.net.run.TrainingData;
 import ch.alpine.tensor.Tensor;
 import ch.alpine.tensor.chq.DeterminateTensorQ;
 

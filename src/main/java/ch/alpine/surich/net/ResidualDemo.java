@@ -8,15 +8,15 @@ import ch.alpine.bridge.fig.ShowGridComponent;
 import ch.alpine.bridge.fig.plt.ListLinePlot;
 import ch.alpine.bridge.pro.ManipulateProvider;
 import ch.alpine.bridge.ref.ann.ReflectionMarker;
-import ch.alpine.subare.net.NetInitialize;
-import ch.alpine.subare.net.NetParamTracker;
-import ch.alpine.subare.net.TrainingData;
-import ch.alpine.subare.net.api.NetLayer;
-import ch.alpine.subare.net.api.NetOptimizer;
+import ch.alpine.subare.net.NetLayer;
+import ch.alpine.subare.net.NetLayers;
 import ch.alpine.subare.net.lay.ElementwiseLayers;
 import ch.alpine.subare.net.lay.NetChains;
 import ch.alpine.subare.net.lay.ResidualLayer;
+import ch.alpine.subare.net.opt.NetOptimizer;
+import ch.alpine.subare.net.run.NetParamTracker;
 import ch.alpine.subare.net.run.NetTrain;
+import ch.alpine.subare.net.run.TrainingData;
 import ch.alpine.tensor.Tensor;
 import ch.alpine.tensor.io.TableBuilder;
 import ch.alpine.tensor.pdf.RandomVariate;
@@ -35,11 +35,11 @@ class ResidualDemo implements ManipulateProvider {
   public Container getContainer() {
     NetLayer netLayer = NetChains.argMax( //
         new ResidualLayer(NetChains.linear(ElementwiseLayers.GELU, dinout, hidden, dinout)));
-    NetInitialize.of(netLayer);
+    NetLayers.initialize(netLayer);
     Tensor xdata = RandomVariate.of(NormalDistribution.standard(), samples, dinout);
     Tensor ydata = netLayer.forwardBatch(xdata);
     // ---
-    NetInitialize.of(netLayer);
+    NetLayers.initialize(netLayer);
     NetOptimizer netOptimize = optParam.create(netLayer);
     NetTrain netTrain = new NetTrain(netLayer, netOptimize);
     NetParamTracker netParamTracker = new NetParamTracker();

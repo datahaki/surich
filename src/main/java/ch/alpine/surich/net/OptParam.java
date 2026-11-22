@@ -2,8 +2,8 @@
 package ch.alpine.surich.net;
 
 import ch.alpine.bridge.ref.ann.ReflectionMarker;
-import ch.alpine.subare.net.api.NetLayer;
-import ch.alpine.subare.net.api.NetOptimizer;
+import ch.alpine.subare.net.NetLayer;
+import ch.alpine.subare.net.opt.NetOptimizer;
 import ch.alpine.subare.net.opt.NetOptimizers;
 import ch.alpine.tensor.RealScalar;
 import ch.alpine.tensor.Scalar;

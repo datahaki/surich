@@ -8,8 +8,8 @@ import org.junit.jupiter.api.TestFactory;
 
 import ch.alpine.bridge.cgr.InstanceDiscovery;
 import ch.alpine.bridge.cgr.InstanceRecord;
-import ch.alpine.subare.net.NetExtract;
-import ch.alpine.subare.net.api.NetLayer;
+import ch.alpine.subare.net.NetLayer;
+import ch.alpine.subare.net.NetLayers;
 import ch.alpine.subare.net.run.NetTrain;
 
 /* point_wise
@@ -30,7 +30,7 @@ class NetTrainComponentTest {
     NetTrain netTrain = netTrainDataBatch.netTrain();
     NetLayer netLayer = netTrain.netLayer();
     IO.println(instanceRecord.friendly() + "================");
-    List<String> list = NetExtract.toString(netLayer);
+    List<String> list = NetLayers.toString(netLayer);
     list.forEach(IO::println);
   }
 }

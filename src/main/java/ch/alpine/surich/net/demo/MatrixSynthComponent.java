@@ -12,14 +12,14 @@ import ch.alpine.bridge.fig.Show;
 import ch.alpine.bridge.fig.ShowGridComponent;
 import ch.alpine.bridge.fig.plt.ListDiscretePlot;
 import ch.alpine.bridge.ref.ann.ReflectionMarker;
-import ch.alpine.subare.net.NetInitialize;
-import ch.alpine.subare.net.NetParamStatTracker;
-import ch.alpine.subare.net.TrainingData;
-import ch.alpine.subare.net.api.NetLayer;
+import ch.alpine.subare.net.NetLayer;
+import ch.alpine.subare.net.NetLayers;
 import ch.alpine.subare.net.lay.MatrixLayer;
 import ch.alpine.subare.net.lay.NetChain;
 import ch.alpine.subare.net.reg.NoRegularization;
+import ch.alpine.subare.net.run.NetParamStatTracker;
 import ch.alpine.subare.net.run.NetTrain;
+import ch.alpine.subare.net.run.TrainingData;
 import ch.alpine.surich.net.NetShows;
 import ch.alpine.surich.net.NetTrainComponent;
 import ch.alpine.surich.net.NetTrainDataBatch;
@@ -70,7 +70,7 @@ class MatrixSynthComponent implements Supplier<NetTrainComponent> {
     public InnerComponent() {
       Random random = new Random(seed);
       NetLayer netLayer = create();
-      NetInitialize.of(netLayer);
+      NetLayers.initialize(netLayer);
       Tensor xdata = RandomVariate.of(UniformDistribution.of(-1, 1), random, samples, dim0);
       Tensor noise = RandomVariate.of(NormalDistribution.of(noise_sigma.zero(), noise_sigma), random, samples, 1);
       Tensor ydata = netLayer.forwardBatch(xdata).add(noise);
@@ -85,7 +85,7 @@ class MatrixSynthComponent implements Supplier<NetTrainComponent> {
     @Override
     public NetTrainDataBatch createNetTrainDataBatch() {
       NetLayer netLayer = create();
-      NetInitialize.of(netLayer);
+      NetLayers.initialize(netLayer);
       netTrain = new NetTrain(netLayer, optParam.create(netLayer));
       netTrain.addListener(netParamStatTracker);
       netTrain.addListener(this);

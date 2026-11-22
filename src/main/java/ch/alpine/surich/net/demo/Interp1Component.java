@@ -13,14 +13,13 @@ import ch.alpine.bridge.fig.ShowGridComponent;
 import ch.alpine.bridge.fig.plt.ListPlot;
 import ch.alpine.bridge.fig.plt.Plot;
 import ch.alpine.bridge.ref.ann.ReflectionMarker;
-import ch.alpine.subare.net.NetInitialize;
-import ch.alpine.subare.net.NetParamStatTracker;
-import ch.alpine.subare.net.NetWrap;
-import ch.alpine.subare.net.TrainingData;
-import ch.alpine.subare.net.api.NetLayer;
+import ch.alpine.subare.net.NetLayer;
+import ch.alpine.subare.net.NetLayers;
 import ch.alpine.subare.net.lay.ElementwiseLayers;
 import ch.alpine.subare.net.lay.NetChains;
+import ch.alpine.subare.net.run.NetParamStatTracker;
 import ch.alpine.subare.net.run.NetTrain;
+import ch.alpine.subare.net.run.TrainingData;
 import ch.alpine.surich.net.NetShows;
 import ch.alpine.surich.net.NetTrainComponent;
 import ch.alpine.surich.net.NetTrainDataBatch;
@@ -85,7 +84,7 @@ class Interp1Component implements Supplier<NetTrainComponent> {
         dims[i] = hidden;
       dims[dims.length - 1] = 1;
       NetLayer netLayer = NetChains.linear(between, dims);
-      NetInitialize.of(netLayer);
+      NetLayers.initialize(netLayer);
       netTrain = new NetTrain(netLayer, optParam.create(netLayer));
       netTrain.addListener(netParamStatTracker);
       netTrain.addListener(this);
@@ -100,7 +99,7 @@ class Interp1Component implements Supplier<NetTrainComponent> {
         {
           Show show = new Show("interpolation");
           show.add(Plot.of(truth, DOMAIN));
-          show.add(Plot.of(NetWrap.asSUO11(copy), DOMAIN)).setLabel("gelu");
+          show.add(Plot.of(NetLayers.asSUO11(copy), DOMAIN)).setLabel("gelu");
           Tensor xdata = trainingData.xdata();
           Tensor ydata = trainingData.ydata();
           show.add(ListPlot.of(Join.of(1, xdata, ydata)));

@@ -11,13 +11,13 @@ import ch.alpine.bridge.fig.Show;
 import ch.alpine.bridge.fig.ShowGridComponent;
 import ch.alpine.bridge.fig.plt.ArrayPlot;
 import ch.alpine.bridge.ref.ann.ReflectionMarker;
-import ch.alpine.subare.net.NetInitialize;
-import ch.alpine.subare.net.NetParamStatTracker;
-import ch.alpine.subare.net.TrainingData;
-import ch.alpine.subare.net.api.NetLayer;
+import ch.alpine.subare.net.NetLayer;
+import ch.alpine.subare.net.NetLayers;
 import ch.alpine.subare.net.lay.ElementwiseLayers;
 import ch.alpine.subare.net.lay.NetChains;
+import ch.alpine.subare.net.run.NetParamStatTracker;
 import ch.alpine.subare.net.run.NetTrain;
+import ch.alpine.subare.net.run.TrainingData;
 import ch.alpine.surich.net.NetShows;
 import ch.alpine.surich.net.NetTrainComponent;
 import ch.alpine.surich.net.NetTrainDataBatch;
@@ -75,7 +75,7 @@ class EmbedComponent implements Supplier<NetTrainComponent> {
     public NetTrainDataBatch createNetTrainDataBatch() {
       NetLayer inner = NetChains.linear(between, S * D, 16, 8, 1);
       NetLayer netLayer = NetChains.binary(NetChains.embedding(V, D, inner));
-      NetInitialize.of(netLayer);
+      NetLayers.initialize(netLayer);
       netTrain = new NetTrain(netLayer, optParam.create(netLayer));
       netTrain.addListener(netParamStatTracker);
       netTrain.addListener(this);

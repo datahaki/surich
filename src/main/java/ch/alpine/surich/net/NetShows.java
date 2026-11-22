@@ -5,9 +5,9 @@ import ch.alpine.bridge.fig.Show;
 import ch.alpine.bridge.fig.grd.AxisMaps;
 import ch.alpine.bridge.fig.plt.ListLinePlot;
 import ch.alpine.bridge.fig.plt.MatrixPlot;
-import ch.alpine.subare.net.NetExtract;
-import ch.alpine.subare.net.NetParamStatTracker;
-import ch.alpine.subare.net.api.NetLayer;
+import ch.alpine.subare.net.NetLayer;
+import ch.alpine.subare.net.NetLayers;
+import ch.alpine.subare.net.run.NetParamStatTracker;
 import ch.alpine.subare.net.run.NetTrain;
 import ch.alpine.tensor.Tensor;
 import ch.alpine.tensor.Tensors;
@@ -27,7 +27,7 @@ public enum NetShows {
 
   public static Show pMatrix(NetLayer netLayer) {
     Show show = new Show("parameters");
-    Tensor matrix = NetExtract.parametersAsMatrix(netLayer);
+    Tensor matrix = NetLayers.parametersAsMatrix(netLayer);
     show.add(MatrixPlot.of(matrix, ColorDataGradients.THERMOMETER, true));
     return show;
   }

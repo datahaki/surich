@@ -12,16 +12,16 @@ import ch.alpine.bridge.fig.Show;
 import ch.alpine.bridge.fig.ShowGridComponent;
 import ch.alpine.bridge.fig.plt.ListDiscretePlot;
 import ch.alpine.bridge.ref.ann.ReflectionMarker;
-import ch.alpine.subare.net.NetInitialize;
-import ch.alpine.subare.net.NetParamStatTracker;
-import ch.alpine.subare.net.TrainingData;
-import ch.alpine.subare.net.api.NetLayer;
+import ch.alpine.subare.net.NetLayer;
+import ch.alpine.subare.net.NetLayers;
 import ch.alpine.subare.net.lay.LinearLayer;
 import ch.alpine.subare.net.lay.NetChain;
 import ch.alpine.subare.net.lay.NetChains;
 import ch.alpine.subare.net.lay.RMSLayer;
 import ch.alpine.subare.net.reg.NoRegularization;
+import ch.alpine.subare.net.run.NetParamStatTracker;
 import ch.alpine.subare.net.run.NetTrain;
+import ch.alpine.subare.net.run.TrainingData;
 import ch.alpine.surich.net.NetShows;
 import ch.alpine.surich.net.NetTrainComponent;
 import ch.alpine.surich.net.NetTrainDataBatch;
@@ -74,7 +74,7 @@ class RmsSynthComponent implements Supplier<NetTrainComponent> {
       RMSLinear rmsLinear = RMSLinear.create();
       rmsLinear.rmsLayer.gamma = gamma;
       NetLayer netLayer = rmsLinear.consolidate();
-      NetInitialize.of(netLayer);
+      NetLayers.initialize(netLayer);
       Tensor xdata = RandomVariate.of(DiscreteUniformDistribution.of(-3, 10), random, samples, 3);
       Tensor noise = RandomVariate.of(NormalDistribution.of(noise_sigma.zero(), noise_sigma), random, samples, 1);
       Tensor ydata = netLayer.forwardBatch(xdata).add(noise);
@@ -90,7 +90,7 @@ class RmsSynthComponent implements Supplier<NetTrainComponent> {
     public NetTrainDataBatch createNetTrainDataBatch() {
       RMSLinear rmsLinear = RMSLinear.create();
       NetLayer netLayer = rmsLinear.consolidate();
-      NetInitialize.of(netLayer);
+      NetLayers.initialize(netLayer);
       netTrain = new NetTrain(netLayer, optParam.create(netLayer));
       netTrain.addListener(netParamStatTracker);
       netTrain.addListener(this);

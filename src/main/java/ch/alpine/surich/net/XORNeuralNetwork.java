@@ -11,14 +11,14 @@ import ch.alpine.bridge.pro.ManipulateProvider;
 import ch.alpine.bridge.ref.ann.FieldClip;
 import ch.alpine.bridge.ref.ann.FieldSelectionArray;
 import ch.alpine.bridge.ref.ann.ReflectionMarker;
-import ch.alpine.subare.net.NetInitialize;
-import ch.alpine.subare.net.NetParamTracker;
-import ch.alpine.subare.net.TrainingData;
-import ch.alpine.subare.net.api.NetLayer;
-import ch.alpine.subare.net.api.NetOptimizer;
+import ch.alpine.subare.net.NetLayer;
+import ch.alpine.subare.net.NetLayers;
 import ch.alpine.subare.net.lay.ElementwiseLayers;
 import ch.alpine.subare.net.lay.NetChains;
+import ch.alpine.subare.net.opt.NetOptimizer;
+import ch.alpine.subare.net.run.NetParamTracker;
 import ch.alpine.subare.net.run.NetTrain;
+import ch.alpine.subare.net.run.TrainingData;
 import ch.alpine.tensor.RealScalar;
 import ch.alpine.tensor.Scalar;
 import ch.alpine.tensor.Tensor;
@@ -71,7 +71,7 @@ class XORNeuralNetwork implements ManipulateProvider {
 
     /** @param Y */
     Network(Tensor Y) {
-      NetInitialize.of(netLayer);
+      NetLayers.initialize(netLayer);
       NetOptimizer netOptimize = optParam.create(netLayer);
       netTrain = new NetTrain(netLayer, netOptimize);
       netTrain.addListener(netParamTracker);
