@@ -16,7 +16,6 @@ import ch.alpine.subare.net.NetChain;
 import ch.alpine.subare.net.NetChains;
 import ch.alpine.subare.net.NetLayer;
 import ch.alpine.subare.net.NetLayers;
-import ch.alpine.subare.net.lay.ElementwiseLayers;
 import ch.alpine.subare.net.lay.ScalarEmbeddingLayer;
 import ch.alpine.subare.net.run.NetParamStatTracker;
 import ch.alpine.subare.net.run.NetTrain;
@@ -24,6 +23,7 @@ import ch.alpine.subare.net.run.TrainingData;
 import ch.alpine.surich.net.NetShows;
 import ch.alpine.surich.net.NetTrainComponent;
 import ch.alpine.surich.net.NetTrainDataBatch;
+import ch.alpine.surich.net.OptLinear;
 import ch.alpine.surich.net.OptParam;
 import ch.alpine.tensor.Tensor;
 import ch.alpine.tensor.Tensors;
@@ -39,7 +39,7 @@ class Embed1Component implements Supplier<NetTrainComponent> {
   public static final Clip DOMAIN = Clips.absoluteOne();
   public Integer V = 30;
   public Integer D = 3;
-  public ElementwiseLayers between = ElementwiseLayers.RELU;
+  public final OptLinear optLinear = new OptLinear();
   public final OptParam optParam = new OptParam();
   public Integer batch_size = 10;
 
@@ -69,7 +69,7 @@ class Embed1Component implements Supplier<NetTrainComponent> {
 
     @Override
     public NetTrainDataBatch createNetTrainDataBatch() {
-      NetLayer inner = NetChains.linear(between, D, 16, 8, 1);
+      NetLayer inner = optLinear.create(D, 1);
       NetLayer netLayer = NetChains.binary(NetChain.join(new ScalarEmbeddingLayer(V, D), inner));
       NetLayers.initialize(netLayer);
       netTrain = new NetTrain(netLayer, optParam.create(netLayer));

@@ -25,7 +25,7 @@ public enum NetShows {
     List<String> list = NetLayers.toString(netLayer);
     int piy = 0;
     for (String string : list) {
-      piy += 13;
+      piy += 16;
       graphics.drawString(string, point.x, point.y + piy);
     }
   }

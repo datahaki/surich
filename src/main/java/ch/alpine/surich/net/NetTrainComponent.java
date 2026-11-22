@@ -47,7 +47,7 @@ public abstract class NetTrainComponent extends JComponent implements NetTrainLi
   }
 
   public List<Rectangle> rectangles(int n) {
-    int inset = 200;
+    int inset = 250;
     Dimension dimension = getSize();
     dimension.width -= inset;
     return GraphicsGrid.rectangles(n, new Rectangle(new Point(inset, 0), dimension));

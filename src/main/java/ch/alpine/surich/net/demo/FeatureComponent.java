@@ -23,6 +23,7 @@ import ch.alpine.subare.net.lay.FeatureEmbeddingLayer.FeatureSlice;
 import ch.alpine.subare.net.lay.IdentityLayer;
 import ch.alpine.subare.net.lay.OneHotLayer;
 import ch.alpine.subare.net.lay.ScalarEmbeddingLayer;
+import ch.alpine.subare.net.lay.ScalarLayer;
 import ch.alpine.subare.net.run.NetParamStatTracker;
 import ch.alpine.subare.net.run.NetTrain;
 import ch.alpine.subare.net.run.TrainingData;
@@ -33,11 +34,11 @@ import ch.alpine.surich.net.OptLinear;
 import ch.alpine.surich.net.OptParam;
 import ch.alpine.tensor.RealScalar;
 import ch.alpine.tensor.Scalar;
+import ch.alpine.tensor.Slash;
 import ch.alpine.tensor.Tensor;
 import ch.alpine.tensor.Tensors;
 import ch.alpine.tensor.alg.Join;
 import ch.alpine.tensor.col.ColorDataGradients;
-import ch.alpine.tensor.opt.nd.CoordinateBoundingBox;
 import ch.alpine.tensor.pdf.RandomVariate;
 import ch.alpine.tensor.pdf.c.UniformDistribution;
 import ch.alpine.tensor.pdf.d.DiscreteUniformDistribution;
@@ -68,18 +69,17 @@ class FeatureComponent implements Supplier<NetTrainComponent> {
   }
 
   class InnerComponent extends NetTrainComponent {
-    final CoordinateBoundingBox cbb = CoordinateBoundingBox.of(Clips.absolute(2), Clips.absolute(2));
     final TrainingData trainingData;
     final NetParamStatTracker netParamStatTracker = new NetParamStatTracker();
     NetTrain netTrain;
 
     public InnerComponent() {
       Random random = new Random(seed);
-      Tensor X = RandomVariate.of(UniformDistribution.of(-1, 1), random, samples, 1);
+      Tensor X = RandomVariate.of(UniformDistribution.of(DOMAIN), random, samples, 1);
       Tensor I = RandomVariate.of(DiscreteUniformDistribution.forArray(V), random, samples, 1);
       Tensor xdata = Join.of(1, X, I);
-      Tensor ydata = Tensor.of(xdata.stream() //
-          .map(xi -> Tensors.of(featureFunc.create(xi.Get(1).number().intValue()).apply(xi.Get(0)))));
+      Tensor ydata = Slash.of(xdata, //
+          xi -> featureFunc.create(xi.Get(1).number().intValue()).apply(xi.Get(0)));
       // assignment of random labels to points
       trainingData = new TrainingData(xdata, ydata);
     }
@@ -97,7 +97,7 @@ class FeatureComponent implements Supplier<NetTrainComponent> {
               ? new FeatureSlice(1, V, new OneHotLayer(V))
               : new FeatureSlice(1, D, new ScalarEmbeddingLayer(V, D)) //
       );
-      NetLayer netLayer = NetChain.join(embed, optLinear.create(d_emb(), 1));
+      NetLayer netLayer = NetChain.join(embed, optLinear.create(d_emb(), 1), new ScalarLayer());
       NetLayers.initialize(netLayer);
       netTrain = new NetTrain(netLayer, optParam.create(netLayer));
       netTrain.addListener(netParamStatTracker);
@@ -115,13 +115,14 @@ class FeatureComponent implements Supplier<NetTrainComponent> {
         }
         List<Rectangle> list = rectangles(4);
         {
+          Clip clip = Clips.operator(RealScalar.of(1.2)::multiply).apply(DOMAIN);
           Show show = new Show();
           show.add(ListPlot.of( //
               trainingData.xdata().get(Tensor.ALL, 0), //
-              trainingData.ydata().get(Tensor.ALL, 0))).setAlpha(64);
+              trainingData.ydata())).setAlpha(64);
           for (int i = 0; i < V; ++i) {
             Scalar si = RealScalar.of(i);
-            Showable showable = show.add(Plot.of(x -> copy.forward(Tensors.of(x, si)).Get(0), Clips.absoluteOne()));
+            Showable showable = show.add(Plot.of(x -> (Scalar) copy.forward(Tensors.of(x, si)), clip));
             showable.setLabel(featureFunc + "_" + i);
           }
           show.render_autoIndent(graphics, list.get(0));

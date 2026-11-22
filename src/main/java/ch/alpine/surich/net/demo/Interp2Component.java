@@ -13,6 +13,7 @@ import ch.alpine.bridge.awt.RenderQuality;
 import ch.alpine.bridge.fig.Show;
 import ch.alpine.bridge.fig.plt.DensityPlot;
 import ch.alpine.bridge.fig.plt.ListPlot;
+import ch.alpine.bridge.fig.plt.PolygonPlot;
 import ch.alpine.bridge.ref.ann.ReflectionMarker;
 import ch.alpine.subare.net.NetChains;
 import ch.alpine.subare.net.NetLayer;
@@ -25,6 +26,7 @@ import ch.alpine.surich.net.NetTrainComponent;
 import ch.alpine.surich.net.NetTrainDataBatch;
 import ch.alpine.surich.net.OptLinear;
 import ch.alpine.surich.net.OptParam;
+import ch.alpine.tensor.RealScalar;
 import ch.alpine.tensor.Scalar;
 import ch.alpine.tensor.Slash;
 import ch.alpine.tensor.Tensor;
@@ -96,6 +98,9 @@ class Interp2Component implements Supplier<NetTrainComponent> {
     protected void paintComponent(Graphics graphics) {
       NetLayer copy = InnerComponent.this.copy;
       if (Objects.nonNull(copy)) {
+        CoordinateBoundingBox cbb = CoordinateBoundingBox.of(DOMAIN, DOMAIN);
+        Clip clip = Clips.operator(RealScalar.of(1.2)::multiply).apply(DOMAIN);
+        CoordinateBoundingBox ext = CoordinateBoundingBox.of(clip, clip);
         {
           RenderQuality.setQuality(graphics);
           NetShows.layers(graphics, new Point(), copy);
@@ -104,19 +109,19 @@ class Interp2Component implements Supplier<NetTrainComponent> {
         {
           Show show = new Show("function");
           ScalarBinaryOperator sbo = (x, y) -> (Scalar) truth.apply(Tensors.of(x, y));
-          CoordinateBoundingBox cbb = CoordinateBoundingBox.of(DOMAIN, DOMAIN);
-          show.add(DensityPlot.of(sbo, cbb, CDG));
+          show.add(DensityPlot.of(sbo, ext, CDG));
+          show.add(PolygonPlot.of(cbb));
           show.add(ListPlot.of(trainingData.xdata()));
           show.render_autoIndent(graphics, list.get(0));
         }
         {
-          Show show = new Show("interpolation error");
+          Show show = new Show("error");
           ScalarBinaryOperator sbo = (x, y) -> {
             Tensor p = Unprotect.using(List.of(x, y));
             return (Scalar) copy.forward(p).subtract(truth.apply(p));
           };
-          CoordinateBoundingBox cbb = CoordinateBoundingBox.of(DOMAIN, DOMAIN);
-          show.add(DensityPlot.of(sbo, cbb, CDG));
+          show.add(DensityPlot.of(sbo, ext, CDG));
+          show.add(PolygonPlot.of(cbb));
           show.add(ListPlot.of(trainingData.xdata()));
           show.render_autoIndent(graphics, list.get(1));
         }
