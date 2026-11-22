@@ -67,7 +67,7 @@ class ClassifyComponent implements Supplier<NetTrainComponent> {
       // assignment of random labels to points
       trainingData = new TrainingData( //
           RandomSample.of(new BoxRandomSample(cbb), random, samples), //
-          RandomVariate.of(DiscreteUniformDistribution.forArray(labels), random, samples, 1));
+          RandomVariate.of(DiscreteUniformDistribution.forArray(labels), random, samples));
     }
 
     @Override
@@ -99,13 +99,13 @@ class ClassifyComponent implements Supplier<NetTrainComponent> {
           Clip eval = Clips.operator(RealScalar.of(1.2)::multiply).apply(DOMAIN);
           CoordinateBoundingBox cbb = CoordinateBoundingBox.of(eval, eval);
           Show show = new Show();
-          show.add(DensityPlot.of((x, y) -> copy.forward(Tensors.of(x, y)).Get(0), cbb, cdg));
+          show.add(DensityPlot.of((x, y) -> (Scalar) copy.forward(Tensors.of(x, y)), cbb, cdg));
           Tensor xdata = trainingData.xdata();
           Tensor ydata = trainingData.ydata();
           for (int k = 0; k < labels; ++k) {
             Scalar label = RealScalar.of(k);
             Tensor p0 = Tensor.of(IntStream.range(0, xdata.length()) //
-                .filter(i -> ydata.Get(i, 0).equals(label)).mapToObj(xdata::get));
+                .filter(i -> ydata.Get(i).equals(label)).mapToObj(xdata::get));
             show.add(ListPlot.of(p0));
           }
           show.render_autoIndent(graphics, list.get(0));
