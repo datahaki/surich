@@ -10,11 +10,11 @@ import java.util.function.Supplier;
 
 import ch.alpine.bridge.fig.GraphicsGrid;
 import ch.alpine.bridge.ref.ann.ReflectionMarker;
+import ch.alpine.subare.net.NetChain;
 import ch.alpine.subare.net.NetLayer;
 import ch.alpine.subare.net.NetLayers;
 import ch.alpine.subare.net.lay.LinearLayer;
 import ch.alpine.subare.net.lay.MatrixLayer;
-import ch.alpine.subare.net.lay.NetChain;
 import ch.alpine.subare.net.lay.ResidualLayer;
 import ch.alpine.subare.net.reg.NoRegularization;
 import ch.alpine.subare.net.run.NetParamStatTracker;
