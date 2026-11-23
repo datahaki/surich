@@ -10,6 +10,7 @@ import ch.alpine.bridge.cgr.InstanceDiscovery;
 import ch.alpine.bridge.cgr.InstanceRecord;
 import ch.alpine.subare.net.LossFunction;
 import ch.alpine.subare.net.NetLayer;
+import ch.alpine.subare.net.NetLayers;
 import ch.alpine.subare.net.NetLoss;
 import ch.alpine.subare.net.NetModel;
 import ch.alpine.subare.net.opt.NetOptimizers;
@@ -78,6 +79,7 @@ class BaseNetDemoTest {
         // 5. Weight update: The optimizer adjusts weights to reduce the loss.
         netTrain.netOptimizer().update();
       }
+      NetLayers.parametersAsMatrix(netLayer);
     }
   }
 }

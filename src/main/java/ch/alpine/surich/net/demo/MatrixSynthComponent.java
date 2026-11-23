@@ -7,7 +7,6 @@ import java.util.List;
 import java.util.Random;
 import java.util.function.Supplier;
 
-import ch.alpine.bridge.fig.GraphicsGrid;
 import ch.alpine.bridge.fig.Show;
 import ch.alpine.bridge.fig.plt.ListDiscretePlot;
 import ch.alpine.bridge.ref.ann.ReflectionMarker;
@@ -96,7 +95,7 @@ class MatrixSynthComponent implements Supplier<NetTrainComponent> {
     @Override
     protected void paintComponent(Graphics graphics, NetModel netModel) {
       NetLayer netLayer = netModel.netLayer();
-      List<Rectangle> list = GraphicsGrid.rectangles(3, getSize());
+      List<Rectangle> list = rectangles(3);
       {
         Show show = new Show("error");
         Tensor Y = netLayer.forwardBatch(trainingData.xdata());
