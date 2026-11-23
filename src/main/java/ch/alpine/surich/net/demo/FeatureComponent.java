@@ -13,9 +13,9 @@ import ch.alpine.bridge.fig.plt.ListPlot;
 import ch.alpine.bridge.fig.plt.Plot;
 import ch.alpine.bridge.ref.ann.ReflectionMarker;
 import ch.alpine.subare.net.NetChain;
+import ch.alpine.subare.net.NetChains;
 import ch.alpine.subare.net.NetLayer;
 import ch.alpine.subare.net.NetLayers;
-import ch.alpine.subare.net.NetModel;
 import ch.alpine.subare.net.NetModels;
 import ch.alpine.subare.net.lay.FeatureEmbeddingLayer;
 import ch.alpine.subare.net.lay.FeatureEmbeddingLayer.FeatureSlice;
@@ -91,10 +91,9 @@ class FeatureComponent implements Supplier<NetTrainComponent> {
               ? new FeatureSlice(1, V, new OneHotLayer(V))
               : new FeatureSlice(1, D, new ScalarEmbeddingLayer(V, D)) //
       );
-      NetModel netModel = NetModels.scalar(NetChain.join(embed, optLinear.create(d_emb(), 1)));
-      NetLayer netLayer = netModel.netLayer();
+      NetLayer netLayer = NetChains.scalar(NetChain.join(embed, optLinear.create(d_emb(), 1)));
       NetLayers.initialize(netLayer);
-      netTrain = new NetTrain(netModel, optParam.create(netLayer));
+      netTrain = new NetTrain(NetModels.squaredErrorLoss(netLayer), optParam.create(netLayer));
       netTrain.addListener(netParamStatTracker);
       netTrain.addListener(this);
       return new NetTrainDataBatch(netTrain, trainingData, batch_size);

@@ -13,6 +13,7 @@ import ch.alpine.subare.net.NetChain;
 import ch.alpine.subare.net.NetLayer;
 import ch.alpine.subare.net.NetLayers;
 import ch.alpine.subare.net.NetModel;
+import ch.alpine.subare.net.NetModels;
 import ch.alpine.subare.net.lay.LinearLayer;
 import ch.alpine.subare.net.lay.MatrixLayer;
 import ch.alpine.subare.net.lay.ResidualLayer;
@@ -81,8 +82,8 @@ class ResidualSynthComponent implements Supplier<NetTrainComponent> {
     @Override
     public NetTrainDataBatch createNetTrainDataBatch() {
       NetLayer netLayer = create();
-      NetModel netModel = NetModel.squaredErrorLoss(netLayer);
       NetLayers.initialize(netLayer);
+      NetModel netModel = NetModels.squaredErrorLoss(netLayer);
       netTrain = new NetTrain(netModel, optParam.create(netLayer));
       netTrain.addListener(netParamStatTracker);
       netTrain.addListener(this);
@@ -92,13 +93,6 @@ class ResidualSynthComponent implements Supplier<NetTrainComponent> {
     @Override
     protected void paintComponent(Graphics graphics, NetLayer copy) {
       List<Rectangle> list = GraphicsGrid.rectangles(3, getSize());
-      // {
-      // Show show = new Show("error");
-      // Tensor Y = copy.forwardBatch(trainingData.xdata());
-      // Tensor d = Y.subtract(trainingData.ydata());
-      // show.add(ListDiscretePlot.of(Range.of(0, d.length()), Flatten.of(d)));
-      // show.render_autoIndent(graphics, list.get(0));
-      // }
       {
         NetShows.param(netParamStatTracker).render_autoIndent(graphics, list.get(1));
         NetShows.loss(netTrain.tloss).render_autoIndent(graphics, list.get(2));
