@@ -24,7 +24,7 @@ import ch.alpine.subare.net.run.TrainingData;
 import ch.alpine.surich.net.NetShows;
 import ch.alpine.surich.net.NetTrainComponent;
 import ch.alpine.surich.net.NetTrainDataBatch;
-import ch.alpine.surich.net.OptLinear;
+import ch.alpine.surich.net.OptLinearChain;
 import ch.alpine.surich.net.OptParam;
 import ch.alpine.tensor.RealScalar;
 import ch.alpine.tensor.Scalar;
@@ -53,7 +53,7 @@ class Interp2Component implements Supplier<NetTrainComponent> {
   public Integer seed = 0;
   public Integer variability = 5;
   public Integer samples = 50;
-  public final OptLinear optLinear = new OptLinear();
+  public final OptLinearChain optLinear = new OptLinearChain();
   public final OptParam optParam = new OptParam();
   public Integer batch_size = 10;
 

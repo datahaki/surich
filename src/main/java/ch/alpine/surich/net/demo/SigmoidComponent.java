@@ -24,7 +24,7 @@ import ch.alpine.subare.net.run.TrainingData;
 import ch.alpine.surich.net.NetShows;
 import ch.alpine.surich.net.NetTrainComponent;
 import ch.alpine.surich.net.NetTrainDataBatch;
-import ch.alpine.surich.net.OptLinear;
+import ch.alpine.surich.net.OptLinearChain;
 import ch.alpine.surich.net.OptParam;
 import ch.alpine.tensor.RealScalar;
 import ch.alpine.tensor.Scalar;
@@ -46,7 +46,7 @@ class SigmoidComponent implements Supplier<NetTrainComponent> {
   public static final Clip DOMAIN = Clips.absoluteOne();
   public Integer seed = 0;
   public Integer samples = 30;
-  public final OptLinear optLinear = new OptLinear();
+  public final OptLinearChain optLinear = new OptLinearChain();
   public final OptParam optParam = new OptParam();
   public Integer batch_size = 10;
 
