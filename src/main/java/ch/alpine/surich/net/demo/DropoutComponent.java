@@ -13,18 +13,16 @@ import ch.alpine.bridge.fig.Show;
 import ch.alpine.bridge.fig.plt.ListPlot;
 import ch.alpine.bridge.fig.plt.Plot;
 import ch.alpine.bridge.ref.ann.ReflectionMarker;
-import ch.alpine.subare.net.NetChains;
 import ch.alpine.subare.net.NetLayer;
 import ch.alpine.subare.net.NetLayers;
-import ch.alpine.subare.net.lay.ElementwiseLayers;
 import ch.alpine.subare.net.run.NetParamStatTracker;
 import ch.alpine.subare.net.run.NetTrain;
 import ch.alpine.subare.net.run.TrainingData;
 import ch.alpine.surich.net.NetShows;
 import ch.alpine.surich.net.NetTrainComponent;
 import ch.alpine.surich.net.NetTrainDataBatch;
+import ch.alpine.surich.net.OptLinear;
 import ch.alpine.surich.net.OptParam;
-import ch.alpine.tensor.RealScalar;
 import ch.alpine.tensor.Scalar;
 import ch.alpine.tensor.Tensor;
 import ch.alpine.tensor.alg.Join;
@@ -44,10 +42,7 @@ class DropoutComponent implements Supplier<NetTrainComponent> {
   public Integer seed = 0;
   public Integer variability = 5;
   public Integer samples = 30;
-  public Integer depth = 2;
-  public Integer hidden = 7;
-  public Scalar dropout_p = RealScalar.of(0.3);
-  public ElementwiseLayers between = ElementwiseLayers.RELU;
+  public final OptLinear optLinear = new OptLinear();
   public final OptParam optParam = new OptParam();
   public Integer batch_size = 6;
 
@@ -80,12 +75,7 @@ class DropoutComponent implements Supplier<NetTrainComponent> {
 
     @Override
     public NetTrainDataBatch createNetTrainDataBatch() {
-      int[] dims = new int[depth + 2];
-      dims[0] = 1;
-      for (int i = 1; i <= depth; ++i)
-        dims[i] = hidden;
-      dims[dims.length - 1] = 1;
-      NetLayer netLayer = NetChains.linearWith(between, dropout_p, dims);
+      NetLayer netLayer = optLinear.create(1, 1);
       NetLayers.initialize(netLayer);
       netTrain = new NetTrain(netLayer, optParam.create(netLayer));
       netTrain.addListener(netParamStatTracker);

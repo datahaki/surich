@@ -38,7 +38,6 @@ import ch.alpine.tensor.Slash;
 import ch.alpine.tensor.Tensor;
 import ch.alpine.tensor.Tensors;
 import ch.alpine.tensor.alg.Join;
-import ch.alpine.tensor.col.ColorDataGradients;
 import ch.alpine.tensor.pdf.RandomVariate;
 import ch.alpine.tensor.pdf.c.UniformDistribution;
 import ch.alpine.tensor.pdf.d.DiscreteUniformDistribution;
@@ -56,7 +55,6 @@ class FeatureComponent implements Supplier<NetTrainComponent> {
   public Boolean oneHot = false;
   public final OptLinear optLinear = new OptLinear();
   public final OptParam optParam = new OptParam();
-  public ColorDataGradients cdg = ColorDataGradients.THERMOMETER;
   public Integer batch_size = 50;
 
   private int d_emb() {
@@ -116,7 +114,7 @@ class FeatureComponent implements Supplier<NetTrainComponent> {
         List<Rectangle> list = rectangles(4);
         {
           Clip clip = Clips.operator(RealScalar.of(1.2)::multiply).apply(DOMAIN);
-          Show show = new Show();
+          Show show = new Show("approximation");
           show.add(ListPlot.of( //
               trainingData.xdata().get(Tensor.ALL, 0), //
               trainingData.ydata())).setAlpha(64);

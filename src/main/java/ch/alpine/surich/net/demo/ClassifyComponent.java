@@ -48,7 +48,6 @@ class ClassifyComponent implements Supplier<NetTrainComponent> {
   public final OptLinear optLinear = new OptLinear();
   public final OptParam optParam = new OptParam();
   public Integer batch_size = 6;
-  public ColorDataGradients cdg = ColorDataGradients.COPPER;
 
   @Override
   public NetTrainComponent get() {
@@ -97,6 +96,7 @@ class ClassifyComponent implements Supplier<NetTrainComponent> {
           Clip eval = Clips.operator(RealScalar.of(1.2)::multiply).apply(DOMAIN);
           CoordinateBoundingBox cbb = CoordinateBoundingBox.of(eval, eval);
           Show show = new Show();
+          ColorDataGradients cdg = ColorDataGradients.COPPER;
           show.add(DensityPlot.of((x, y) -> (Scalar) copy.forward(Tensors.of(x, y)), cbb, cdg));
           Tensor xdata = trainingData.xdata();
           Tensor ydata = trainingData.ydata();

@@ -47,7 +47,7 @@ public abstract class BaseNetDemo implements ManipulateProvider {
   }
 
   @Override
-  public final void closeOperation() {
+  public final void windowClosed() {
     if (Objects.nonNull(netTrainComponent))
       netTrainComponent.cancel();
     executorService.shutdown();
