@@ -5,9 +5,11 @@ import java.util.ArrayList;
 import java.util.List;
 
 import ch.alpine.bridge.ref.ann.ReflectionMarker;
+import ch.alpine.subare.net.NetChain;
 import ch.alpine.subare.net.NetChains;
 import ch.alpine.subare.net.NetLayer;
 import ch.alpine.subare.net.lay.ElementwiseLayers;
+import ch.alpine.subare.net.lay.ScalarLayer;
 import ch.alpine.tensor.RealScalar;
 import ch.alpine.tensor.Scalar;
 import ch.alpine.tensor.Scalars;
@@ -28,5 +30,9 @@ public class OptLinearChain {
       list.add(Scalars.intValueExact(lin_dims.Get(i)));
     list.add(d_out);
     return NetChains.linearWith(list, between, dropout_p);
+  }
+
+  public NetLayer asSUO() {
+    return NetChain.join(ScalarLayer.ScalarToVector, create(1, 1), ScalarLayer.VectorToScalar);
   }
 }

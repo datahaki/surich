@@ -13,9 +13,10 @@ import ch.alpine.bridge.fig.plt.Plot;
 import ch.alpine.bridge.ref.ann.ReflectionMarker;
 import ch.alpine.subare.net.NetLayer;
 import ch.alpine.subare.net.NetLayers;
-import ch.alpine.subare.net.NetModels;
+import ch.alpine.subare.net.NetModel;
 import ch.alpine.subare.net.run.NetTrain;
 import ch.alpine.subare.net.run.TrainingData;
+import ch.alpine.surich.net.ErrorType;
 import ch.alpine.surich.net.NetShows;
 import ch.alpine.surich.net.NetTrainComponent;
 import ch.alpine.surich.net.NetTrainDataBatch;
@@ -24,8 +25,6 @@ import ch.alpine.surich.net.OptParam;
 import ch.alpine.tensor.RealScalar;
 import ch.alpine.tensor.Scalar;
 import ch.alpine.tensor.Tensor;
-import ch.alpine.tensor.Tensors;
-import ch.alpine.tensor.alg.Join;
 import ch.alpine.tensor.api.ScalarTensorFunction;
 import ch.alpine.tensor.api.ScalarUnaryOperator;
 import ch.alpine.tensor.itp.BSplineFunctionString;
@@ -42,7 +41,8 @@ class Interp1Component implements Supplier<NetTrainComponent> {
   public Integer seed = 0;
   public Integer variability = 5;
   public Integer samples = 30;
-  public final OptLinearChain optLinear = new OptLinearChain();
+  public final OptLinearChain optLinearChain = new OptLinearChain();
+  public ErrorType errorType = ErrorType.FROB;
   public final OptParam optParam = new OptParam();
   public Integer batch_size = 6;
 
@@ -61,7 +61,7 @@ class Interp1Component implements Supplier<NetTrainComponent> {
       Tensor disY = RandomVariate.of(NormalDistribution.standard(), random, variability);
       ScalarTensorFunction stf = BSplineFunctionString.of(3, disY);
       ScalarUnaryOperator lin = LinearInterpolation.of(Clips.positive(variability - 1));
-      Tensor xdata = RandomVariate.of(UniformDistribution.of(DOMAIN), random, samples, 1);
+      Tensor xdata = RandomVariate.of(UniformDistribution.of(DOMAIN), random, samples);
       truth = s -> (Scalar) stf.apply(lin.apply(DOMAIN.rescale(s)));
       Tensor ydata = xdata.maps(truth);
       trainingData = new TrainingData(xdata, ydata);
@@ -74,9 +74,9 @@ class Interp1Component implements Supplier<NetTrainComponent> {
 
     @Override
     public NetTrainDataBatch createNetTrainDataBatch() {
-      NetLayer netLayer = optLinear.create(1, 1);
+      NetLayer netLayer = optLinearChain.asSUO();
       NetLayers.initialize(netLayer);
-      netTrain = new NetTrain(NetModels.squaredErrorLoss(netLayer), optParam.create(netLayer));
+      netTrain = new NetTrain(new NetModel(netLayer, errorType.lossFunction), optParam.create(netLayer));
       netTrain.addListener(netParamStatTracker);
       netTrain.addListener(this);
       return new NetTrainDataBatch(netTrain, trainingData, batch_size);
@@ -89,10 +89,10 @@ class Interp1Component implements Supplier<NetTrainComponent> {
         Clip eval = Clips.operator(RealScalar.of(1.5)::multiply).apply(DOMAIN);
         Show show = new Show("interpolation");
         show.add(Plot.of(truth, eval));
-        show.add(Plot.of(s -> copy.forward(Tensors.of(s)).Get(0), eval)).setLabel("gelu");
+        show.add(Plot.of(s -> (Scalar) copy.forward(s), eval)).setLabel("gelu");
         Tensor xdata = trainingData.xdata();
         Tensor ydata = trainingData.ydata();
-        show.add(ListPlot.of(Join.of(1, xdata, ydata)));
+        show.add(ListPlot.of(xdata, ydata));
         show.render_autoIndent(graphics, list.get(0));
       }
       {

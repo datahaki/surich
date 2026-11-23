@@ -13,7 +13,8 @@ import ch.alpine.bridge.fig.plt.Plot;
 import ch.alpine.bridge.ref.ann.ReflectionMarker;
 import ch.alpine.subare.net.NetLayer;
 import ch.alpine.subare.net.NetLayers;
-import ch.alpine.subare.net.NetModels;
+import ch.alpine.subare.net.NetModel;
+import ch.alpine.subare.net.err.SquaredErrorLoss;
 import ch.alpine.subare.net.run.NetTrain;
 import ch.alpine.subare.net.run.TrainingData;
 import ch.alpine.surich.net.NetShows;
@@ -23,8 +24,6 @@ import ch.alpine.surich.net.OptLinearChain;
 import ch.alpine.surich.net.OptParam;
 import ch.alpine.tensor.Scalar;
 import ch.alpine.tensor.Tensor;
-import ch.alpine.tensor.Tensors;
-import ch.alpine.tensor.alg.Join;
 import ch.alpine.tensor.api.ScalarTensorFunction;
 import ch.alpine.tensor.api.ScalarUnaryOperator;
 import ch.alpine.tensor.itp.BSplineFunctionString;
@@ -60,7 +59,7 @@ class DropoutComponent implements Supplier<NetTrainComponent> {
       Tensor disY = RandomVariate.of(NormalDistribution.standard(), random, variability);
       ScalarTensorFunction stf = BSplineFunctionString.of(3, disY);
       ScalarUnaryOperator lin = LinearInterpolation.of(Clips.positive(variability - 1));
-      Tensor xdata = RandomVariate.of(UniformDistribution.of(DOMAIN), random, samples, 1);
+      Tensor xdata = RandomVariate.of(UniformDistribution.of(DOMAIN), random, samples);
       truth = s -> (Scalar) stf.apply(lin.apply(DOMAIN.rescale(s)));
       Tensor ydata = xdata.maps(truth);
       trainingData = new TrainingData(xdata, ydata);
@@ -73,9 +72,9 @@ class DropoutComponent implements Supplier<NetTrainComponent> {
 
     @Override
     public NetTrainDataBatch createNetTrainDataBatch() {
-      NetLayer netLayer = optLinear.create(1, 1);
+      NetLayer netLayer = optLinear.asSUO();
       NetLayers.initialize(netLayer);
-      netTrain = new NetTrain(NetModels.squaredErrorLoss(netLayer), optParam.create(netLayer));
+      netTrain = new NetTrain(new NetModel(netLayer, SquaredErrorLoss.INSTANCE), optParam.create(netLayer));
       netTrain.addListener(netParamStatTracker);
       netTrain.addListener(this);
       return new NetTrainDataBatch(netTrain, trainingData, batch_size);
@@ -87,10 +86,10 @@ class DropoutComponent implements Supplier<NetTrainComponent> {
       {
         Show show = new Show("interpolation");
         show.add(Plot.of(truth, DOMAIN));
-        show.add(Plot.of(s -> copy.forward(Tensors.of(s)).Get(0), DOMAIN)).setLabel("gelu");
+        show.add(Plot.of(s -> (Scalar) copy.forward(s), DOMAIN)).setLabel("gelu");
         Tensor xdata = trainingData.xdata();
         Tensor ydata = trainingData.ydata();
-        show.add(ListPlot.of(Join.of(1, xdata, ydata)));
+        show.add(ListPlot.of(xdata, ydata));
         show.render_autoIndent(graphics, list.get(0));
       }
       {

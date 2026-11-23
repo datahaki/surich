@@ -14,7 +14,7 @@ import ch.alpine.subare.net.NetChains;
 import ch.alpine.subare.net.NetLayer;
 import ch.alpine.subare.net.NetLayers;
 import ch.alpine.subare.net.NetModel;
-import ch.alpine.subare.net.NetModels;
+import ch.alpine.subare.net.err.SquaredErrorLoss;
 import ch.alpine.subare.net.lay.ElementwiseLayers;
 import ch.alpine.subare.net.run.NetTrain;
 import ch.alpine.subare.net.run.TrainingData;
@@ -73,7 +73,7 @@ class EmbedComponent implements Supplier<NetTrainComponent> {
       NetLayer inner = NetChains.linear(between, S * D, 16, 8, 1);
       NetLayer netLayer = NetChains.binary(NetChains.embedding(V, D, inner));
       NetLayers.initialize(netLayer);
-      NetModel netModel = NetModels.squaredErrorLoss(netLayer);
+      NetModel netModel = new NetModel(netLayer, SquaredErrorLoss.INSTANCE);
       netTrain = new NetTrain(netModel, optParam.create(netLayer));
       netTrain.addListener(netParamStatTracker);
       netTrain.addListener(this);

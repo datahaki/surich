@@ -67,7 +67,10 @@ class Embed1Component implements Supplier<NetTrainComponent> {
     @Override
     public NetTrainDataBatch createNetTrainDataBatch() {
       NetLayer inner = optLinearChain.create(D, 1);
-      NetLayer netLayer = NetChains.binary(NetChain.join(new ScalarEmbeddingLayer(V, D), inner));
+      NetLayer netLayer = NetChains.binary(NetChain.join( //
+          new ScalarEmbeddingLayer(V, D), //
+          inner));
+      NetLayers.toString(netLayer).forEach(IO::println);
       NetModel netModel = new NetModel(netLayer, SquaredErrorLoss.INSTANCE);
       NetLayers.initialize(netLayer);
       netTrain = new NetTrain(netModel, optParam.create(netLayer));

@@ -13,7 +13,7 @@ import ch.alpine.subare.net.NetChain;
 import ch.alpine.subare.net.NetLayer;
 import ch.alpine.subare.net.NetLayers;
 import ch.alpine.subare.net.NetModel;
-import ch.alpine.subare.net.NetModels;
+import ch.alpine.subare.net.err.SquaredErrorLoss;
 import ch.alpine.subare.net.lay.LinearLayer;
 import ch.alpine.subare.net.lay.MatrixLayer;
 import ch.alpine.subare.net.lay.ResidualLayer;
@@ -83,7 +83,7 @@ class ResidualSynthComponent implements Supplier<NetTrainComponent> {
     public NetTrainDataBatch createNetTrainDataBatch() {
       NetLayer netLayer = create();
       NetLayers.initialize(netLayer);
-      NetModel netModel = NetModels.squaredErrorLoss(netLayer);
+      NetModel netModel = new NetModel(netLayer, SquaredErrorLoss.INSTANCE);
       netTrain = new NetTrain(netModel, optParam.create(netLayer));
       netTrain.addListener(netParamStatTracker);
       netTrain.addListener(this);

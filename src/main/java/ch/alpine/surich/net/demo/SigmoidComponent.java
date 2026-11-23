@@ -15,7 +15,8 @@ import ch.alpine.bridge.ref.ann.ReflectionMarker;
 import ch.alpine.subare.net.NetChains;
 import ch.alpine.subare.net.NetLayer;
 import ch.alpine.subare.net.NetLayers;
-import ch.alpine.subare.net.NetModels;
+import ch.alpine.subare.net.NetModel;
+import ch.alpine.subare.net.err.SquaredErrorLoss;
 import ch.alpine.subare.net.run.NetTrain;
 import ch.alpine.subare.net.run.TrainingData;
 import ch.alpine.surich.net.NetShows;
@@ -74,7 +75,7 @@ class SigmoidComponent implements Supplier<NetTrainComponent> {
     public NetTrainDataBatch createNetTrainDataBatch() {
       NetLayer netLayer = NetChains.binary(optLinearChain.create(2, 1));
       NetLayers.initialize(netLayer);
-      netTrain = new NetTrain(NetModels.squaredErrorLoss(netLayer), optParam.create(netLayer));
+      netTrain = new NetTrain(new NetModel(netLayer, SquaredErrorLoss.INSTANCE), optParam.create(netLayer));
       netTrain.addListener(netParamStatTracker);
       netTrain.addListener(this);
       return new NetTrainDataBatch(netTrain, trainingData, batch_size);

@@ -7,7 +7,6 @@ import java.util.List;
 import java.util.Random;
 import java.util.function.Supplier;
 
-import ch.alpine.bridge.fig.GraphicsGrid;
 import ch.alpine.bridge.fig.Show;
 import ch.alpine.bridge.fig.plt.ListDiscretePlot;
 import ch.alpine.bridge.ref.ann.ReflectionMarker;
@@ -16,7 +15,7 @@ import ch.alpine.subare.net.NetChains;
 import ch.alpine.subare.net.NetLayer;
 import ch.alpine.subare.net.NetLayers;
 import ch.alpine.subare.net.NetModel;
-import ch.alpine.subare.net.NetModels;
+import ch.alpine.subare.net.err.SquaredErrorLoss;
 import ch.alpine.subare.net.lay.LinearLayer;
 import ch.alpine.subare.net.lay.RMSLayer;
 import ch.alpine.subare.net.reg.NoRegularization;
@@ -82,7 +81,7 @@ class RmsSynthComponent implements Supplier<NetTrainComponent> {
     public NetTrainDataBatch createNetTrainDataBatch() {
       RMSLinear rmsLinear = RMSLinear.create();
       NetLayer netLayer = rmsLinear.consolidate();
-      NetModel netModel = NetModels.squaredErrorLoss(netLayer);
+      NetModel netModel = new NetModel(netLayer, SquaredErrorLoss.INSTANCE);
       NetLayers.initialize(netLayer);
       netTrain = new NetTrain(netModel, optParam.create(netLayer));
       netTrain.addListener(netParamStatTracker);
