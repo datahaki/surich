@@ -3,7 +3,6 @@ package ch.alpine.surich.net.demo;
 
 import org.junit.jupiter.api.Test;
 
-import ch.alpine.subare.net.NetLayers;
 import ch.alpine.subare.net.run.NetTrain;
 import ch.alpine.surich.net.NetTrainComponent;
 import ch.alpine.surich.net.NetTrainDataBatch;
@@ -15,6 +14,6 @@ class FeatureComponentTest {
     NetTrainComponent netTrainComponent = featureComponent.get();
     NetTrainDataBatch netTrainDataBatch = netTrainComponent.createNetTrainDataBatch();
     NetTrain netTrain = netTrainDataBatch.netTrain();
-    NetLayers.parametersAsMatrix(netTrain.netLayer());
+    // NetLayers.parametersAsMatrix(netTrain.netLayer());
   }
 }

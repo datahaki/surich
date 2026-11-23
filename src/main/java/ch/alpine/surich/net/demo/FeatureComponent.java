@@ -15,12 +15,13 @@ import ch.alpine.bridge.ref.ann.ReflectionMarker;
 import ch.alpine.subare.net.NetChain;
 import ch.alpine.subare.net.NetLayer;
 import ch.alpine.subare.net.NetLayers;
+import ch.alpine.subare.net.NetModel;
+import ch.alpine.subare.net.NetModels;
 import ch.alpine.subare.net.lay.FeatureEmbeddingLayer;
 import ch.alpine.subare.net.lay.FeatureEmbeddingLayer.FeatureSlice;
 import ch.alpine.subare.net.lay.IdentityLayer;
 import ch.alpine.subare.net.lay.OneHotLayer;
 import ch.alpine.subare.net.lay.ScalarEmbeddingLayer;
-import ch.alpine.subare.net.lay.ScalarLayer;
 import ch.alpine.subare.net.run.NetTrain;
 import ch.alpine.subare.net.run.TrainingData;
 import ch.alpine.surich.net.NetShows;
@@ -90,9 +91,10 @@ class FeatureComponent implements Supplier<NetTrainComponent> {
               ? new FeatureSlice(1, V, new OneHotLayer(V))
               : new FeatureSlice(1, D, new ScalarEmbeddingLayer(V, D)) //
       );
-      NetLayer netLayer = NetChain.join(embed, optLinear.create(d_emb(), 1), new ScalarLayer());
+      NetModel netModel = NetModels.scalar(NetChain.join(embed, optLinear.create(d_emb(), 1)));
+      NetLayer netLayer = netModel.netLayer();
       NetLayers.initialize(netLayer);
-      netTrain = new NetTrain(netLayer, optParam.create(netLayer));
+      netTrain = new NetTrain(netModel, optParam.create(netLayer));
       netTrain.addListener(netParamStatTracker);
       netTrain.addListener(this);
       return new NetTrainDataBatch(netTrain, trainingData, batch_size);

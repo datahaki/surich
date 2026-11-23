@@ -52,7 +52,7 @@ public abstract class NetTrainComponent extends JComponent implements NetTrainLi
   public final boolean epoch(NetTrain netTrain) {
     if (watchdog.isBarking()) {
       watchdog.notifyWatchdog();
-      copy = Serialization.copy(netTrain.netLayer());
+      copy = Serialization.copy(netTrain.netModel().netLayer());
       repaint();
     }
     return running;

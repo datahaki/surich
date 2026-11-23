@@ -12,9 +12,10 @@ import ch.alpine.bridge.fig.plt.DensityPlot;
 import ch.alpine.bridge.fig.plt.ListPlot;
 import ch.alpine.bridge.fig.plt.PolygonPlot;
 import ch.alpine.bridge.ref.ann.ReflectionMarker;
-import ch.alpine.subare.net.NetChains;
 import ch.alpine.subare.net.NetLayer;
 import ch.alpine.subare.net.NetLayers;
+import ch.alpine.subare.net.NetModel;
+import ch.alpine.subare.net.NetModels;
 import ch.alpine.subare.net.run.NetTrain;
 import ch.alpine.subare.net.run.TrainingData;
 import ch.alpine.surich.net.NetShows;
@@ -81,9 +82,10 @@ class Interp2Component implements Supplier<NetTrainComponent> {
 
     @Override
     public NetTrainDataBatch createNetTrainDataBatch() {
-      NetLayer netLayer = NetChains.scalar(optLinear.create(2, 1));
+      NetModel netModel = NetModels.scalar(optLinear.create(2, 1));
+      NetLayer netLayer = netModel.netLayer();
       NetLayers.initialize(netLayer);
-      netTrain = new NetTrain(netLayer, optParam.create(netLayer));
+      netTrain = new NetTrain(netModel, optParam.create(netLayer));
       netTrain.addListener(netParamStatTracker);
       netTrain.addListener(this);
       return new NetTrainDataBatch(netTrain, trainingData, batch_size);

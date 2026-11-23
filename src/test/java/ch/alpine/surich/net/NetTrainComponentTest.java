@@ -29,7 +29,7 @@ class NetTrainComponentTest {
     netTrainComponent.setSize(200, 200);
     NetTrainDataBatch netTrainDataBatch = netTrainComponent.createNetTrainDataBatch();
     NetTrain netTrain = netTrainDataBatch.netTrain();
-    NetLayer netLayer = netTrain.netLayer();
+    NetLayer netLayer = netTrain.netModel().netLayer();
     IO.println(instanceRecord.friendly() + "================");
     List<String> list = NetLayers.toString(netLayer);
     list.forEach(IO::println);

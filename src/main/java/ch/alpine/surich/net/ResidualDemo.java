@@ -11,6 +11,8 @@ import ch.alpine.bridge.ref.ann.ReflectionMarker;
 import ch.alpine.subare.net.NetChains;
 import ch.alpine.subare.net.NetLayer;
 import ch.alpine.subare.net.NetLayers;
+import ch.alpine.subare.net.NetModel;
+import ch.alpine.subare.net.NetModels;
 import ch.alpine.subare.net.lay.ElementwiseLayers;
 import ch.alpine.subare.net.lay.ResidualLayer;
 import ch.alpine.subare.net.opt.NetOptimizer;
@@ -33,15 +35,16 @@ class ResidualDemo implements ManipulateProvider {
 
   @Override
   public Container getContainer() {
-    NetLayer netLayer = NetChains.argMax( //
+    NetModel netModel = NetModels.argMax( //
         new ResidualLayer(NetChains.linear(ElementwiseLayers.GELU, dinout, hidden, dinout)));
+    NetLayer netLayer = netModel.netLayer();
     NetLayers.initialize(netLayer);
     Tensor xdata = RandomVariate.of(NormalDistribution.standard(), samples, dinout);
     Tensor ydata = netLayer.forwardBatch(xdata);
     // ---
     NetLayers.initialize(netLayer);
     NetOptimizer netOptimize = optParam.create(netLayer);
-    NetTrain netTrain = new NetTrain(netLayer, netOptimize);
+    NetTrain netTrain = new NetTrain(netModel, netOptimize);
     NetParamTracker netParamTracker = new NetParamTracker();
     netTrain.addListener(netParamTracker);
     TrainingData trainingData = new TrainingData(xdata, ydata);

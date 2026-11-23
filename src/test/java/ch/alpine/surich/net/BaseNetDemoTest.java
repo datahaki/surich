@@ -8,10 +8,10 @@ import org.junit.jupiter.api.TestFactory;
 
 import ch.alpine.bridge.cgr.InstanceDiscovery;
 import ch.alpine.bridge.cgr.InstanceRecord;
+import ch.alpine.subare.net.LossFunction;
 import ch.alpine.subare.net.NetLayer;
-import ch.alpine.subare.net.NetLayers;
 import ch.alpine.subare.net.NetLoss;
-import ch.alpine.subare.net.NetOutput;
+import ch.alpine.subare.net.NetModel;
 import ch.alpine.subare.net.opt.NetOptimizers;
 import ch.alpine.subare.net.run.NetTrain;
 import ch.alpine.subare.net.run.TrainingData;
@@ -55,16 +55,17 @@ class BaseNetDemoTest {
       optParam.GD = netOptimizers;
       NetTrainDataBatch netTrainDataBatch = netTrainComponent.createNetTrainDataBatch();
       NetTrain netTrain = netTrainDataBatch.netTrain();
-      NetLayer netLayer = netTrain.netLayer();
+      NetModel netModel = netTrain.netModel();
+      NetLayer netLayer = netModel.netLayer();
+      LossFunction lossFunction = netModel.lossFunction();
       TrainingData trainingData = netTrainDataBatch.trainingData();
-      NetOutput netOutput = NetLayers.output(netLayer);
       for (int i = 0; i < trainingData.xdata().length(); ++i) {
         Tensor prediction = netLayer.forward(trainingData.xdata().get(i));
         DeterminateTensorQ.require(prediction);
         // 2. Calculate error: Compare the prediction with the actual output.
         Tensor target = trainingData.ydata().get(i);
         // IO.println("T="+Dimensions.of(target));
-        NetLoss netError = netOutput.error(target);
+        NetLoss netError = lossFunction.compute(prediction, target);
         // 3. Calculate loss: Apply a loss function to quantify the error.
         /** Loss:
          * A scalar value computed by a loss function (e.g., Mean

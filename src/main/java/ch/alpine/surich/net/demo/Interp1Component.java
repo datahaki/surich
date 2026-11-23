@@ -13,6 +13,7 @@ import ch.alpine.bridge.fig.plt.Plot;
 import ch.alpine.bridge.ref.ann.ReflectionMarker;
 import ch.alpine.subare.net.NetLayer;
 import ch.alpine.subare.net.NetLayers;
+import ch.alpine.subare.net.NetModel;
 import ch.alpine.subare.net.run.NetTrain;
 import ch.alpine.subare.net.run.TrainingData;
 import ch.alpine.surich.net.NetShows;
@@ -74,7 +75,7 @@ class Interp1Component implements Supplier<NetTrainComponent> {
     public NetTrainDataBatch createNetTrainDataBatch() {
       NetLayer netLayer = optLinear.create(1, 1);
       NetLayers.initialize(netLayer);
-      netTrain = new NetTrain(netLayer, optParam.create(netLayer));
+      netTrain = new NetTrain(NetModel.squaredErrorLoss(netLayer), optParam.create(netLayer));
       netTrain.addListener(netParamStatTracker);
       netTrain.addListener(this);
       return new NetTrainDataBatch(netTrain, trainingData, batch_size);

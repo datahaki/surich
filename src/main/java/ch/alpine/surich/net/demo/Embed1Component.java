@@ -10,9 +10,10 @@ import ch.alpine.bridge.fig.Show;
 import ch.alpine.bridge.fig.plt.ListDiscretePlot;
 import ch.alpine.bridge.ref.ann.ReflectionMarker;
 import ch.alpine.subare.net.NetChain;
-import ch.alpine.subare.net.NetChains;
 import ch.alpine.subare.net.NetLayer;
 import ch.alpine.subare.net.NetLayers;
+import ch.alpine.subare.net.NetModel;
+import ch.alpine.subare.net.NetModels;
 import ch.alpine.subare.net.lay.ScalarEmbeddingLayer;
 import ch.alpine.subare.net.run.NetTrain;
 import ch.alpine.subare.net.run.TrainingData;
@@ -65,9 +66,10 @@ class Embed1Component implements Supplier<NetTrainComponent> {
     @Override
     public NetTrainDataBatch createNetTrainDataBatch() {
       NetLayer inner = optLinearChain.create(D, 1);
-      NetLayer netLayer = NetChains.binary(NetChain.join(new ScalarEmbeddingLayer(V, D), inner));
+      NetModel netModel = NetModels.binary(NetChain.join(new ScalarEmbeddingLayer(V, D), inner));
+      NetLayer netLayer = netModel.netLayer();
       NetLayers.initialize(netLayer);
-      netTrain = new NetTrain(netLayer, optParam.create(netLayer));
+      netTrain = new NetTrain(netModel, optParam.create(netLayer));
       netTrain.addListener(netParamStatTracker);
       netTrain.addListener(this);
       return new NetTrainDataBatch(netTrain, trainingData, batch_size);

@@ -14,6 +14,7 @@ import ch.alpine.bridge.ref.ann.ReflectionMarker;
 import ch.alpine.subare.net.NetChain;
 import ch.alpine.subare.net.NetLayer;
 import ch.alpine.subare.net.NetLayers;
+import ch.alpine.subare.net.NetModel;
 import ch.alpine.subare.net.lay.MatrixLayer;
 import ch.alpine.subare.net.reg.NoRegularization;
 import ch.alpine.subare.net.run.NetTrain;
@@ -83,7 +84,9 @@ class MatrixSynthComponent implements Supplier<NetTrainComponent> {
     public NetTrainDataBatch createNetTrainDataBatch() {
       NetLayer netLayer = create();
       NetLayers.initialize(netLayer);
-      netTrain = new NetTrain(netLayer, optParam.create(netLayer));
+      netTrain = new NetTrain( //
+          NetModel.squaredErrorLoss(netLayer), //
+          optParam.create(netLayer));
       netTrain.addListener(netParamStatTracker);
       netTrain.addListener(this);
       return new NetTrainDataBatch(netTrain, trainingData, batch_size);
