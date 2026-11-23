@@ -81,10 +81,11 @@ class EmbedComponent implements Supplier<NetTrainComponent> {
     }
 
     @Override
-    protected void paintComponent(Graphics graphics, NetLayer copy) {
+    protected void paintComponent(Graphics graphics, NetModel netModel) {
+      NetLayer netLayer = netModel.netLayer();
       List<Rectangle> list = GraphicsGrid.rectangles(3, getSize());
       {
-        Tensor error = copy.forwardBatch(trainingData.xdata()).subtract(trainingData.ydata());
+        Tensor error = netLayer.forwardBatch(trainingData.xdata()).subtract(trainingData.ydata());
         int N = error.length();
         int ceil = Ceiling.intValueExact(Sqrt.FUNCTION.apply(RealScalar.of(N)));
         error = PadRight.zeros(ceil * ceil).apply(error);
@@ -96,7 +97,7 @@ class EmbedComponent implements Supplier<NetTrainComponent> {
       {
         NetShows.param(netParamStatTracker).render_autoIndent(graphics, list.get(1));
         NetShows.loss(netTrain.tloss).render_autoIndent(graphics, list.get(2));
-        NetShows.pMatrix(copy).render_autoIndent(graphics, list.get(3));
+        NetShows.pMatrix(netLayer).render_autoIndent(graphics, list.get(3));
       }
     }
   }

@@ -15,7 +15,7 @@ import ch.alpine.bridge.fig.GraphicsGrid;
 import ch.alpine.bridge.ref.ann.ReflectionMarker;
 import ch.alpine.bridge.wdog.SoftWatchdog;
 import ch.alpine.bridge.wdog.Watchdog;
-import ch.alpine.subare.net.NetLayer;
+import ch.alpine.subare.net.NetModel;
 import ch.alpine.subare.net.run.NetParamStatTracker;
 import ch.alpine.subare.net.run.NetTrain;
 import ch.alpine.subare.net.run.NetTrainListener;
@@ -27,7 +27,7 @@ public abstract class NetTrainComponent extends JComponent implements NetTrainLi
   private final Watchdog watchdog = SoftWatchdog.barking(Quantity.of(50, "ms"));
   protected final NetParamStatTracker netParamStatTracker = new NetParamStatTracker();
   private volatile boolean running = true;
-  private NetLayer copy;
+  private NetModel copy;
 
   public abstract OptParam optParam();
 
@@ -37,7 +37,7 @@ public abstract class NetTrainComponent extends JComponent implements NetTrainLi
     createNetTrainDataBatch().run();
   }
 
-  protected abstract void paintComponent(Graphics graphics, NetLayer copy);
+  protected abstract void paintComponent(Graphics graphics, NetModel copy);
 
   @Override
   protected void paintComponent(Graphics graphics) {
@@ -52,7 +52,7 @@ public abstract class NetTrainComponent extends JComponent implements NetTrainLi
   public final boolean epoch(NetTrain netTrain) {
     if (watchdog.isBarking()) {
       watchdog.notifyWatchdog();
-      copy = Serialization.copy(netTrain.netModel().netLayer());
+      copy = Serialization.copy(netTrain.netModel());
       repaint();
     }
     return running;

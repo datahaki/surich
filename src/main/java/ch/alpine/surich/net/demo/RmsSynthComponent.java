@@ -90,11 +90,12 @@ class RmsSynthComponent implements Supplier<NetTrainComponent> {
     }
 
     @Override
-    protected void paintComponent(Graphics graphics, NetLayer copy) {
+    protected void paintComponent(Graphics graphics, NetModel netModel) {
+      NetLayer netLayer = netModel.netLayer();
       List<Rectangle> list = rectangles(4);
       {
         Show show = new Show("error");
-        Tensor Y = copy.forwardBatch(trainingData.xdata());
+        Tensor Y = netLayer.forwardBatch(trainingData.xdata());
         Tensor d = Y.subtract(trainingData.ydata());
         show.add(ListDiscretePlot.of(Range.of(0, d.length()), d));
         show.render_autoIndent(graphics, list.get(0));
@@ -102,7 +103,7 @@ class RmsSynthComponent implements Supplier<NetTrainComponent> {
       {
         NetShows.param(netParamStatTracker).render_autoIndent(graphics, list.get(1));
         NetShows.loss(netTrain.tloss).render_autoIndent(graphics, list.get(2));
-        NetShows.pMatrix(copy).render_autoIndent(graphics, list.get(3));
+        NetShows.pMatrix(netLayer).render_autoIndent(graphics, list.get(3));
       }
     };
   }

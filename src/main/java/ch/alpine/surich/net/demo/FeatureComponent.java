@@ -104,7 +104,8 @@ class FeatureComponent implements Supplier<NetTrainComponent> {
     }
 
     @Override
-    protected void paintComponent(Graphics graphics, NetLayer copy) {
+    protected void paintComponent(Graphics graphics, NetModel netModel) {
+      NetLayer netLayer = netModel.netLayer();
       List<Rectangle> list = rectangles(4);
       {
         Clip clip = Clips.operator(RealScalar.of(1.2)::multiply).apply(DOMAIN);
@@ -114,13 +115,13 @@ class FeatureComponent implements Supplier<NetTrainComponent> {
             trainingData.ydata())).setAlpha(64);
         for (int i = 0; i < V; ++i) {
           Scalar si = RealScalar.of(i);
-          Showable showable = show.add(Plot.of(x -> (Scalar) copy.forward(Tensors.of(x, si)), clip));
+          Showable showable = show.add(Plot.of(x -> (Scalar) netLayer.forward(Tensors.of(x, si)), clip));
           showable.setLabel(featureFunc + "_" + i);
         }
         show.render_autoIndent(graphics, list.get(0));
       }
       {
-        NetShows.pMatrix(copy).render_autoIndent(graphics, list.get(1));
+        NetShows.pMatrix(netLayer).render_autoIndent(graphics, list.get(1));
         NetShows.param(netParamStatTracker).render_autoIndent(graphics, list.get(2));
         NetShows.loss(netTrain.tloss).render_autoIndent(graphics, list.get(3));
       }

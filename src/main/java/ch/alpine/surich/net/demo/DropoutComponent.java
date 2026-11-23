@@ -14,9 +14,9 @@ import ch.alpine.bridge.ref.ann.ReflectionMarker;
 import ch.alpine.subare.net.NetLayer;
 import ch.alpine.subare.net.NetLayers;
 import ch.alpine.subare.net.NetModel;
-import ch.alpine.subare.net.err.SquaredErrorLoss;
 import ch.alpine.subare.net.run.NetTrain;
 import ch.alpine.subare.net.run.TrainingData;
+import ch.alpine.surich.net.ErrorType;
 import ch.alpine.surich.net.NetShows;
 import ch.alpine.surich.net.NetTrainComponent;
 import ch.alpine.surich.net.NetTrainDataBatch;
@@ -40,6 +40,7 @@ class DropoutComponent implements Supplier<NetTrainComponent> {
   public Integer seed = 0;
   public Integer variability = 5;
   public Integer samples = 30;
+  public ErrorType errorType = ErrorType._SquaredErrorLoss;
   public final OptLinearChain optLinear = new OptLinearChain();
   public final OptParam optParam = new OptParam();
   public Integer batch_size = 6;
@@ -74,19 +75,20 @@ class DropoutComponent implements Supplier<NetTrainComponent> {
     public NetTrainDataBatch createNetTrainDataBatch() {
       NetLayer netLayer = optLinear.asSUO();
       NetLayers.initialize(netLayer);
-      netTrain = new NetTrain(new NetModel(netLayer, SquaredErrorLoss.INSTANCE), optParam.create(netLayer));
+      netTrain = new NetTrain(new NetModel(netLayer, errorType.lossFunction), optParam.create(netLayer));
       netTrain.addListener(netParamStatTracker);
       netTrain.addListener(this);
       return new NetTrainDataBatch(netTrain, trainingData, batch_size);
     }
 
     @Override
-    protected void paintComponent(Graphics graphics, NetLayer copy) {
+    protected void paintComponent(Graphics graphics, NetModel netModel) {
+      NetLayer netLayer = netModel.netLayer();
       List<Rectangle> list = rectangles(4);
       {
         Show show = new Show("interpolation");
         show.add(Plot.of(truth, DOMAIN));
-        show.add(Plot.of(s -> (Scalar) copy.forward(s), DOMAIN)).setLabel("gelu");
+        show.add(Plot.of(s -> (Scalar) netLayer.forward(s), DOMAIN)).setLabel("gelu");
         Tensor xdata = trainingData.xdata();
         Tensor ydata = trainingData.ydata();
         show.add(ListPlot.of(xdata, ydata));
@@ -95,7 +97,7 @@ class DropoutComponent implements Supplier<NetTrainComponent> {
       {
         NetShows.param(netParamStatTracker).render_autoIndent(graphics, list.get(1));
         NetShows.loss(netTrain.tloss).render_autoIndent(graphics, list.get(2));
-        NetShows.pMatrix(copy).render_autoIndent(graphics, list.get(3));
+        NetShows.pMatrix(netLayer).render_autoIndent(graphics, list.get(3));
       }
     };
   }

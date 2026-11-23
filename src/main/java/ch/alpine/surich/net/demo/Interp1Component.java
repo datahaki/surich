@@ -42,7 +42,7 @@ class Interp1Component implements Supplier<NetTrainComponent> {
   public Integer variability = 5;
   public Integer samples = 30;
   public final OptLinearChain optLinearChain = new OptLinearChain();
-  public ErrorType errorType = ErrorType.FROB;
+  public ErrorType errorType = ErrorType._SquaredErrorLoss;
   public final OptParam optParam = new OptParam();
   public Integer batch_size = 6;
 
@@ -83,13 +83,14 @@ class Interp1Component implements Supplier<NetTrainComponent> {
     }
 
     @Override
-    protected void paintComponent(Graphics graphics, NetLayer copy) {
+    protected void paintComponent(Graphics graphics, NetModel netModel) {
+      NetLayer netLayer = netModel.netLayer();
       List<Rectangle> list = rectangles(4);
       {
         Clip eval = Clips.operator(RealScalar.of(1.5)::multiply).apply(DOMAIN);
         Show show = new Show("interpolation");
         show.add(Plot.of(truth, eval));
-        show.add(Plot.of(s -> (Scalar) copy.forward(s), eval)).setLabel("gelu");
+        show.add(Plot.of(s -> (Scalar) netLayer.forward(s), eval)).setLabel("gelu");
         Tensor xdata = trainingData.xdata();
         Tensor ydata = trainingData.ydata();
         show.add(ListPlot.of(xdata, ydata));
@@ -98,7 +99,7 @@ class Interp1Component implements Supplier<NetTrainComponent> {
       {
         NetShows.param(netParamStatTracker).render_autoIndent(graphics, list.get(1));
         NetShows.loss(netTrain.tloss).render_autoIndent(graphics, list.get(2));
-        NetShows.pMatrix(copy).render_autoIndent(graphics, list.get(3));
+        NetShows.pMatrix(netLayer).render_autoIndent(graphics, list.get(3));
       }
     };
   }

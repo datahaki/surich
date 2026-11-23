@@ -82,11 +82,12 @@ class SigmoidComponent implements Supplier<NetTrainComponent> {
     }
 
     @Override
-    protected void paintComponent(Graphics graphics, NetLayer copy) {
+    protected void paintComponent(Graphics graphics, NetModel netModel) {
+      NetLayer netLayer = netModel.netLayer();
       List<Rectangle> list = rectangles(4);
       {
         Show show = new Show();
-        ScalarBinaryOperator sbo = (x, y) -> (Scalar) copy.forward(Tensors.of(x, y));
+        ScalarBinaryOperator sbo = (x, y) -> (Scalar) netLayer.forward(Tensors.of(x, y));
         Clip clip = Clips.operator(RealScalar.of(1.2)::multiply).apply(DOMAIN);
         CoordinateBoundingBox cbb = CoordinateBoundingBox.of(clip, clip);
         show.add(DensityPlot.of(sbo, cbb, ColorDataGradients.COPPER));
@@ -101,7 +102,7 @@ class SigmoidComponent implements Supplier<NetTrainComponent> {
       {
         NetShows.param(netParamStatTracker).render_autoIndent(graphics, list.get(1));
         NetShows.loss(netTrain.tloss).render_autoIndent(graphics, list.get(2));
-        NetShows.pMatrix(copy).render_autoIndent(graphics, list.get(3));
+        NetShows.pMatrix(netLayer).render_autoIndent(graphics, list.get(3));
       }
     };
   }

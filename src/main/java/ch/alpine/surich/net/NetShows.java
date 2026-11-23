@@ -11,6 +11,7 @@ import ch.alpine.bridge.fig.plt.ListLinePlot;
 import ch.alpine.bridge.fig.plt.MatrixPlot;
 import ch.alpine.subare.net.NetLayer;
 import ch.alpine.subare.net.NetLayers;
+import ch.alpine.subare.net.NetModel;
 import ch.alpine.subare.net.run.NetParamStatTracker;
 import ch.alpine.subare.net.run.NetTrain;
 import ch.alpine.tensor.Tensor;
@@ -21,13 +22,15 @@ import ch.alpine.tensor.sca.Sign;
 
 public enum NetShows {
   ;
-  public static void layers(Graphics graphics, Point point, NetLayer netLayer) {
-    List<String> list = NetLayers.toString(netLayer);
+  public static void layers(Graphics graphics, Point point, NetModel netModel) {
+    List<String> list = NetLayers.toString(netModel.netLayer());
     int piy = 0;
     for (String string : list) {
       piy += 16;
       graphics.drawString(string, point.x, point.y + piy);
     }
+    piy += 16;
+    graphics.drawString(netModel.lossFunction().toString(), point.x, point.y + piy);
   }
 
   public static Show param(NetParamStatTracker netParamStatTracker) {

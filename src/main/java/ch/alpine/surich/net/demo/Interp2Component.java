@@ -93,7 +93,8 @@ class Interp2Component implements Supplier<NetTrainComponent> {
     }
 
     @Override
-    protected void paintComponent(Graphics graphics, NetLayer copy) {
+    protected void paintComponent(Graphics graphics, NetModel netModel) {
+      NetLayer netLayer = netModel.netLayer();
       CoordinateBoundingBox cbb = CoordinateBoundingBox.of(DOMAIN, DOMAIN);
       Clip clip = Clips.operator(RealScalar.of(1.2)::multiply).apply(DOMAIN);
       CoordinateBoundingBox ext = CoordinateBoundingBox.of(clip, clip);
@@ -110,7 +111,7 @@ class Interp2Component implements Supplier<NetTrainComponent> {
         Show show = new Show("error");
         ScalarBinaryOperator sbo = (x, y) -> {
           Tensor p = Unprotect.using(List.of(x, y));
-          return (Scalar) copy.forward(p).subtract(truth.apply(p));
+          return (Scalar) netLayer.forward(p).subtract(truth.apply(p));
         };
         show.add(DensityPlot.of(sbo, ext, CDG));
         show.add(PolygonPlot.of(cbb));
@@ -120,7 +121,7 @@ class Interp2Component implements Supplier<NetTrainComponent> {
       {
         NetShows.param(netParamStatTracker).render_autoIndent(graphics, list.get(2));
         NetShows.loss(netTrain.tloss).render_autoIndent(graphics, list.get(3));
-        NetShows.pMatrix(copy).render_autoIndent(graphics, list.get(4));
+        NetShows.pMatrix(netLayer).render_autoIndent(graphics, list.get(4));
       }
     };
   }
