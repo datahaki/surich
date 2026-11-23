@@ -57,13 +57,13 @@ class BaseNetDemoTest {
       NetTrain netTrain = netTrainDataBatch.netTrain();
       NetLayer netLayer = netTrain.netLayer();
       TrainingData trainingData = netTrainDataBatch.trainingData();
+      NetOutput netOutput = NetLayers.output(netLayer);
       for (int i = 0; i < trainingData.xdata().length(); ++i) {
         Tensor prediction = netLayer.forward(trainingData.xdata().get(i));
         DeterminateTensorQ.require(prediction);
         // 2. Calculate error: Compare the prediction with the actual output.
         Tensor target = trainingData.ydata().get(i);
         // IO.println("T="+Dimensions.of(target));
-        NetOutput netOutput = NetLayers.output(netLayer);
         NetLoss netError = netOutput.error(target);
         // 3. Calculate loss: Apply a loss function to quantify the error.
         /** Loss:

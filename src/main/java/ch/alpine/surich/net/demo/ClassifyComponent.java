@@ -14,6 +14,7 @@ import ch.alpine.bridge.awt.RenderQuality;
 import ch.alpine.bridge.fig.Show;
 import ch.alpine.bridge.fig.plt.DensityPlot;
 import ch.alpine.bridge.fig.plt.ListPlot;
+import ch.alpine.bridge.fig.plt.PolygonPlot;
 import ch.alpine.bridge.ref.ann.ReflectionMarker;
 import ch.alpine.subare.net.NetChains;
 import ch.alpine.subare.net.NetLayer;
@@ -94,10 +95,10 @@ class ClassifyComponent implements Supplier<NetTrainComponent> {
         List<Rectangle> list = rectangles(4);
         {
           Clip eval = Clips.operator(RealScalar.of(1.2)::multiply).apply(DOMAIN);
-          CoordinateBoundingBox cbb = CoordinateBoundingBox.of(eval, eval);
+          CoordinateBoundingBox ext = CoordinateBoundingBox.of(eval, eval);
           Show show = new Show();
           ColorDataGradients cdg = ColorDataGradients.COPPER;
-          show.add(DensityPlot.of((x, y) -> (Scalar) copy.forward(Tensors.of(x, y)), cbb, cdg));
+          show.add(DensityPlot.of((x, y) -> (Scalar) copy.forward(Tensors.of(x, y)), ext, cdg));
           Tensor xdata = trainingData.xdata();
           Tensor ydata = trainingData.ydata();
           for (int k = 0; k < labels; ++k) {
@@ -106,6 +107,7 @@ class ClassifyComponent implements Supplier<NetTrainComponent> {
                 .filter(i -> ydata.Get(i).equals(label)).mapToObj(xdata::get));
             show.add(ListPlot.of(p0));
           }
+          show.add(PolygonPlot.of(cbb)).setAlpha(64);
           show.render_autoIndent(graphics, list.get(0));
         }
         {
