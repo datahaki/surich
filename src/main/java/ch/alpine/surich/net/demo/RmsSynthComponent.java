@@ -29,7 +29,6 @@ import ch.alpine.surich.net.OptParam;
 import ch.alpine.tensor.RealScalar;
 import ch.alpine.tensor.Scalar;
 import ch.alpine.tensor.Tensor;
-import ch.alpine.tensor.Tensors;
 import ch.alpine.tensor.alg.Range;
 import ch.alpine.tensor.pdf.RandomVariate;
 import ch.alpine.tensor.pdf.c.NormalDistribution;
@@ -39,7 +38,6 @@ import ch.alpine.tensor.pdf.d.DiscreteUniformDistribution;
 class RmsSynthComponent implements Supplier<NetTrainComponent> {
   public Integer seed = 0;
   public Integer samples = 30;
-  public Tensor gamma = Tensors.vector(0.7, 0.3, 0.25);
   public Scalar noise_sigma = RealScalar.of(0.0001);
   public final OptParam optParam = new OptParam();
   public Integer batch_size = 6;
@@ -67,7 +65,6 @@ class RmsSynthComponent implements Supplier<NetTrainComponent> {
     public InnerComponent() {
       Random random = new Random(seed);
       RMSLinear rmsLinear = RMSLinear.create();
-      rmsLinear.rmsLayer.gamma = gamma;
       NetLayer netLayer = rmsLinear.consolidate();
       NetLayers.initialize(netLayer);
       Tensor xdata = RandomVariate.of(DiscreteUniformDistribution.of(-3, 10), random, samples, 3);
@@ -95,7 +92,7 @@ class RmsSynthComponent implements Supplier<NetTrainComponent> {
 
     @Override
     protected void paintComponent(Graphics graphics, NetLayer copy) {
-      List<Rectangle> list = GraphicsGrid.rectangles(3, getSize());
+      List<Rectangle> list = rectangles(4);
       {
         Show show = new Show("error");
         Tensor Y = copy.forwardBatch(trainingData.xdata());

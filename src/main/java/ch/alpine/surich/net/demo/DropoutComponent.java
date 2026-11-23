@@ -7,7 +7,6 @@ import java.util.List;
 import java.util.Random;
 import java.util.function.Supplier;
 
-import ch.alpine.bridge.fig.GraphicsGrid;
 import ch.alpine.bridge.fig.Show;
 import ch.alpine.bridge.fig.plt.ListPlot;
 import ch.alpine.bridge.fig.plt.Plot;
@@ -24,6 +23,7 @@ import ch.alpine.surich.net.OptLinearChain;
 import ch.alpine.surich.net.OptParam;
 import ch.alpine.tensor.Scalar;
 import ch.alpine.tensor.Tensor;
+import ch.alpine.tensor.Tensors;
 import ch.alpine.tensor.alg.Join;
 import ch.alpine.tensor.api.ScalarTensorFunction;
 import ch.alpine.tensor.api.ScalarUnaryOperator;
@@ -83,11 +83,11 @@ class DropoutComponent implements Supplier<NetTrainComponent> {
 
     @Override
     protected void paintComponent(Graphics graphics, NetLayer copy) {
-      List<Rectangle> list = GraphicsGrid.rectangles(3, getSize());
+      List<Rectangle> list = rectangles(4);
       {
         Show show = new Show("interpolation");
         show.add(Plot.of(truth, DOMAIN));
-        show.add(Plot.of(NetLayers.asSUO11(copy), DOMAIN)).setLabel("gelu");
+        show.add(Plot.of(s -> copy.forward(Tensors.of(s)).Get(0), DOMAIN)).setLabel("gelu");
         Tensor xdata = trainingData.xdata();
         Tensor ydata = trainingData.ydata();
         show.add(ListPlot.of(Join.of(1, xdata, ydata)));

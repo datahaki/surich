@@ -24,6 +24,7 @@ import ch.alpine.surich.net.OptParam;
 import ch.alpine.tensor.RealScalar;
 import ch.alpine.tensor.Scalar;
 import ch.alpine.tensor.Tensor;
+import ch.alpine.tensor.Tensors;
 import ch.alpine.tensor.alg.Join;
 import ch.alpine.tensor.api.ScalarTensorFunction;
 import ch.alpine.tensor.api.ScalarUnaryOperator;
@@ -88,7 +89,7 @@ class Interp1Component implements Supplier<NetTrainComponent> {
         Clip eval = Clips.operator(RealScalar.of(1.5)::multiply).apply(DOMAIN);
         Show show = new Show("interpolation");
         show.add(Plot.of(truth, eval));
-        show.add(Plot.of(NetLayers.asSUO11(copy), eval)).setLabel("gelu");
+        show.add(Plot.of(s -> copy.forward(Tensors.of(s)).Get(0), eval)).setLabel("gelu");
         Tensor xdata = trainingData.xdata();
         Tensor ydata = trainingData.ydata();
         show.add(ListPlot.of(Join.of(1, xdata, ydata)));
