@@ -2,14 +2,11 @@
 package ch.alpine.surich.net.demo;
 
 import java.awt.Graphics;
-import java.awt.Point;
 import java.awt.Rectangle;
 import java.util.List;
-import java.util.Objects;
 import java.util.Random;
 import java.util.function.Supplier;
 
-import ch.alpine.bridge.awt.RenderQuality;
 import ch.alpine.bridge.fig.Show;
 import ch.alpine.bridge.fig.Showable;
 import ch.alpine.bridge.fig.plt.ListPlot;
@@ -24,7 +21,6 @@ import ch.alpine.subare.net.lay.IdentityLayer;
 import ch.alpine.subare.net.lay.OneHotLayer;
 import ch.alpine.subare.net.lay.ScalarEmbeddingLayer;
 import ch.alpine.subare.net.lay.ScalarLayer;
-import ch.alpine.subare.net.run.NetParamStatTracker;
 import ch.alpine.subare.net.run.NetTrain;
 import ch.alpine.subare.net.run.TrainingData;
 import ch.alpine.surich.net.NetShows;
@@ -68,7 +64,6 @@ class FeatureComponent implements Supplier<NetTrainComponent> {
 
   class InnerComponent extends NetTrainComponent {
     final TrainingData trainingData;
-    final NetParamStatTracker netParamStatTracker = new NetParamStatTracker();
     NetTrain netTrain;
 
     public InnerComponent() {
@@ -104,32 +99,25 @@ class FeatureComponent implements Supplier<NetTrainComponent> {
     }
 
     @Override
-    protected void paintComponent(Graphics graphics) {
-      NetLayer copy = InnerComponent.this.copy;
-      if (Objects.nonNull(copy)) {
-        {
-          RenderQuality.setQuality(graphics);
-          NetShows.layers(graphics, new Point(), copy);
+    protected void paintComponent(Graphics graphics, NetLayer copy) {
+      List<Rectangle> list = rectangles(4);
+      {
+        Clip clip = Clips.operator(RealScalar.of(1.2)::multiply).apply(DOMAIN);
+        Show show = new Show("approximation");
+        show.add(ListPlot.of( //
+            trainingData.xdata().get(Tensor.ALL, 0), //
+            trainingData.ydata())).setAlpha(64);
+        for (int i = 0; i < V; ++i) {
+          Scalar si = RealScalar.of(i);
+          Showable showable = show.add(Plot.of(x -> (Scalar) copy.forward(Tensors.of(x, si)), clip));
+          showable.setLabel(featureFunc + "_" + i);
         }
-        List<Rectangle> list = rectangles(4);
-        {
-          Clip clip = Clips.operator(RealScalar.of(1.2)::multiply).apply(DOMAIN);
-          Show show = new Show("approximation");
-          show.add(ListPlot.of( //
-              trainingData.xdata().get(Tensor.ALL, 0), //
-              trainingData.ydata())).setAlpha(64);
-          for (int i = 0; i < V; ++i) {
-            Scalar si = RealScalar.of(i);
-            Showable showable = show.add(Plot.of(x -> (Scalar) copy.forward(Tensors.of(x, si)), clip));
-            showable.setLabel(featureFunc + "_" + i);
-          }
-          show.render_autoIndent(graphics, list.get(0));
-        }
-        {
-          NetShows.pMatrix(copy).render_autoIndent(graphics, list.get(1));
-          NetShows.param(netParamStatTracker).render_autoIndent(graphics, list.get(2));
-          NetShows.loss(netTrain.tloss).render_autoIndent(graphics, list.get(3));
-        }
+        show.render_autoIndent(graphics, list.get(0));
+      }
+      {
+        NetShows.pMatrix(copy).render_autoIndent(graphics, list.get(1));
+        NetShows.param(netParamStatTracker).render_autoIndent(graphics, list.get(2));
+        NetShows.loss(netTrain.tloss).render_autoIndent(graphics, list.get(3));
       }
     }
   }

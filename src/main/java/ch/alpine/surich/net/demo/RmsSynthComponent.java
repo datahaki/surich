@@ -4,7 +4,6 @@ package ch.alpine.surich.net.demo;
 import java.awt.Graphics;
 import java.awt.Rectangle;
 import java.util.List;
-import java.util.Objects;
 import java.util.Random;
 import java.util.function.Supplier;
 
@@ -19,7 +18,6 @@ import ch.alpine.subare.net.NetLayers;
 import ch.alpine.subare.net.lay.LinearLayer;
 import ch.alpine.subare.net.lay.RMSLayer;
 import ch.alpine.subare.net.reg.NoRegularization;
-import ch.alpine.subare.net.run.NetParamStatTracker;
 import ch.alpine.subare.net.run.NetTrain;
 import ch.alpine.subare.net.run.TrainingData;
 import ch.alpine.surich.net.NetShows;
@@ -34,12 +32,9 @@ import ch.alpine.tensor.alg.Range;
 import ch.alpine.tensor.pdf.RandomVariate;
 import ch.alpine.tensor.pdf.c.NormalDistribution;
 import ch.alpine.tensor.pdf.d.DiscreteUniformDistribution;
-import ch.alpine.tensor.sca.Clip;
-import ch.alpine.tensor.sca.Clips;
 
 @ReflectionMarker
 class RmsSynthComponent implements Supplier<NetTrainComponent> {
-  public static final Clip DOMAIN = Clips.absoluteOne();
   public Integer seed = 0;
   public Integer samples = 30;
   public Tensor gamma = Tensors.vector(0.7, 0.3, 0.25);
@@ -65,7 +60,6 @@ class RmsSynthComponent implements Supplier<NetTrainComponent> {
 
   class InnerComponent extends NetTrainComponent {
     final TrainingData trainingData;
-    final NetParamStatTracker netParamStatTracker = new NetParamStatTracker();
     NetTrain netTrain;
 
     public InnerComponent() {
@@ -97,22 +91,19 @@ class RmsSynthComponent implements Supplier<NetTrainComponent> {
     }
 
     @Override
-    protected void paintComponent(Graphics graphics) {
-      NetLayer copy = InnerComponent.this.copy;
-      if (Objects.nonNull(copy)) {
-        List<Rectangle> list = GraphicsGrid.rectangles(3, getSize());
-        {
-          Show show = new Show("error");
-          Tensor Y = copy.forwardBatch(trainingData.xdata());
-          Tensor d = Y.subtract(trainingData.ydata());
-          show.add(ListDiscretePlot.of(Range.of(0, d.length()), d));
-          show.render_autoIndent(graphics, list.get(0));
-        }
-        {
-          NetShows.param(netParamStatTracker).render_autoIndent(graphics, list.get(1));
-          NetShows.loss(netTrain.tloss).render_autoIndent(graphics, list.get(2));
-          NetShows.pMatrix(copy).render_autoIndent(graphics, list.get(3));
-        }
+    protected void paintComponent(Graphics graphics, NetLayer copy) {
+      List<Rectangle> list = GraphicsGrid.rectangles(3, getSize());
+      {
+        Show show = new Show("error");
+        Tensor Y = copy.forwardBatch(trainingData.xdata());
+        Tensor d = Y.subtract(trainingData.ydata());
+        show.add(ListDiscretePlot.of(Range.of(0, d.length()), d));
+        show.render_autoIndent(graphics, list.get(0));
+      }
+      {
+        NetShows.param(netParamStatTracker).render_autoIndent(graphics, list.get(1));
+        NetShows.loss(netTrain.tloss).render_autoIndent(graphics, list.get(2));
+        NetShows.pMatrix(copy).render_autoIndent(graphics, list.get(3));
       }
     };
   }

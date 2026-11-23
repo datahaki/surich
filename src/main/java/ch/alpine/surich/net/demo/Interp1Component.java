@@ -2,21 +2,17 @@
 package ch.alpine.surich.net.demo;
 
 import java.awt.Graphics;
-import java.awt.Point;
 import java.awt.Rectangle;
 import java.util.List;
-import java.util.Objects;
 import java.util.Random;
 import java.util.function.Supplier;
 
-import ch.alpine.bridge.awt.RenderQuality;
 import ch.alpine.bridge.fig.Show;
 import ch.alpine.bridge.fig.plt.ListPlot;
 import ch.alpine.bridge.fig.plt.Plot;
 import ch.alpine.bridge.ref.ann.ReflectionMarker;
 import ch.alpine.subare.net.NetLayer;
 import ch.alpine.subare.net.NetLayers;
-import ch.alpine.subare.net.run.NetParamStatTracker;
 import ch.alpine.subare.net.run.NetTrain;
 import ch.alpine.subare.net.run.TrainingData;
 import ch.alpine.surich.net.NetShows;
@@ -56,7 +52,6 @@ class Interp1Component implements Supplier<NetTrainComponent> {
   class InnerComponent extends NetTrainComponent {
     final ScalarUnaryOperator truth;
     final TrainingData trainingData;
-    final NetParamStatTracker netParamStatTracker = new NetParamStatTracker();
     NetTrain netTrain;
 
     public InnerComponent() {
@@ -86,29 +81,22 @@ class Interp1Component implements Supplier<NetTrainComponent> {
     }
 
     @Override
-    protected void paintComponent(Graphics graphics) {
-      NetLayer copy = InnerComponent.this.copy;
-      if (Objects.nonNull(copy)) {
-        {
-          RenderQuality.setQuality(graphics);
-          NetShows.layers(graphics, new Point(), copy);
-        }
-        List<Rectangle> list = rectangles(4);
-        {
-          Clip eval = Clips.operator(RealScalar.of(1.5)::multiply).apply(DOMAIN);
-          Show show = new Show("interpolation");
-          show.add(Plot.of(truth, eval));
-          show.add(Plot.of(NetLayers.asSUO11(copy), eval)).setLabel("gelu");
-          Tensor xdata = trainingData.xdata();
-          Tensor ydata = trainingData.ydata();
-          show.add(ListPlot.of(Join.of(1, xdata, ydata)));
-          show.render_autoIndent(graphics, list.get(0));
-        }
-        {
-          NetShows.param(netParamStatTracker).render_autoIndent(graphics, list.get(1));
-          NetShows.loss(netTrain.tloss).render_autoIndent(graphics, list.get(2));
-          NetShows.pMatrix(copy).render_autoIndent(graphics, list.get(3));
-        }
+    protected void paintComponent(Graphics graphics, NetLayer copy) {
+      List<Rectangle> list = rectangles(4);
+      {
+        Clip eval = Clips.operator(RealScalar.of(1.5)::multiply).apply(DOMAIN);
+        Show show = new Show("interpolation");
+        show.add(Plot.of(truth, eval));
+        show.add(Plot.of(NetLayers.asSUO11(copy), eval)).setLabel("gelu");
+        Tensor xdata = trainingData.xdata();
+        Tensor ydata = trainingData.ydata();
+        show.add(ListPlot.of(Join.of(1, xdata, ydata)));
+        show.render_autoIndent(graphics, list.get(0));
+      }
+      {
+        NetShows.param(netParamStatTracker).render_autoIndent(graphics, list.get(1));
+        NetShows.loss(netTrain.tloss).render_autoIndent(graphics, list.get(2));
+        NetShows.pMatrix(copy).render_autoIndent(graphics, list.get(3));
       }
     };
   }

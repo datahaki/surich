@@ -4,7 +4,6 @@ package ch.alpine.surich.net.demo;
 import java.awt.Graphics;
 import java.awt.Rectangle;
 import java.util.List;
-import java.util.Objects;
 import java.util.function.Supplier;
 
 import ch.alpine.bridge.fig.GraphicsGrid;
@@ -15,7 +14,6 @@ import ch.alpine.subare.net.NetChains;
 import ch.alpine.subare.net.NetLayer;
 import ch.alpine.subare.net.NetLayers;
 import ch.alpine.subare.net.lay.ElementwiseLayers;
-import ch.alpine.subare.net.run.NetParamStatTracker;
 import ch.alpine.subare.net.run.NetTrain;
 import ch.alpine.subare.net.run.TrainingData;
 import ch.alpine.surich.net.NetShows;
@@ -54,7 +52,6 @@ class EmbedComponent implements Supplier<NetTrainComponent> {
   class InnerComponent extends NetTrainComponent {
     final CoordinateBoundingBox cbb = CoordinateBoundingBox.of(Clips.absolute(2), Clips.absolute(2));
     final TrainingData trainingData;
-    final NetParamStatTracker netParamStatTracker = new NetParamStatTracker();
     NetTrain netTrain;
 
     public InnerComponent() {
@@ -81,25 +78,22 @@ class EmbedComponent implements Supplier<NetTrainComponent> {
     }
 
     @Override
-    protected void paintComponent(Graphics graphics) {
-      NetLayer copy = InnerComponent.this.copy;
-      if (Objects.nonNull(copy)) {
-        List<Rectangle> list = GraphicsGrid.rectangles(3, getSize());
-        {
-          Tensor error = copy.forwardBatch(trainingData.xdata()).subtract(trainingData.ydata());
-          int N = error.length();
-          int ceil = Ceiling.intValueExact(Sqrt.FUNCTION.apply(RealScalar.of(N)));
-          error = PadRight.zeros(ceil * ceil).apply(error);
-          Tensor matrix = ArrayReshape.of(error, ceil, ceil);
-          Show show = new Show("Error");
-          show.add(ArrayPlot.of(matrix));
-          show.render_autoIndent(graphics, list.get(0));
-        }
-        {
-          NetShows.param(netParamStatTracker).render_autoIndent(graphics, list.get(1));
-          NetShows.loss(netTrain.tloss).render_autoIndent(graphics, list.get(2));
-          NetShows.pMatrix(copy).render_autoIndent(graphics, list.get(3));
-        }
+    protected void paintComponent(Graphics graphics, NetLayer copy) {
+      List<Rectangle> list = GraphicsGrid.rectangles(3, getSize());
+      {
+        Tensor error = copy.forwardBatch(trainingData.xdata()).subtract(trainingData.ydata());
+        int N = error.length();
+        int ceil = Ceiling.intValueExact(Sqrt.FUNCTION.apply(RealScalar.of(N)));
+        error = PadRight.zeros(ceil * ceil).apply(error);
+        Tensor matrix = ArrayReshape.of(error, ceil, ceil);
+        Show show = new Show("Error");
+        show.add(ArrayPlot.of(matrix));
+        show.render_autoIndent(graphics, list.get(0));
+      }
+      {
+        NetShows.param(netParamStatTracker).render_autoIndent(graphics, list.get(1));
+        NetShows.loss(netTrain.tloss).render_autoIndent(graphics, list.get(2));
+        NetShows.pMatrix(copy).render_autoIndent(graphics, list.get(3));
       }
     }
   }

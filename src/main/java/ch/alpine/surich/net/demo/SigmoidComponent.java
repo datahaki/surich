@@ -2,15 +2,12 @@
 package ch.alpine.surich.net.demo;
 
 import java.awt.Graphics;
-import java.awt.Point;
 import java.awt.Rectangle;
 import java.util.List;
-import java.util.Objects;
 import java.util.Random;
 import java.util.function.Supplier;
 import java.util.stream.IntStream;
 
-import ch.alpine.bridge.awt.RenderQuality;
 import ch.alpine.bridge.fig.Show;
 import ch.alpine.bridge.fig.plt.DensityPlot;
 import ch.alpine.bridge.fig.plt.ListPlot;
@@ -18,7 +15,6 @@ import ch.alpine.bridge.ref.ann.ReflectionMarker;
 import ch.alpine.subare.net.NetChains;
 import ch.alpine.subare.net.NetLayer;
 import ch.alpine.subare.net.NetLayers;
-import ch.alpine.subare.net.run.NetParamStatTracker;
 import ch.alpine.subare.net.run.NetTrain;
 import ch.alpine.subare.net.run.TrainingData;
 import ch.alpine.surich.net.NetShows;
@@ -46,7 +42,7 @@ class SigmoidComponent implements Supplier<NetTrainComponent> {
   public static final Clip DOMAIN = Clips.absoluteOne();
   public Integer seed = 0;
   public Integer samples = 30;
-  public final OptLinearChain optLinear = new OptLinearChain();
+  public final OptLinearChain optLinearChain = new OptLinearChain();
   public final OptParam optParam = new OptParam();
   public Integer batch_size = 10;
 
@@ -58,7 +54,6 @@ class SigmoidComponent implements Supplier<NetTrainComponent> {
   class InnerComponent extends NetTrainComponent {
     final CoordinateBoundingBox cbb = CoordinateBoundingBox.of(DOMAIN, DOMAIN);
     final TrainingData trainingData;
-    final NetParamStatTracker netParamStatTracker = new NetParamStatTracker();
     NetTrain netTrain;
 
     public InnerComponent() {
@@ -76,7 +71,7 @@ class SigmoidComponent implements Supplier<NetTrainComponent> {
 
     @Override
     public NetTrainDataBatch createNetTrainDataBatch() {
-      NetLayer netLayer = NetChains.binary(optLinear.create(2, 1));
+      NetLayer netLayer = NetChains.binary(optLinearChain.create(2, 1));
       NetLayers.initialize(netLayer);
       netTrain = new NetTrain(netLayer, optParam.create(netLayer));
       netTrain.addListener(netParamStatTracker);
@@ -85,33 +80,26 @@ class SigmoidComponent implements Supplier<NetTrainComponent> {
     }
 
     @Override
-    protected void paintComponent(Graphics graphics) {
-      NetLayer copy = InnerComponent.this.copy;
-      if (Objects.nonNull(copy)) {
-        {
-          RenderQuality.setQuality(graphics);
-          NetShows.layers(graphics, new Point(), copy);
-        }
-        List<Rectangle> list = rectangles(4);
-        {
-          Show show = new Show();
-          ScalarBinaryOperator sbo = (x, y) -> (Scalar) copy.forward(Tensors.of(x, y));
-          Clip clip = Clips.operator(RealScalar.of(1.2)::multiply).apply(DOMAIN);
-          CoordinateBoundingBox cbb = CoordinateBoundingBox.of(clip, clip);
-          show.add(DensityPlot.of(sbo, cbb, ColorDataGradients.COPPER));
-          Tensor xdata = trainingData.xdata();
-          Tensor ydata = trainingData.ydata();
-          Tensor p0 = Tensor.of(IntStream.range(0, xdata.length()).filter(i -> Scalars.isZero(ydata.Get(i))).mapToObj(xdata::get));
-          Tensor p1 = Tensor.of(IntStream.range(0, xdata.length()).filter(i -> !Scalars.isZero(ydata.Get(i))).mapToObj(xdata::get));
-          show.add(ListPlot.of(p0));
-          show.add(ListPlot.of(p1));
-          show.render_autoIndent(graphics, list.get(0));
-        }
-        {
-          NetShows.param(netParamStatTracker).render_autoIndent(graphics, list.get(1));
-          NetShows.loss(netTrain.tloss).render_autoIndent(graphics, list.get(2));
-          NetShows.pMatrix(copy).render_autoIndent(graphics, list.get(3));
-        }
+    protected void paintComponent(Graphics graphics, NetLayer copy) {
+      List<Rectangle> list = rectangles(4);
+      {
+        Show show = new Show();
+        ScalarBinaryOperator sbo = (x, y) -> (Scalar) copy.forward(Tensors.of(x, y));
+        Clip clip = Clips.operator(RealScalar.of(1.2)::multiply).apply(DOMAIN);
+        CoordinateBoundingBox cbb = CoordinateBoundingBox.of(clip, clip);
+        show.add(DensityPlot.of(sbo, cbb, ColorDataGradients.COPPER));
+        Tensor xdata = trainingData.xdata();
+        Tensor ydata = trainingData.ydata();
+        Tensor p0 = Tensor.of(IntStream.range(0, xdata.length()).filter(i -> Scalars.isZero(ydata.Get(i))).mapToObj(xdata::get));
+        Tensor p1 = Tensor.of(IntStream.range(0, xdata.length()).filter(i -> !Scalars.isZero(ydata.Get(i))).mapToObj(xdata::get));
+        show.add(ListPlot.of(p0));
+        show.add(ListPlot.of(p1));
+        show.render_autoIndent(graphics, list.get(0));
+      }
+      {
+        NetShows.param(netParamStatTracker).render_autoIndent(graphics, list.get(1));
+        NetShows.loss(netTrain.tloss).render_autoIndent(graphics, list.get(2));
+        NetShows.pMatrix(copy).render_autoIndent(graphics, list.get(3));
       }
     };
   }

@@ -2,14 +2,11 @@
 package ch.alpine.surich.net.demo;
 
 import java.awt.Graphics;
-import java.awt.Point;
 import java.awt.Rectangle;
 import java.util.List;
-import java.util.Objects;
 import java.util.Random;
 import java.util.function.Supplier;
 
-import ch.alpine.bridge.awt.RenderQuality;
 import ch.alpine.bridge.fig.Show;
 import ch.alpine.bridge.fig.plt.DensityPlot;
 import ch.alpine.bridge.fig.plt.ListPlot;
@@ -18,7 +15,6 @@ import ch.alpine.bridge.ref.ann.ReflectionMarker;
 import ch.alpine.subare.net.NetChains;
 import ch.alpine.subare.net.NetLayer;
 import ch.alpine.subare.net.NetLayers;
-import ch.alpine.subare.net.run.NetParamStatTracker;
 import ch.alpine.subare.net.run.NetTrain;
 import ch.alpine.subare.net.run.TrainingData;
 import ch.alpine.surich.net.NetShows;
@@ -65,7 +61,6 @@ class Interp2Component implements Supplier<NetTrainComponent> {
   class InnerComponent extends NetTrainComponent {
     final TensorUnaryOperator truth;
     final TrainingData trainingData;
-    final NetParamStatTracker netParamStatTracker = new NetParamStatTracker();
     NetTrain netTrain;
 
     public InnerComponent() {
@@ -95,41 +90,34 @@ class Interp2Component implements Supplier<NetTrainComponent> {
     }
 
     @Override
-    protected void paintComponent(Graphics graphics) {
-      NetLayer copy = InnerComponent.this.copy;
-      if (Objects.nonNull(copy)) {
-        CoordinateBoundingBox cbb = CoordinateBoundingBox.of(DOMAIN, DOMAIN);
-        Clip clip = Clips.operator(RealScalar.of(1.2)::multiply).apply(DOMAIN);
-        CoordinateBoundingBox ext = CoordinateBoundingBox.of(clip, clip);
-        {
-          RenderQuality.setQuality(graphics);
-          NetShows.layers(graphics, new Point(), copy);
-        }
-        List<Rectangle> list = rectangles(6);
-        {
-          Show show = new Show("function");
-          ScalarBinaryOperator sbo = (x, y) -> (Scalar) truth.apply(Tensors.of(x, y));
-          show.add(DensityPlot.of(sbo, ext, CDG));
-          show.add(PolygonPlot.of(cbb));
-          show.add(ListPlot.of(trainingData.xdata()));
-          show.render_autoIndent(graphics, list.get(0));
-        }
-        {
-          Show show = new Show("error");
-          ScalarBinaryOperator sbo = (x, y) -> {
-            Tensor p = Unprotect.using(List.of(x, y));
-            return (Scalar) copy.forward(p).subtract(truth.apply(p));
-          };
-          show.add(DensityPlot.of(sbo, ext, CDG));
-          show.add(PolygonPlot.of(cbb));
-          show.add(ListPlot.of(trainingData.xdata()));
-          show.render_autoIndent(graphics, list.get(1));
-        }
-        {
-          NetShows.param(netParamStatTracker).render_autoIndent(graphics, list.get(2));
-          NetShows.loss(netTrain.tloss).render_autoIndent(graphics, list.get(3));
-          NetShows.pMatrix(copy).render_autoIndent(graphics, list.get(4));
-        }
+    protected void paintComponent(Graphics graphics, NetLayer copy) {
+      CoordinateBoundingBox cbb = CoordinateBoundingBox.of(DOMAIN, DOMAIN);
+      Clip clip = Clips.operator(RealScalar.of(1.2)::multiply).apply(DOMAIN);
+      CoordinateBoundingBox ext = CoordinateBoundingBox.of(clip, clip);
+      List<Rectangle> list = rectangles(6);
+      {
+        Show show = new Show("function");
+        ScalarBinaryOperator sbo = (x, y) -> (Scalar) truth.apply(Tensors.of(x, y));
+        show.add(DensityPlot.of(sbo, ext, CDG));
+        show.add(PolygonPlot.of(cbb));
+        show.add(ListPlot.of(trainingData.xdata()));
+        show.render_autoIndent(graphics, list.get(0));
+      }
+      {
+        Show show = new Show("error");
+        ScalarBinaryOperator sbo = (x, y) -> {
+          Tensor p = Unprotect.using(List.of(x, y));
+          return (Scalar) copy.forward(p).subtract(truth.apply(p));
+        };
+        show.add(DensityPlot.of(sbo, ext, CDG));
+        show.add(PolygonPlot.of(cbb));
+        show.add(ListPlot.of(trainingData.xdata()));
+        show.render_autoIndent(graphics, list.get(1));
+      }
+      {
+        NetShows.param(netParamStatTracker).render_autoIndent(graphics, list.get(2));
+        NetShows.loss(netTrain.tloss).render_autoIndent(graphics, list.get(3));
+        NetShows.pMatrix(copy).render_autoIndent(graphics, list.get(4));
       }
     };
   }
