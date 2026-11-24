@@ -8,7 +8,9 @@ import java.util.Random;
 import java.util.function.Supplier;
 import java.util.stream.IntStream;
 
+import ch.alpine.bridge.col.HuePalette;
 import ch.alpine.bridge.fig.Show;
+import ch.alpine.bridge.fig.Showable;
 import ch.alpine.bridge.fig.plt.DensityPlot;
 import ch.alpine.bridge.fig.plt.ListPlot;
 import ch.alpine.bridge.fig.plt.PolygonPlot;
@@ -28,7 +30,8 @@ import ch.alpine.tensor.RealScalar;
 import ch.alpine.tensor.Scalar;
 import ch.alpine.tensor.Tensor;
 import ch.alpine.tensor.Tensors;
-import ch.alpine.tensor.col.ColorDataGradients;
+import ch.alpine.tensor.col.ColorDataIndexed;
+import ch.alpine.tensor.col.ColorDataLists;
 import ch.alpine.tensor.opt.nd.BoxRandomSample;
 import ch.alpine.tensor.opt.nd.CoordinateBoundingBox;
 import ch.alpine.tensor.pdf.RandomSample;
@@ -46,6 +49,9 @@ class ClassifyComponent implements Supplier<NetTrainComponent> {
   public final OptLinearChain optLinear = new OptLinearChain();
   public final OptParam optParam = new OptParam();
   public Integer batch_size = 6;
+  public ColorDataLists cdl = ColorDataLists._097;
+  public Scalar sat = RealScalar.of(0.5);
+  public Scalar val = RealScalar.of(0.5);
 
   @Override
   public NetTrainComponent get() {
@@ -72,7 +78,7 @@ class ClassifyComponent implements Supplier<NetTrainComponent> {
 
     @Override
     public NetTrainDataBatch createNetTrainDataBatch() {
-      NetModel netModel = NetModels.argMax(optLinear.create(2, 3));
+      NetModel netModel = NetModels.argMax(optLinear.create(2, labels));
       NetLayer netLayer = netModel.netLayer();
       NetLayers.initialize(netLayer);
       netTrain = new NetTrain(netModel, optParam.create(netLayer));
@@ -86,18 +92,20 @@ class ClassifyComponent implements Supplier<NetTrainComponent> {
       NetLayer netLayer = netModel.netLayer();
       List<Rectangle> list = rectangles(4);
       {
+        ColorDataIndexed cdi = cdl.cyclic();
+        ColorDataIndexed cdb = HuePalette.of(cdi).create(sat, val);
         Clip eval = Clips.operator(RealScalar.of(1.2)::multiply).apply(DOMAIN);
         CoordinateBoundingBox ext = CoordinateBoundingBox.of(eval, eval);
         Show show = new Show();
-        ColorDataGradients cdg = ColorDataGradients.COPPER;
-        show.add(DensityPlot.of((x, y) -> (Scalar) netLayer.forward(Tensors.of(x, y)), ext, cdg));
+        show.add(DensityPlot.of((x, y) -> (Scalar) netLayer.forward(Tensors.of(x, y)), ext, cdb));
         Tensor xdata = trainingData.xdata();
         Tensor ydata = trainingData.ydata();
         for (int k = 0; k < labels; ++k) {
           Scalar label = RealScalar.of(k);
           Tensor p0 = Tensor.of(IntStream.range(0, xdata.length()) //
               .filter(i -> ydata.Get(i).equals(label)).mapToObj(xdata::get));
-          show.add(ListPlot.of(p0));
+          Showable showable = show.add(ListPlot.of(p0));
+          showable.setColor(cdi.getColor(k));
         }
         show.add(PolygonPlot.of(cbb)).setAlpha(64);
         show.render_autoIndent(graphics, list.get(0));
