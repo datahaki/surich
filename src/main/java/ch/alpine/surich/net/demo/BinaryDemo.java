@@ -7,17 +7,18 @@ import java.util.List;
 import java.util.function.Supplier;
 import java.util.stream.IntStream;
 
+import ch.alpine.bridge.col.HuePalette;
 import ch.alpine.bridge.fig.Show;
 import ch.alpine.bridge.fig.plt.DensityPlot;
 import ch.alpine.bridge.fig.plt.ListPlot;
 import ch.alpine.bridge.ref.ann.ReflectionMarker;
-import ch.alpine.subare.net.NetChains;
 import ch.alpine.subare.net.NetLayer;
 import ch.alpine.subare.net.NetLayers;
 import ch.alpine.subare.net.NetModel;
-import ch.alpine.subare.net.err.SquaredErrorLoss;
+import ch.alpine.subare.net.NetModels;
 import ch.alpine.subare.net.run.NetTrain;
 import ch.alpine.subare.net.run.TrainingData;
+import ch.alpine.surich.net.BaseNetDemo;
 import ch.alpine.surich.net.NetShows;
 import ch.alpine.surich.net.NetTrainComponent;
 import ch.alpine.surich.net.NetTrainDataBatch;
@@ -29,7 +30,8 @@ import ch.alpine.tensor.Scalars;
 import ch.alpine.tensor.Tensor;
 import ch.alpine.tensor.Tensors;
 import ch.alpine.tensor.api.ScalarBinaryOperator;
-import ch.alpine.tensor.col.ColorDataGradients;
+import ch.alpine.tensor.col.ColorDataIndexed;
+import ch.alpine.tensor.col.ColorDataLists;
 import ch.alpine.tensor.opt.nd.BoxRandomSample;
 import ch.alpine.tensor.opt.nd.CoordinateBoundingBox;
 import ch.alpine.tensor.pdf.RandomSample;
@@ -37,15 +39,34 @@ import ch.alpine.tensor.pdf.RandomVariate;
 import ch.alpine.tensor.pdf.d.BernoulliDistribution;
 import ch.alpine.tensor.sca.Clip;
 import ch.alpine.tensor.sca.Clips;
+import ch.alpine.tensor.sca.UnitStep;
 
 @ReflectionMarker
-class SigmoidComponent implements Supplier<NetTrainComponent> {
+class BinaryDemo extends BaseNetDemo {
+  // parameters of supplier are introduced to the gui
+  public final Supplier<NetTrainComponent> supplier = new BinaryComponent();
+
+  @Override
+  protected Supplier<NetTrainComponent> supplier() {
+    return supplier;
+  }
+
+  static void main() {
+    new BinaryDemo().runStandalone();
+  }
+}
+
+@ReflectionMarker
+class BinaryComponent implements Supplier<NetTrainComponent> {
   public static final Clip DOMAIN = Clips.absoluteOne();
   public Integer seed = 0;
   public Integer samples = 30;
   public final OptLinearChain optLinearChain = new OptLinearChain();
   public final OptParam optParam = new OptParam();
   public Integer batch_size = 10;
+  public ColorDataLists cdl = ColorDataLists._097;
+  public Scalar sat = RealScalar.of(0.5);
+  public Scalar val = RealScalar.of(0.5);
 
   @Override
   public NetTrainComponent get() {
@@ -72,9 +93,10 @@ class SigmoidComponent implements Supplier<NetTrainComponent> {
 
     @Override
     public NetTrainDataBatch createNetTrainDataBatch() {
-      NetLayer netLayer = NetChains.binary(optLinearChain.create(2, 1));
+      NetModel netModel = NetModels.logits(optLinearChain.create(2, 1));
+      NetLayer netLayer = netModel.netLayer();
       NetLayers.initialize(netLayer, randomGenerator);
-      netTrain = new NetTrain(new NetModel(netLayer, SquaredErrorLoss.INSTANCE), optParam.create(netLayer));
+      netTrain = new NetTrain(netModel, optParam.create(netLayer));
       netTrain.addListener(netParamStatTracker);
       netTrain.addListener(this);
       return new NetTrainDataBatch(netTrain, trainingData, batch_size);
@@ -85,17 +107,19 @@ class SigmoidComponent implements Supplier<NetTrainComponent> {
       NetLayer netLayer = netModel.netLayer();
       List<Rectangle> list = rectangles(4);
       {
+        ColorDataIndexed cdi = cdl.cyclic();
+        ColorDataIndexed cdb = HuePalette.of(cdi).create(sat, val);
         Show show = new Show();
-        ScalarBinaryOperator sbo = (x, y) -> (Scalar) netLayer.forward(Tensors.of(x, y));
+        ScalarBinaryOperator sbo = (x, y) -> (Scalar) netLayer.forward(Tensors.of(x, y)).maps(UnitStep.FUNCTION);
         Clip clip = Clips.operator(RealScalar.of(1.2)::multiply).apply(DOMAIN);
         CoordinateBoundingBox cbb = CoordinateBoundingBox.of(clip, clip);
-        show.add(DensityPlot.of(sbo, cbb, ColorDataGradients.COPPER));
+        show.add(DensityPlot.of(sbo, cbb, cdb));
         Tensor xdata = trainingData.xdata();
         Tensor ydata = trainingData.ydata();
         Tensor p0 = Tensor.of(IntStream.range(0, xdata.length()).filter(i -> Scalars.isZero(ydata.Get(i))).mapToObj(xdata::get));
         Tensor p1 = Tensor.of(IntStream.range(0, xdata.length()).filter(i -> !Scalars.isZero(ydata.Get(i))).mapToObj(xdata::get));
-        show.add(ListPlot.of(p0));
-        show.add(ListPlot.of(p1));
+        show.add(ListPlot.of(p0)).setColor(cdi.getColor(0));
+        show.add(ListPlot.of(p1)).setColor(cdi.getColor(1));
         show.render_autoIndent(graphics, list.get(0));
       }
       {
