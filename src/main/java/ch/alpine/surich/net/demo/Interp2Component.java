@@ -4,7 +4,6 @@ package ch.alpine.surich.net.demo;
 import java.awt.Graphics;
 import java.awt.Rectangle;
 import java.util.List;
-import java.util.Random;
 import java.util.function.Supplier;
 
 import ch.alpine.bridge.fig.Show;
@@ -66,11 +65,11 @@ class Interp2Component implements Supplier<NetTrainComponent> {
     NetTrain netTrain;
 
     public InnerComponent() {
-      Random random = new Random(seed);
-      Tensor disY = RandomVariate.of(NormalDistribution.standard(), random, variability, variability);
+      super(seed);
+      Tensor disY = RandomVariate.of(NormalDistribution.standard(), randomGenerator, variability, variability);
       Interpolation interpolation = BSplineInterpolation.of(3, disY);
       ScalarUnaryOperator lin = LinearInterpolation.of(Clips.positive(variability - 1));
-      Tensor xdata = RandomVariate.of(UniformDistribution.of(DOMAIN), random, samples, 2);
+      Tensor xdata = RandomVariate.of(UniformDistribution.of(DOMAIN), randomGenerator, samples, 2);
       truth = xy -> interpolation.get(xy.maps(s -> lin.apply(DOMAIN.rescale(s))));
       Tensor ydata = Slash.of(xdata, truth);
       trainingData = new TrainingData(xdata, ydata);
@@ -84,7 +83,7 @@ class Interp2Component implements Supplier<NetTrainComponent> {
     @Override
     public NetTrainDataBatch createNetTrainDataBatch() {
       NetLayer netLayer = NetChain.join(optLinear.create(2, 1), ScalarLayer.VectorToScalar);
-      NetLayers.initialize(netLayer);
+      NetLayers.initialize(netLayer, randomGenerator);
       netTrain = new NetTrain(new NetModel(netLayer, SquaredErrorLoss.INSTANCE), optParam.create(netLayer));
       netTrain.addListener(netParamStatTracker);
       netTrain.addListener(this);

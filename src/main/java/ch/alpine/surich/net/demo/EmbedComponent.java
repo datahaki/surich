@@ -57,6 +57,7 @@ class EmbedComponent implements Supplier<NetTrainComponent> {
     NetTrain netTrain;
 
     public InnerComponent() {
+      super(0);
       Tensor xdata = Tuples.of(Range.of(0, V), S);
       Tensor ydata = Tensor.of(xdata.stream().map(OrderedQ::of).map(Boole::of));
       // assignment of random labels to points
@@ -72,7 +73,7 @@ class EmbedComponent implements Supplier<NetTrainComponent> {
     public NetTrainDataBatch createNetTrainDataBatch() {
       NetLayer inner = NetChains.linear(between, S * D, 16, 8, 1);
       NetLayer netLayer = NetChains.binary(NetChains.embedding(V, D, inner));
-      NetLayers.initialize(netLayer);
+      NetLayers.initialize(netLayer, randomGenerator);
       NetModel netModel = new NetModel(netLayer, SquaredErrorLoss.INSTANCE);
       netTrain = new NetTrain(netModel, optParam.create(netLayer));
       netTrain.addListener(netParamStatTracker);

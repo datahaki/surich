@@ -4,7 +4,6 @@ package ch.alpine.surich.net.demo;
 import java.awt.Graphics;
 import java.awt.Rectangle;
 import java.util.List;
-import java.util.Random;
 import java.util.function.Supplier;
 
 import ch.alpine.bridge.fig.Show;
@@ -69,9 +68,9 @@ class FeatureComponent implements Supplier<NetTrainComponent> {
     NetTrain netTrain;
 
     public InnerComponent() {
-      Random random = new Random(seed);
-      Tensor X = RandomVariate.of(UniformDistribution.of(DOMAIN), random, samples, 1);
-      Tensor I = RandomVariate.of(DiscreteUniformDistribution.forArray(V), random, samples, 1);
+      super(seed);
+      Tensor X = RandomVariate.of(UniformDistribution.of(DOMAIN), randomGenerator, samples, 1);
+      Tensor I = RandomVariate.of(DiscreteUniformDistribution.forArray(V), randomGenerator, samples, 1);
       Tensor xdata = Join.of(1, X, I);
       Tensor ydata = Slash.of(xdata, //
           xi -> featureFunc.create(xi.Get(1).number().intValue()).apply(xi.Get(0)));
@@ -96,7 +95,7 @@ class FeatureComponent implements Supplier<NetTrainComponent> {
           embed, //
           optLinear.create(d_emb(), 1), //
           ScalarLayer.VectorToScalar);
-      NetLayers.initialize(netLayer);
+      NetLayers.initialize(netLayer, randomGenerator);
       netTrain = new NetTrain(new NetModel(netLayer, SquaredErrorLoss.INSTANCE), optParam.create(netLayer));
       netTrain.addListener(netParamStatTracker);
       netTrain.addListener(this);

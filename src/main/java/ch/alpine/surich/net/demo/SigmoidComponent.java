@@ -4,7 +4,6 @@ package ch.alpine.surich.net.demo;
 import java.awt.Graphics;
 import java.awt.Rectangle;
 import java.util.List;
-import java.util.Random;
 import java.util.function.Supplier;
 import java.util.stream.IntStream;
 
@@ -59,11 +58,11 @@ class SigmoidComponent implements Supplier<NetTrainComponent> {
     NetTrain netTrain;
 
     public InnerComponent() {
-      Random random = new Random(seed);
+      super(seed);
       // assignment of random labels to points
       trainingData = new TrainingData( //
-          RandomSample.of(new BoxRandomSample(cbb), random, samples), //
-          RandomVariate.of(BernoulliDistribution.of(0.5), random, samples));
+          RandomSample.of(new BoxRandomSample(cbb), randomGenerator, samples), //
+          RandomVariate.of(BernoulliDistribution.of(0.5), randomGenerator, samples));
     }
 
     @Override
@@ -74,7 +73,7 @@ class SigmoidComponent implements Supplier<NetTrainComponent> {
     @Override
     public NetTrainDataBatch createNetTrainDataBatch() {
       NetLayer netLayer = NetChains.binary(optLinearChain.create(2, 1));
-      NetLayers.initialize(netLayer);
+      NetLayers.initialize(netLayer, randomGenerator);
       netTrain = new NetTrain(new NetModel(netLayer, SquaredErrorLoss.INSTANCE), optParam.create(netLayer));
       netTrain.addListener(netParamStatTracker);
       netTrain.addListener(this);

@@ -4,7 +4,6 @@ package ch.alpine.surich.net.demo;
 import java.awt.Graphics;
 import java.awt.Rectangle;
 import java.util.List;
-import java.util.Random;
 import java.util.function.Supplier;
 
 import ch.alpine.bridge.fig.Show;
@@ -58,7 +57,7 @@ class SwiGLUClassifyComponent implements Supplier<NetTrainComponent> {
     NetTrain netTrain;
 
     public InnerComponent() {
-      Random random = new Random(seed);
+      super(seed);
       // assignment of random labels to points
       Distribution radiusClass0 = UniformDistribution.of(0.0, 0.7);
       Distribution radiusClass1 = UniformDistribution.of(1.0, 1.7);
@@ -66,8 +65,8 @@ class SwiGLUClassifyComponent implements Supplier<NetTrainComponent> {
       Tensor Y = Tensors.reserve(samples);
       for (int i = 0; i < samples; ++i) {
         boolean label = labelFunc(i);
-        double r = RandomVariate.of(label ? radiusClass0 : radiusClass1, random).number().doubleValue();
-        double theta = RandomVariate.of(angleDist, random).number().doubleValue();
+        double r = RandomVariate.of(label ? radiusClass0 : radiusClass1, randomGenerator).number().doubleValue();
+        double theta = RandomVariate.of(angleDist, randomGenerator).number().doubleValue();
         double x0 = r * Math.cos(theta);
         double x1 = r * Math.sin(theta);
         if (label) {
@@ -92,7 +91,7 @@ class SwiGLUClassifyComponent implements Supplier<NetTrainComponent> {
       NetModel netModel2 = new NetModel(optLinear.swiGLU(2, 2), SquaredErrorLoss.INSTANCE);
       NetModel netModel = netModel2;
       NetLayer netLayer = netModel.netLayer();
-      NetLayers.initialize(netLayer);
+      NetLayers.initialize(netLayer, randomGenerator);
       netTrain = new NetTrain(netModel, optParam.create(netLayer));
       netTrain.addListener(netParamStatTracker);
       netTrain.addListener(this);

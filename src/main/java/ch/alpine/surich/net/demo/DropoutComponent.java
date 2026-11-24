@@ -4,7 +4,6 @@ package ch.alpine.surich.net.demo;
 import java.awt.Graphics;
 import java.awt.Rectangle;
 import java.util.List;
-import java.util.Random;
 import java.util.function.Supplier;
 
 import ch.alpine.bridge.fig.Show;
@@ -56,11 +55,11 @@ class DropoutComponent implements Supplier<NetTrainComponent> {
     NetTrain netTrain;
 
     public InnerComponent() {
-      Random random = new Random(seed);
-      Tensor disY = RandomVariate.of(NormalDistribution.standard(), random, variability);
+      super(seed);
+      Tensor disY = RandomVariate.of(NormalDistribution.standard(), randomGenerator, variability);
       ScalarTensorFunction stf = BSplineFunctionString.of(3, disY);
       ScalarUnaryOperator lin = LinearInterpolation.of(Clips.positive(variability - 1));
-      Tensor xdata = RandomVariate.of(UniformDistribution.of(DOMAIN), random, samples);
+      Tensor xdata = RandomVariate.of(UniformDistribution.of(DOMAIN), randomGenerator, samples);
       truth = s -> (Scalar) stf.apply(lin.apply(DOMAIN.rescale(s)));
       Tensor ydata = xdata.maps(truth);
       trainingData = new TrainingData(xdata, ydata);
@@ -74,7 +73,7 @@ class DropoutComponent implements Supplier<NetTrainComponent> {
     @Override
     public NetTrainDataBatch createNetTrainDataBatch() {
       NetLayer netLayer = optLinear.asSUO();
-      NetLayers.initialize(netLayer);
+      NetLayers.initialize(netLayer, randomGenerator);
       netTrain = new NetTrain(new NetModel(netLayer, errorType.lossFunction), optParam.create(netLayer));
       netTrain.addListener(netParamStatTracker);
       netTrain.addListener(this);

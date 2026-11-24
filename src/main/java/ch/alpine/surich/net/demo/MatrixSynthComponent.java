@@ -4,7 +4,6 @@ package ch.alpine.surich.net.demo;
 import java.awt.Graphics;
 import java.awt.Rectangle;
 import java.util.List;
-import java.util.Random;
 import java.util.function.Supplier;
 
 import ch.alpine.bridge.fig.Show;
@@ -66,11 +65,11 @@ class MatrixSynthComponent implements Supplier<NetTrainComponent> {
     NetTrain netTrain;
 
     public InnerComponent() {
-      Random random = new Random(seed);
+      super(seed);
       NetLayer netLayer = create();
-      NetLayers.initialize(netLayer);
-      Tensor xdata = RandomVariate.of(UniformDistribution.of(-1, 1), random, samples, dim0);
-      Tensor noise = RandomVariate.of(NormalDistribution.of(noise_sigma.zero(), noise_sigma), random, samples, 1);
+      NetLayers.initialize(netLayer, randomGenerator);
+      Tensor xdata = RandomVariate.of(UniformDistribution.of(-1, 1), randomGenerator, samples, dim0);
+      Tensor noise = RandomVariate.of(NormalDistribution.of(noise_sigma.zero(), noise_sigma), randomGenerator, samples, 1);
       Tensor ydata = netLayer.forwardBatch(xdata).add(noise);
       trainingData = new TrainingData(xdata, ydata);
     }
@@ -83,7 +82,7 @@ class MatrixSynthComponent implements Supplier<NetTrainComponent> {
     @Override
     public NetTrainDataBatch createNetTrainDataBatch() {
       NetLayer netLayer = create();
-      NetLayers.initialize(netLayer);
+      NetLayers.initialize(netLayer, randomGenerator);
       netTrain = new NetTrain( //
           new NetModel(netLayer, SquaredErrorLoss.INSTANCE), //
           optParam.create(netLayer));

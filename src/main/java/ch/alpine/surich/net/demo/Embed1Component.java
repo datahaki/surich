@@ -52,6 +52,7 @@ class Embed1Component implements Supplier<NetTrainComponent> {
     NetTrain netTrain;
 
     public InnerComponent() {
+      super(0);
       Tensor value = Range.of(0, V);
       Tensor xdata = value.maps(Tensors::of);
       Tensor ydata = value.maps(v -> Boole.of(v.number().intValue() % 2 == 0));
@@ -71,7 +72,7 @@ class Embed1Component implements Supplier<NetTrainComponent> {
           new ScalarEmbeddingLayer(V, D), //
           inner));
       NetModel netModel = new NetModel(netLayer, SquaredErrorLoss.INSTANCE);
-      NetLayers.initialize(netLayer);
+      NetLayers.initialize(netLayer, randomGenerator);
       netTrain = new NetTrain(netModel, optParam.create(netLayer));
       netTrain.addListener(netParamStatTracker);
       netTrain.addListener(this);

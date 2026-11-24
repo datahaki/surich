@@ -4,7 +4,6 @@ package ch.alpine.surich.net.demo;
 import java.awt.Graphics;
 import java.awt.Rectangle;
 import java.util.List;
-import java.util.Random;
 import java.util.function.Supplier;
 
 import ch.alpine.bridge.fig.Show;
@@ -68,9 +67,9 @@ class SwiGLUInterp2Component implements Supplier<NetTrainComponent> {
     NetTrain netTrain;
 
     public InnerComponent() {
-      Random random = new Random(seed);
+      super(seed);
       Distribution dist = UniformDistribution.of(DOMAIN);
-      Tensor X = RandomVariate.of(dist, random, samples, 2);
+      Tensor X = RandomVariate.of(dist, randomGenerator, samples, 2);
       Tensor Y = Slash.of(X, x -> truth(x));
       trainingData = new TrainingData(X, Y);
     }
@@ -89,7 +88,7 @@ class SwiGLUInterp2Component implements Supplier<NetTrainComponent> {
           ScalarLayer.VectorToScalar), //
           SquaredErrorLoss.INSTANCE);
       NetLayer netLayer = netModel.netLayer();
-      NetLayers.initialize(netLayer);
+      NetLayers.initialize(netLayer, randomGenerator);
       netTrain = new NetTrain(netModel, optParam.create(netLayer));
       netTrain.addListener(netParamStatTracker);
       netTrain.addListener(this);

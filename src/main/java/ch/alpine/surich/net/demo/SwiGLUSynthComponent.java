@@ -4,7 +4,6 @@ package ch.alpine.surich.net.demo;
 import java.awt.Graphics;
 import java.awt.Rectangle;
 import java.util.List;
-import java.util.Random;
 import java.util.function.Supplier;
 
 import ch.alpine.bridge.ref.ann.ReflectionMarker;
@@ -53,10 +52,10 @@ class SwiGLUSynthComponent implements Supplier<NetTrainComponent> {
     NetTrain netTrain;
 
     public InnerComponent() {
-      Random random = new Random(seed);
+      super(seed);
       NetLayer netLayer = create();
-      NetLayers.initialize(netLayer);
-      Tensor xdata = RandomVariate.of(UniformDistribution.of(-1, 1), random, samples, dim0);
+      NetLayers.initialize(netLayer, randomGenerator);
+      Tensor xdata = RandomVariate.of(UniformDistribution.of(-1, 1), randomGenerator, samples, dim0);
       Tensor ydata = netLayer.forwardBatch(xdata);
       trainingData = new TrainingData(xdata, ydata);
     }
@@ -69,7 +68,7 @@ class SwiGLUSynthComponent implements Supplier<NetTrainComponent> {
     @Override
     public NetTrainDataBatch createNetTrainDataBatch() {
       NetLayer netLayer = create();
-      NetLayers.initialize(netLayer);
+      NetLayers.initialize(netLayer, randomGenerator);
       netTrain = new NetTrain( //
           new NetModel(netLayer, SquaredErrorLoss.INSTANCE), //
           optParam.create(netLayer));

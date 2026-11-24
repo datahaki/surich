@@ -4,7 +4,6 @@ package ch.alpine.surich.net.demo;
 import java.awt.Graphics;
 import java.awt.Rectangle;
 import java.util.List;
-import java.util.Random;
 import java.util.function.Supplier;
 import java.util.stream.IntStream;
 
@@ -64,11 +63,11 @@ class ClassifyComponent implements Supplier<NetTrainComponent> {
     NetTrain netTrain;
 
     public InnerComponent() {
-      Random random = new Random(seed);
+      super(seed);
       // assignment of random labels to points
       trainingData = new TrainingData( //
-          RandomSample.of(new BoxRandomSample(cbb), random, samples), //
-          RandomVariate.of(DiscreteUniformDistribution.forArray(labels), random, samples));
+          RandomSample.of(new BoxRandomSample(cbb), randomGenerator, samples), //
+          RandomVariate.of(DiscreteUniformDistribution.forArray(labels), randomGenerator, samples));
     }
 
     @Override
@@ -80,7 +79,7 @@ class ClassifyComponent implements Supplier<NetTrainComponent> {
     public NetTrainDataBatch createNetTrainDataBatch() {
       NetModel netModel = NetModels.softmax_argMax(optLinear.create(2, labels));
       NetLayer netLayer = netModel.netLayer();
-      NetLayers.initialize(netLayer);
+      NetLayers.initialize(netLayer, randomGenerator);
       netTrain = new NetTrain(netModel, optParam.create(netLayer));
       netTrain.addListener(netParamStatTracker);
       netTrain.addListener(this);

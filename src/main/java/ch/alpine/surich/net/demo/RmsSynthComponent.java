@@ -4,7 +4,6 @@ package ch.alpine.surich.net.demo;
 import java.awt.Graphics;
 import java.awt.Rectangle;
 import java.util.List;
-import java.util.Random;
 import java.util.function.Supplier;
 
 import ch.alpine.bridge.fig.Show;
@@ -62,12 +61,12 @@ class RmsSynthComponent implements Supplier<NetTrainComponent> {
     NetTrain netTrain;
 
     public InnerComponent() {
-      Random random = new Random(seed);
+      super(seed);
       RMSLinear rmsLinear = RMSLinear.create();
       NetLayer netLayer = rmsLinear.consolidate();
-      NetLayers.initialize(netLayer);
-      Tensor xdata = RandomVariate.of(DiscreteUniformDistribution.of(-3, 10), random, samples, 3);
-      Tensor noise = RandomVariate.of(NormalDistribution.of(noise_sigma.zero(), noise_sigma), random, samples);
+      NetLayers.initialize(netLayer, randomGenerator);
+      Tensor xdata = RandomVariate.of(DiscreteUniformDistribution.of(-3, 10), randomGenerator, samples, 3);
+      Tensor noise = RandomVariate.of(NormalDistribution.of(noise_sigma.zero(), noise_sigma), randomGenerator, samples);
       Tensor ydata = netLayer.forwardBatch(xdata).add(noise);
       trainingData = new TrainingData(xdata, ydata);
     }
@@ -82,7 +81,7 @@ class RmsSynthComponent implements Supplier<NetTrainComponent> {
       RMSLinear rmsLinear = RMSLinear.create();
       NetLayer netLayer = rmsLinear.consolidate();
       NetModel netModel = new NetModel(netLayer, SquaredErrorLoss.INSTANCE);
-      NetLayers.initialize(netLayer);
+      NetLayers.initialize(netLayer, randomGenerator);
       netTrain = new NetTrain(netModel, optParam.create(netLayer));
       netTrain.addListener(netParamStatTracker);
       netTrain.addListener(this);

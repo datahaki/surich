@@ -7,6 +7,8 @@ import java.awt.Point;
 import java.awt.Rectangle;
 import java.util.List;
 import java.util.Objects;
+import java.util.random.RandomGenerator;
+import java.util.random.RandomGeneratorFactory;
 
 import javax.swing.JComponent;
 
@@ -28,6 +30,11 @@ public abstract class NetTrainComponent extends JComponent implements NetTrainLi
   protected final NetParamStatTracker netParamStatTracker = new NetParamStatTracker();
   private volatile boolean running = true;
   private NetModel copy;
+  protected final RandomGenerator randomGenerator;
+
+  public NetTrainComponent(int seed) {
+    randomGenerator = RandomGeneratorFactory.of("L64X256MixRandom").create(seed);
+  }
 
   public abstract OptParam optParam();
 

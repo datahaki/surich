@@ -106,10 +106,10 @@ class SwiGLUInterp1Component implements Supplier<NetTrainComponent> {
     NetTrain netTrain;
 
     public InnerComponent() {
-      Random random = new Random(seed);
+      super(seed);
       Clip clip = Clips.absolute(domain);
       Distribution dist = UniformDistribution.of(clip);
-      Tensor X = RandomVariate.of(dist, random, samples);
+      Tensor X = RandomVariate.of(dist, randomGenerator, samples);
       Tensor Y = X.maps(swiGluFunc);
       trainingData = new TrainingData(X, Y);
     }
