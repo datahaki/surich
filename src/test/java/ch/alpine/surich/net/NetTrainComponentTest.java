@@ -1,7 +1,6 @@
 // code by jph
 package ch.alpine.surich.net;
 
-import java.util.List;
 import java.util.stream.Stream;
 
 import org.junit.jupiter.api.DynamicTest;
@@ -9,8 +8,8 @@ import org.junit.jupiter.api.TestFactory;
 
 import ch.alpine.bridge.cgr.InstanceDiscovery;
 import ch.alpine.bridge.cgr.InstanceRecord;
-import ch.alpine.subare.net.NetLayer;
-import ch.alpine.subare.net.NetLayers;
+import ch.alpine.subare.net.NetModel;
+import ch.alpine.subare.net.NetModels;
 import ch.alpine.subare.net.run.NetTrain;
 
 /* point_wise
@@ -29,9 +28,7 @@ class NetTrainComponentTest {
     netTrainComponent.setSize(200, 200);
     NetTrainDataBatch netTrainDataBatch = netTrainComponent.createNetTrainDataBatch();
     NetTrain netTrain = netTrainDataBatch.netTrain();
-    NetLayer netLayer = netTrain.netModel().netLayer();
-    IO.println(instanceRecord.friendly() + "================");
-    List<String> list = NetLayers.toString(netLayer);
-    list.forEach(IO::println);
+    NetModel netModel = netTrain.netModel();
+    NetModels.toString(netModel);
   }
 }

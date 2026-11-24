@@ -70,7 +70,6 @@ class Embed1Component implements Supplier<NetTrainComponent> {
       NetLayer netLayer = NetChains.binary(NetChain.join( //
           new ScalarEmbeddingLayer(V, D), //
           inner));
-      NetLayers.toString(netLayer).forEach(IO::println);
       NetModel netModel = new NetModel(netLayer, SquaredErrorLoss.INSTANCE);
       NetLayers.initialize(netLayer);
       netTrain = new NetTrain(netModel, optParam.create(netLayer));
