@@ -35,7 +35,7 @@ class ResidualDemo implements ManipulateProvider {
 
   @Override
   public Container getContainer() {
-    NetModel netModel = NetModels.argMax( //
+    NetModel netModel = NetModels.softmax_argMax( //
         new ResidualLayer(NetChains.linear(ElementwiseLayers.GELU, dinout, hidden, dinout)));
     NetLayer netLayer = netModel.netLayer();
     NetLayers.initialize(netLayer);

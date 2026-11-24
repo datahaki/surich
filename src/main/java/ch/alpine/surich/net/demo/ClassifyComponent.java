@@ -55,15 +55,15 @@ class ClassifyComponent implements Supplier<NetTrainComponent> {
 
   @Override
   public NetTrainComponent get() {
-    return new Interp1TrainComponent();
+    return new InnerComponent();
   }
 
-  class Interp1TrainComponent extends NetTrainComponent {
+  class InnerComponent extends NetTrainComponent {
     final CoordinateBoundingBox cbb = CoordinateBoundingBox.of(DOMAIN, DOMAIN);
     final TrainingData trainingData;
     NetTrain netTrain;
 
-    public Interp1TrainComponent() {
+    public InnerComponent() {
       Random random = new Random(seed);
       // assignment of random labels to points
       trainingData = new TrainingData( //
@@ -78,7 +78,7 @@ class ClassifyComponent implements Supplier<NetTrainComponent> {
 
     @Override
     public NetTrainDataBatch createNetTrainDataBatch() {
-      NetModel netModel = NetModels.argMax(optLinear.create(2, labels));
+      NetModel netModel = NetModels.softmax_argMax(optLinear.create(2, labels));
       NetLayer netLayer = netModel.netLayer();
       NetLayers.initialize(netLayer);
       netTrain = new NetTrain(netModel, optParam.create(netLayer));

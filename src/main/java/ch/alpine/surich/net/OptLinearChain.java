@@ -10,6 +10,7 @@ import ch.alpine.subare.net.NetChains;
 import ch.alpine.subare.net.NetLayer;
 import ch.alpine.subare.net.lay.ElementwiseLayers;
 import ch.alpine.subare.net.lay.ScalarLayer;
+import ch.alpine.subare.net.lay.SwiGLULayer;
 import ch.alpine.tensor.RealScalar;
 import ch.alpine.tensor.Scalar;
 import ch.alpine.tensor.Scalars;
@@ -30,6 +31,11 @@ public class OptLinearChain {
       list.add(Scalars.intValueExact(lin_dims.Get(i)));
     list.add(d_out);
     return NetChains.linearWith(list, between, dropout_p);
+  }
+
+  public NetLayer swiGLU(int d_in, int d_out) {
+    int depth = lin_dims.Get(0).number().intValue();
+    return new SwiGLULayer(d_in, depth, d_out);
   }
 
   public NetLayer asSUO() {
