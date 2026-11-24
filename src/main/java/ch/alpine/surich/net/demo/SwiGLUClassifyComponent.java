@@ -13,7 +13,6 @@ import ch.alpine.bridge.ref.ann.ReflectionMarker;
 import ch.alpine.subare.net.NetLayer;
 import ch.alpine.subare.net.NetLayers;
 import ch.alpine.subare.net.NetModel;
-import ch.alpine.subare.net.NetModels;
 import ch.alpine.subare.net.err.SquaredErrorLoss;
 import ch.alpine.subare.net.run.NetTrain;
 import ch.alpine.subare.net.run.TrainingData;

@@ -48,7 +48,6 @@ import ch.alpine.tensor.sca.Clips;
 @ReflectionMarker
 class Interp2Component implements Supplier<NetTrainComponent> {
   private static final Clip DOMAIN = Clips.absoluteOne();
-  private static final ColorDataGradients CDG = ColorDataGradients.COPPER;
   public Integer seed = 0;
   public Integer variability = 5;
   public Integer samples = 50;
@@ -99,10 +98,11 @@ class Interp2Component implements Supplier<NetTrainComponent> {
       Clip clip = Clips.operator(RealScalar.of(1.2)::multiply).apply(DOMAIN);
       CoordinateBoundingBox ext = CoordinateBoundingBox.of(clip, clip);
       List<Rectangle> list = rectangles(6);
+      ColorDataGradients cdg = ColorDataGradients.COPPER;
       {
         Show show = new Show("function");
         ScalarBinaryOperator sbo = (x, y) -> (Scalar) truth.apply(Tensors.of(x, y));
-        show.add(DensityPlot.of(sbo, ext, CDG));
+        show.add(DensityPlot.of(sbo, ext, cdg));
         show.add(PolygonPlot.of(cbb));
         show.add(ListPlot.of(trainingData.xdata()));
         show.render_autoIndent(graphics, list.get(0));
@@ -113,7 +113,7 @@ class Interp2Component implements Supplier<NetTrainComponent> {
           Tensor p = Unprotect.using(List.of(x, y));
           return (Scalar) netLayer.forward(p).subtract(truth.apply(p));
         };
-        show.add(DensityPlot.of(sbo, ext, CDG));
+        show.add(DensityPlot.of(sbo, ext, cdg));
         show.add(PolygonPlot.of(cbb));
         show.add(ListPlot.of(trainingData.xdata()));
         show.render_autoIndent(graphics, list.get(1));
