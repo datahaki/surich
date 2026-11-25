@@ -12,7 +12,7 @@ import ch.alpine.bridge.fig.plt.ListPlot;
 import ch.alpine.bridge.fig.plt.Plot;
 import ch.alpine.bridge.ref.ann.ReflectionMarker;
 import ch.alpine.subare.net.lay.FeatureEmbeddingLayer;
-import ch.alpine.subare.net.lay.FeatureEmbeddingLayer.FeatureSlice;
+import ch.alpine.subare.net.lay.Flatten1Layer;
 import ch.alpine.subare.net.lay.IdentityLayer;
 import ch.alpine.subare.net.lay.NetChain;
 import ch.alpine.subare.net.lay.NetLayer;
@@ -20,6 +20,7 @@ import ch.alpine.subare.net.lay.NetLayers;
 import ch.alpine.subare.net.lay.OneHotLayer;
 import ch.alpine.subare.net.lay.ScalarEmbeddingLayer;
 import ch.alpine.subare.net.lay.ScalarLayer;
+import ch.alpine.subare.net.lay.TakeListLayer;
 import ch.alpine.subare.net.los.SquaredErrorLoss;
 import ch.alpine.subare.net.mod.NetModel;
 import ch.alpine.subare.net.run.NetTrain;
@@ -120,17 +121,19 @@ class FeatureComponent implements Supplier<NetTrainComponent> {
     @Override
     public NetTrainDataBatch createNetTrainDataBatch() {
       NetLayer embed = FeatureEmbeddingLayer.of( //
-          new FeatureSlice(1, 1, IdentityLayer.INSTANCE), //
+          IdentityLayer.INSTANCE, //
           oneHot //
-              ? new FeatureSlice(1, V, new OneHotLayer(V))
-              : new FeatureSlice(1, D, new ScalarEmbeddingLayer(V, D)) //
-      );
+              ? new OneHotLayer(V)
+              : new ScalarEmbeddingLayer(V, D));
       NetLayer netLayer = NetChain.join( //
+          new TakeListLayer(1, 1), //
           embed, //
+          new Flatten1Layer(), //
           optLinearChain.create(d_emb(), 1), //
           ScalarLayer.VectorToScalar);
       NetLayers.initialize(netLayer, randomGenerator);
-      netTrain = new NetTrain(new NetModel(netLayer, SquaredErrorLoss.INSTANCE), optParam.create(netLayer));
+      NetModel netModel = new NetModel(netLayer, SquaredErrorLoss.INSTANCE);
+      netTrain = new NetTrain(netModel, optParam.create(netLayer));
       return new NetTrainDataBatch(netTrain, trainingData, batch_size);
     }
 
