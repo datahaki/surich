@@ -96,13 +96,11 @@ class Embed1Component implements Supplier<NetTrainComponent> {
     protected void paintComponent(Graphics graphics, NetModel netModel) {
       NetLayer netLayer = netModel.netLayer();
       List<Rectangle> list = rectangles(1);
-      {
-        Show show = new Show("even");
-        Tensor X = trainingData.xdata();
-        Tensor Y = netLayer.forwardBatch(X).maps(UnitStep.FUNCTION);
-        show.add(ListDiscretePlot.of(Flatten.of(X), Y));
-        show.render_autoIndent(graphics, list.get(0));
-      }
+      Show show = new Show("even");
+      Tensor X = trainingData.xdata();
+      Tensor Y = netLayer.forwardBatch(X).maps(UnitStep.FUNCTION);
+      show.add(ListDiscretePlot.of(Flatten.of(X), Y));
+      show.render_autoIndent(graphics, list.get(0));
     }
   }
 }

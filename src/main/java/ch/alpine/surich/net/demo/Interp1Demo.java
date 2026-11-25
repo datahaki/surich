@@ -99,16 +99,14 @@ class Interp1Component implements Supplier<NetTrainComponent> {
     protected void paintComponent(Graphics graphics, NetModel netModel) {
       NetLayer netLayer = netModel.netLayer();
       List<Rectangle> list = rectangles(1);
-      {
-        Clip eval = Clips.operator(RealScalar.of(1.5)::multiply).apply(DOMAIN);
-        Show show = new Show("interpolation");
-        show.add(Plot.of(truth, eval));
-        show.add(Plot.of(s -> (Scalar) netLayer.forward(s), eval)).setLabel("gelu");
-        Tensor xdata = trainingData.xdata();
-        Tensor ydata = trainingData.ydata();
-        show.add(ListPlot.of(xdata, ydata));
-        show.render_autoIndent(graphics, list.get(0));
-      }
+      Clip eval = Clips.operator(RealScalar.of(1.5)::multiply).apply(DOMAIN);
+      Show show = new Show("interpolation");
+      show.add(Plot.of(truth, eval));
+      show.add(Plot.of(s -> (Scalar) netLayer.forward(s), eval)).setLabel("gelu");
+      Tensor xdata = trainingData.xdata();
+      Tensor ydata = trainingData.ydata();
+      show.add(ListPlot.of(xdata, ydata));
+      show.render_autoIndent(graphics, list.get(0));
     };
   }
 }

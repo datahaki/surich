@@ -99,16 +99,14 @@ class EmbedComponent implements Supplier<NetTrainComponent> {
     protected void paintComponent(Graphics graphics, NetModel netModel) {
       NetLayer netLayer = netModel.netLayer();
       List<Rectangle> list = rectangles(1);
-      {
-        Tensor error = netLayer.forwardBatch(trainingData.xdata()).maps(UnitStep.FUNCTION).subtract(trainingData.ydata());
-        int N = error.length();
-        int ceil = Ceiling.intValueExact(Sqrt.FUNCTION.apply(RealScalar.of(N)));
-        error = PadRight.zeros(ceil * ceil).apply(error);
-        Tensor matrix = ArrayReshape.of(error, ceil, ceil);
-        Show show = new Show("Error");
-        show.add(ArrayPlot.of(matrix));
-        show.render_autoIndent(graphics, list.get(0));
-      }
+      Tensor error = netLayer.forwardBatch(trainingData.xdata()).maps(UnitStep.FUNCTION).subtract(trainingData.ydata());
+      int N = error.length();
+      int ceil = Ceiling.intValueExact(Sqrt.FUNCTION.apply(RealScalar.of(N)));
+      error = PadRight.zeros(ceil * ceil).apply(error);
+      Tensor matrix = ArrayReshape.of(error, ceil, ceil);
+      Show show = new Show("Error");
+      show.add(ArrayPlot.of(matrix));
+      show.render_autoIndent(graphics, list.get(0));
     }
   }
 }

@@ -103,26 +103,24 @@ class ClassifyComponent implements Supplier<NetTrainComponent> {
     @Override
     protected void paintComponent(Graphics graphics, NetModel netModel) {
       NetLayer netLayer = netModel.netLayer();
-      List<Rectangle> list = rectangles(4);
-      {
-        ColorDataIndexed cdi = cdl.cyclic();
-        ColorDataIndexed cdb = HuePalette.of(cdi).create(sat, val);
-        Clip eval = Clips.operator(RealScalar.of(1.2)::multiply).apply(DOMAIN);
-        CoordinateBoundingBox ext = CoordinateBoundingBox.of(eval, eval);
-        Show show = new Show();
-        show.add(DensityPlot.of((x, y) -> (Scalar) netLayer.forward(Tensors.of(x, y)), ext, cdb));
-        Tensor xdata = trainingData.xdata();
-        Tensor ydata = trainingData.ydata();
-        for (int k = 0; k < labels; ++k) {
-          Scalar label = RealScalar.of(k);
-          Tensor p0 = Tensor.of(IntStream.range(0, xdata.length()) //
-              .filter(i -> ydata.Get(i).equals(label)).mapToObj(xdata::get));
-          Showable showable = show.add(ListPlot.of(p0));
-          showable.setColor(cdi.getColor(k));
-        }
-        show.add(PolygonPlot.of(cbb)).setAlpha(64);
-        show.render_autoIndent(graphics, list.get(0));
+      List<Rectangle> list = rectangles(1);
+      ColorDataIndexed cdi = cdl.cyclic();
+      ColorDataIndexed cdb = HuePalette.of(cdi).create(sat, val);
+      Clip eval = Clips.operator(RealScalar.of(1.2)::multiply).apply(DOMAIN);
+      CoordinateBoundingBox ext = CoordinateBoundingBox.of(eval, eval);
+      Show show = new Show();
+      show.add(DensityPlot.of((x, y) -> (Scalar) netLayer.forward(Tensors.of(x, y)), ext, cdb));
+      Tensor xdata = trainingData.xdata();
+      Tensor ydata = trainingData.ydata();
+      for (int k = 0; k < labels; ++k) {
+        Scalar label = RealScalar.of(k);
+        Tensor p0 = Tensor.of(IntStream.range(0, xdata.length()) //
+            .filter(i -> ydata.Get(i).equals(label)).mapToObj(xdata::get));
+        Showable showable = show.add(ListPlot.of(p0));
+        showable.setColor(cdi.getColor(k));
       }
+      show.add(PolygonPlot.of(cbb)).setAlpha(64);
+      show.render_autoIndent(graphics, list.get(0));
     };
   }
 }

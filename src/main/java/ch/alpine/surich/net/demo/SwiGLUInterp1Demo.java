@@ -156,13 +156,11 @@ class SwiGLUInterp1Component implements Supplier<NetTrainComponent> {
       Clip ext = Clips.operator(RealScalar.of(1.2)::multiply).apply(clip);
       NetLayer netLayer = netModel.netLayer();
       List<Rectangle> list = rectangles(1);
-      {
-        Show show = new Show("function");
-        show.add(Plot.of(swiGluFunc, ext)).setLabel("truth");
-        show.add(Plot.of(x -> (Scalar) netLayer.forward(x), ext)).setLabel("net.forward");
-        show.add(ListPlot.of(trainingData.xdata(), trainingData.ydata())).setLabel("training data");
-        show.render_autoIndent(graphics, list.get(0));
-      }
+      Show show = new Show("function");
+      show.add(Plot.of(swiGluFunc, ext)).setLabel("truth");
+      show.add(Plot.of(x -> (Scalar) netLayer.forward(x), ext)).setLabel("net.forward");
+      show.add(ListPlot.of(trainingData.xdata(), trainingData.ydata())).setLabel("training data");
+      show.render_autoIndent(graphics, list.get(0));
     };
   }
 }

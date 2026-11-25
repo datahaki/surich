@@ -98,20 +98,18 @@ class SigmoidComponent implements Supplier<NetTrainComponent> {
     protected void paintComponent(Graphics graphics, NetModel netModel) {
       NetLayer netLayer = netModel.netLayer();
       List<Rectangle> list = rectangles(1);
-      {
-        Show show = new Show();
-        ScalarBinaryOperator sbo = (x, y) -> (Scalar) netLayer.forward(Tensors.of(x, y));
-        Clip clip = Clips.operator(RealScalar.of(1.2)::multiply).apply(DOMAIN);
-        CoordinateBoundingBox cbb = CoordinateBoundingBox.of(clip, clip);
-        show.add(DensityPlot.of(sbo, cbb, ColorDataGradients.COPPER));
-        Tensor xdata = trainingData.xdata();
-        Tensor ydata = trainingData.ydata();
-        Tensor p0 = Tensor.of(IntStream.range(0, xdata.length()).filter(i -> Scalars.isZero(ydata.Get(i))).mapToObj(xdata::get));
-        Tensor p1 = Tensor.of(IntStream.range(0, xdata.length()).filter(i -> !Scalars.isZero(ydata.Get(i))).mapToObj(xdata::get));
-        show.add(ListPlot.of(p0));
-        show.add(ListPlot.of(p1));
-        show.render_autoIndent(graphics, list.get(0));
-      }
+      Show show = new Show();
+      ScalarBinaryOperator sbo = (x, y) -> (Scalar) netLayer.forward(Tensors.of(x, y));
+      Clip clip = Clips.operator(RealScalar.of(1.2)::multiply).apply(DOMAIN);
+      CoordinateBoundingBox cbb = CoordinateBoundingBox.of(clip, clip);
+      show.add(DensityPlot.of(sbo, cbb, ColorDataGradients.COPPER));
+      Tensor xdata = trainingData.xdata();
+      Tensor ydata = trainingData.ydata();
+      Tensor p0 = Tensor.of(IntStream.range(0, xdata.length()).filter(i -> Scalars.isZero(ydata.Get(i))).mapToObj(xdata::get));
+      Tensor p1 = Tensor.of(IntStream.range(0, xdata.length()).filter(i -> !Scalars.isZero(ydata.Get(i))).mapToObj(xdata::get));
+      show.add(ListPlot.of(p0));
+      show.add(ListPlot.of(p1));
+      show.render_autoIndent(graphics, list.get(0));
     };
   }
 }

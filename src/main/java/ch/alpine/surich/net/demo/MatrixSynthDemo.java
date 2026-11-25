@@ -109,13 +109,11 @@ class MatrixSynthComponent implements Supplier<NetTrainComponent> {
     protected void paintComponent(Graphics graphics, NetModel netModel) {
       NetLayer netLayer = netModel.netLayer();
       List<Rectangle> list = rectangles(1);
-      {
-        Show show = new Show("error");
-        Tensor Y = netLayer.forwardBatch(trainingData.xdata());
-        Tensor d = Y.subtract(trainingData.ydata());
-        show.add(ListDiscretePlot.of(Range.of(0, d.length()), Flatten.of(d)));
-        show.render_autoIndent(graphics, list.get(0));
-      }
+      Show show = new Show("error");
+      Tensor Y = netLayer.forwardBatch(trainingData.xdata());
+      Tensor d = Y.subtract(trainingData.ydata());
+      show.add(ListDiscretePlot.of(Range.of(0, d.length()), Flatten.of(d)));
+      show.render_autoIndent(graphics, list.get(0));
     };
   }
 }

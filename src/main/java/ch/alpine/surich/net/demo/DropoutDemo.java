@@ -98,15 +98,13 @@ class DropoutComponent implements Supplier<NetTrainComponent> {
     protected void paintComponent(Graphics graphics, NetModel netModel) {
       NetLayer netLayer = netModel.netLayer();
       List<Rectangle> list = rectangles(1);
-      {
-        Show show = new Show("interpolation");
-        show.add(Plot.of(truth, DOMAIN));
-        show.add(Plot.of(s -> (Scalar) netLayer.forward(s), DOMAIN)).setLabel("gelu");
-        Tensor xdata = trainingData.xdata();
-        Tensor ydata = trainingData.ydata();
-        show.add(ListPlot.of(xdata, ydata));
-        show.render_autoIndent(graphics, list.get(0));
-      }
+      Show show = new Show("interpolation");
+      show.add(Plot.of(truth, DOMAIN));
+      show.add(Plot.of(s -> (Scalar) netLayer.forward(s), DOMAIN)).setLabel("gelu");
+      Tensor xdata = trainingData.xdata();
+      Tensor ydata = trainingData.ydata();
+      show.add(ListPlot.of(xdata, ydata));
+      show.render_autoIndent(graphics, list.get(0));
     };
   }
 }

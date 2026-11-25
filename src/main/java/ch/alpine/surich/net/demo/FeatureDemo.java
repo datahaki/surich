@@ -140,19 +140,17 @@ class FeatureComponent implements Supplier<NetTrainComponent> {
     protected void paintComponent(Graphics graphics, NetModel netModel) {
       NetLayer netLayer = netModel.netLayer();
       List<Rectangle> list = rectangles(1);
-      {
-        Clip clip = Clips.operator(RealScalar.of(1.2)::multiply).apply(DOMAIN);
-        Show show = new Show("approximation");
-        show.add(ListPlot.of( //
-            trainingData.xdata().get(Tensor.ALL, 0), //
-            trainingData.ydata())).setAlpha(64);
-        for (int i = 0; i < V; ++i) {
-          Scalar si = RealScalar.of(i);
-          Showable showable = show.add(Plot.of(x -> (Scalar) netLayer.forward(Tensors.of(x, si)), clip));
-          showable.setLabel(featureFunc + "_" + i);
-        }
-        show.render_autoIndent(graphics, list.get(0));
+      Clip clip = Clips.operator(RealScalar.of(1.2)::multiply).apply(DOMAIN);
+      Show show = new Show("approximation");
+      show.add(ListPlot.of( //
+          trainingData.xdata().get(Tensor.ALL, 0), //
+          trainingData.ydata())).setAlpha(64);
+      for (int i = 0; i < V; ++i) {
+        Scalar si = RealScalar.of(i);
+        Showable showable = show.add(Plot.of(x -> (Scalar) netLayer.forward(Tensors.of(x, si)), clip));
+        showable.setLabel(featureFunc + "_" + i);
       }
+      show.render_autoIndent(graphics, list.get(0));
     }
   }
 }
