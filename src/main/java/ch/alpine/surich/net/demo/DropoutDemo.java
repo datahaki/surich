@@ -17,7 +17,6 @@ import ch.alpine.subare.net.run.NetTrain;
 import ch.alpine.subare.net.run.TrainingData;
 import ch.alpine.surich.net.BaseNetDemo;
 import ch.alpine.surich.net.ErrorType;
-import ch.alpine.surich.net.NetShows;
 import ch.alpine.surich.net.NetTrainComponent;
 import ch.alpine.surich.net.NetTrainDataBatch;
 import ch.alpine.surich.net.OptLinearChain;
@@ -68,7 +67,6 @@ class DropoutComponent implements Supplier<NetTrainComponent> {
   class InnerComponent extends NetTrainComponent {
     final ScalarUnaryOperator truth;
     final TrainingData trainingData;
-    NetTrain netTrain;
 
     public InnerComponent() {
       super(seed);
@@ -99,7 +97,7 @@ class DropoutComponent implements Supplier<NetTrainComponent> {
     @Override
     protected void paintComponent(Graphics graphics, NetModel netModel) {
       NetLayer netLayer = netModel.netLayer();
-      List<Rectangle> list = rectangles(4);
+      List<Rectangle> list = rectangles(1);
       {
         Show show = new Show("interpolation");
         show.add(Plot.of(truth, DOMAIN));
@@ -108,11 +106,6 @@ class DropoutComponent implements Supplier<NetTrainComponent> {
         Tensor ydata = trainingData.ydata();
         show.add(ListPlot.of(xdata, ydata));
         show.render_autoIndent(graphics, list.get(0));
-      }
-      {
-        NetShows.param(netParamStatTracker).render_autoIndent(graphics, list.get(1));
-        NetShows.loss(netTrain.tloss).render_autoIndent(graphics, list.get(2));
-        NetShows.pMatrix(netLayer).render_autoIndent(graphics, list.get(3));
       }
     };
   }

@@ -16,7 +16,6 @@ import ch.alpine.subare.net.err.SquaredErrorLoss;
 import ch.alpine.subare.net.run.NetTrain;
 import ch.alpine.subare.net.run.TrainingData;
 import ch.alpine.surich.net.BaseNetDemo;
-import ch.alpine.surich.net.NetShows;
 import ch.alpine.surich.net.NetTrainComponent;
 import ch.alpine.surich.net.NetTrainDataBatch;
 import ch.alpine.surich.net.OptLinearChain;
@@ -70,7 +69,6 @@ class SwiGLUClassifyComponent implements Supplier<NetTrainComponent> {
     final TrainingData trainingData;
     final Tensor X1 = Tensors.reserve(samples / 2);
     final Tensor X2 = Tensors.reserve(samples / 2);
-    NetTrain netTrain;
 
     public InnerComponent() {
       super(seed);
@@ -117,7 +115,7 @@ class SwiGLUClassifyComponent implements Supplier<NetTrainComponent> {
     @Override
     protected void paintComponent(Graphics graphics, NetModel netModel) {
       NetLayer netLayer = netModel.netLayer();
-      List<Rectangle> list = rectangles(6);
+      List<Rectangle> list = rectangles(2);
       {
         Show show = new Show("training samples");
         show.add(ListPlot.of(X1));
@@ -131,11 +129,6 @@ class SwiGLUClassifyComponent implements Supplier<NetTrainComponent> {
         show.add(ListPlot.of(Slash.of(X2, netLayer::forward)));
         show.setAspectRatioOne();
         show.render_autoIndent(graphics, list.get(1));
-      }
-      {
-        NetShows.param(netParamStatTracker).render_autoIndent(graphics, list.get(2));
-        NetShows.loss(netTrain.tloss).render_autoIndent(graphics, list.get(3));
-        NetShows.pMatrix(netLayer).render_autoIndent(graphics, list.get(4));
       }
     };
   }

@@ -18,7 +18,6 @@ import ch.alpine.subare.net.lay.ScalarEmbeddingLayer;
 import ch.alpine.subare.net.run.NetTrain;
 import ch.alpine.subare.net.run.TrainingData;
 import ch.alpine.surich.net.BaseNetDemo;
-import ch.alpine.surich.net.NetShows;
 import ch.alpine.surich.net.NetTrainComponent;
 import ch.alpine.surich.net.NetTrainDataBatch;
 import ch.alpine.surich.net.OptLinearChain;
@@ -65,7 +64,6 @@ class Embed1Component implements Supplier<NetTrainComponent> {
   class InnerComponent extends NetTrainComponent {
     final CoordinateBoundingBox cbb = CoordinateBoundingBox.of(Clips.absolute(2), Clips.absolute(2));
     final TrainingData trainingData;
-    NetTrain netTrain;
 
     public InnerComponent() {
       super(0);
@@ -97,18 +95,13 @@ class Embed1Component implements Supplier<NetTrainComponent> {
     @Override
     protected void paintComponent(Graphics graphics, NetModel netModel) {
       NetLayer netLayer = netModel.netLayer();
-      List<Rectangle> list = rectangles(4);
+      List<Rectangle> list = rectangles(1);
       {
         Show show = new Show("even");
         Tensor X = trainingData.xdata();
         Tensor Y = netLayer.forwardBatch(X).maps(UnitStep.FUNCTION);
         show.add(ListDiscretePlot.of(Flatten.of(X), Y));
         show.render_autoIndent(graphics, list.get(0));
-      }
-      {
-        NetShows.param(netParamStatTracker).render_autoIndent(graphics, list.get(1));
-        NetShows.loss(netTrain.tloss).render_autoIndent(graphics, list.get(2));
-        NetShows.pMatrix(netLayer).render_autoIndent(graphics, list.get(3));
       }
     }
   }

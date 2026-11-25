@@ -21,7 +21,6 @@ import ch.alpine.subare.net.NetModels;
 import ch.alpine.subare.net.run.NetTrain;
 import ch.alpine.subare.net.run.TrainingData;
 import ch.alpine.surich.net.BaseNetDemo;
-import ch.alpine.surich.net.NetShows;
 import ch.alpine.surich.net.NetTrainComponent;
 import ch.alpine.surich.net.NetTrainDataBatch;
 import ch.alpine.surich.net.OptLinearChain;
@@ -76,7 +75,6 @@ class ClassifyComponent implements Supplier<NetTrainComponent> {
   class InnerComponent extends NetTrainComponent {
     final CoordinateBoundingBox cbb = CoordinateBoundingBox.of(DOMAIN, DOMAIN);
     final TrainingData trainingData;
-    NetTrain netTrain;
 
     public InnerComponent() {
       super(seed);
@@ -124,11 +122,6 @@ class ClassifyComponent implements Supplier<NetTrainComponent> {
         }
         show.add(PolygonPlot.of(cbb)).setAlpha(64);
         show.render_autoIndent(graphics, list.get(0));
-      }
-      {
-        NetShows.param(netParamStatTracker).render_autoIndent(graphics, list.get(1));
-        NetShows.loss(netTrain.tloss).render_autoIndent(graphics, list.get(2));
-        NetShows.pMatrix(netLayer).render_autoIndent(graphics, list.get(3));
       }
     };
   }

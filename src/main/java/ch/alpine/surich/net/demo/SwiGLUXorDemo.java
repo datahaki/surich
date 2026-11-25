@@ -1,9 +1,6 @@
 // code by jph
 package ch.alpine.surich.net.demo;
 
-import java.awt.Graphics;
-import java.awt.Rectangle;
-import java.util.List;
 import java.util.function.Supplier;
 
 import ch.alpine.bridge.ref.ann.ReflectionMarker;
@@ -21,7 +18,6 @@ import ch.alpine.subare.net.reg.L2Regularization;
 import ch.alpine.subare.net.run.NetTrain;
 import ch.alpine.subare.net.run.TrainingData;
 import ch.alpine.surich.net.BaseNetDemo;
-import ch.alpine.surich.net.NetShows;
 import ch.alpine.surich.net.NetTrainComponent;
 import ch.alpine.surich.net.NetTrainDataBatch;
 import ch.alpine.surich.net.OptParam;
@@ -67,7 +63,6 @@ class SwiGLUXorComponent implements Supplier<NetTrainComponent> {
 
   class InnerComponent extends NetTrainComponent {
     final TrainingData trainingData;
-    NetTrain netTrain;
 
     public InnerComponent() {
       super(seed);
@@ -110,16 +105,5 @@ class SwiGLUXorComponent implements Supplier<NetTrainComponent> {
       netTrain.addListener(this);
       return new NetTrainDataBatch(netTrain, trainingData, batch_size);
     }
-
-    @Override
-    protected void paintComponent(Graphics graphics, NetModel netModel) {
-      NetLayer netLayer = netModel.netLayer();
-      List<Rectangle> list = rectangles(4);
-      {
-        NetShows.param(netParamStatTracker).render_autoIndent(graphics, list.get(1));
-        NetShows.loss(netTrain.tloss).render_autoIndent(graphics, list.get(2));
-        NetShows.pMatrix(netLayer).render_autoIndent(graphics, list.get(3));
-      }
-    };
   }
 }

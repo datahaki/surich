@@ -20,7 +20,6 @@ import ch.alpine.subare.net.lay.ScalarLayer;
 import ch.alpine.subare.net.run.NetTrain;
 import ch.alpine.subare.net.run.TrainingData;
 import ch.alpine.surich.net.BaseNetDemo;
-import ch.alpine.surich.net.NetShows;
 import ch.alpine.surich.net.NetTrainComponent;
 import ch.alpine.surich.net.NetTrainDataBatch;
 import ch.alpine.surich.net.OptLinearChain;
@@ -78,7 +77,6 @@ class Interp2Component implements Supplier<NetTrainComponent> {
   class InnerComponent extends NetTrainComponent {
     final TensorUnaryOperator truth;
     final TrainingData trainingData;
-    NetTrain netTrain;
 
     public InnerComponent() {
       super(seed);
@@ -112,7 +110,7 @@ class Interp2Component implements Supplier<NetTrainComponent> {
       CoordinateBoundingBox cbb = CoordinateBoundingBox.of(DOMAIN, DOMAIN);
       Clip clip = Clips.operator(RealScalar.of(1.2)::multiply).apply(DOMAIN);
       CoordinateBoundingBox ext = CoordinateBoundingBox.of(clip, clip);
-      List<Rectangle> list = rectangles(6);
+      List<Rectangle> list = rectangles(2);
       ColorDataGradients cdg = ColorDataGradients.COPPER;
       {
         Show show = new Show("function");
@@ -132,11 +130,6 @@ class Interp2Component implements Supplier<NetTrainComponent> {
         show.add(PolygonPlot.of(cbb));
         show.add(ListPlot.of(trainingData.xdata()));
         show.render_autoIndent(graphics, list.get(1));
-      }
-      {
-        NetShows.param(netParamStatTracker).render_autoIndent(graphics, list.get(2));
-        NetShows.loss(netTrain.tloss).render_autoIndent(graphics, list.get(3));
-        NetShows.pMatrix(netLayer).render_autoIndent(graphics, list.get(4));
       }
     };
   }

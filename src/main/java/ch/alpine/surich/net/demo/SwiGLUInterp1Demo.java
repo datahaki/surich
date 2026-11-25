@@ -22,7 +22,6 @@ import ch.alpine.subare.net.reg.L2Regularization;
 import ch.alpine.subare.net.run.NetTrain;
 import ch.alpine.subare.net.run.TrainingData;
 import ch.alpine.surich.net.BaseNetDemo;
-import ch.alpine.surich.net.NetShows;
 import ch.alpine.surich.net.NetTrainComponent;
 import ch.alpine.surich.net.NetTrainDataBatch;
 import ch.alpine.surich.net.OptParam;
@@ -119,7 +118,6 @@ class SwiGLUInterp1Component implements Supplier<NetTrainComponent> {
 
   class InnerComponent extends NetTrainComponent {
     final TrainingData trainingData;
-    NetTrain netTrain;
 
     public InnerComponent() {
       super(seed);
@@ -157,18 +155,13 @@ class SwiGLUInterp1Component implements Supplier<NetTrainComponent> {
       Clip clip = Clips.absolute(domain);
       Clip ext = Clips.operator(RealScalar.of(1.2)::multiply).apply(clip);
       NetLayer netLayer = netModel.netLayer();
-      List<Rectangle> list = rectangles(4);
+      List<Rectangle> list = rectangles(1);
       {
         Show show = new Show("function");
         show.add(Plot.of(swiGluFunc, ext)).setLabel("truth");
         show.add(Plot.of(x -> (Scalar) netLayer.forward(x), ext)).setLabel("net.forward");
         show.add(ListPlot.of(trainingData.xdata(), trainingData.ydata())).setLabel("training data");
         show.render_autoIndent(graphics, list.get(0));
-      }
-      {
-        NetShows.param(netParamStatTracker).render_autoIndent(graphics, list.get(1));
-        NetShows.loss(netTrain.tloss).render_autoIndent(graphics, list.get(2));
-        NetShows.pMatrix(netLayer).render_autoIndent(graphics, list.get(3));
       }
     };
   }

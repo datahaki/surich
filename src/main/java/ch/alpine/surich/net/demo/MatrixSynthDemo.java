@@ -19,7 +19,6 @@ import ch.alpine.subare.net.reg.NoRegularization;
 import ch.alpine.subare.net.run.NetTrain;
 import ch.alpine.subare.net.run.TrainingData;
 import ch.alpine.surich.net.BaseNetDemo;
-import ch.alpine.surich.net.NetShows;
 import ch.alpine.surich.net.NetTrainComponent;
 import ch.alpine.surich.net.NetTrainDataBatch;
 import ch.alpine.surich.net.OptParam;
@@ -78,7 +77,6 @@ class MatrixSynthComponent implements Supplier<NetTrainComponent> {
 
   class InnerComponent extends NetTrainComponent {
     final TrainingData trainingData;
-    NetTrain netTrain;
 
     public InnerComponent() {
       super(seed);
@@ -110,18 +108,13 @@ class MatrixSynthComponent implements Supplier<NetTrainComponent> {
     @Override
     protected void paintComponent(Graphics graphics, NetModel netModel) {
       NetLayer netLayer = netModel.netLayer();
-      List<Rectangle> list = rectangles(3);
+      List<Rectangle> list = rectangles(1);
       {
         Show show = new Show("error");
         Tensor Y = netLayer.forwardBatch(trainingData.xdata());
         Tensor d = Y.subtract(trainingData.ydata());
         show.add(ListDiscretePlot.of(Range.of(0, d.length()), Flatten.of(d)));
         show.render_autoIndent(graphics, list.get(0));
-      }
-      {
-        NetShows.param(netParamStatTracker).render_autoIndent(graphics, list.get(1));
-        NetShows.loss(netTrain.tloss).render_autoIndent(graphics, list.get(2));
-        NetShows.pMatrix(netLayer).render_autoIndent(graphics, list.get(3));
       }
     };
   }

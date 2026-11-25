@@ -31,6 +31,7 @@ public abstract class NetTrainComponent extends JComponent implements NetTrainLi
   private volatile boolean running = true;
   private NetModel copy;
   protected final RandomGenerator randomGenerator;
+  public NetTrain netTrain;
 
   public NetTrainComponent(int seed) {
     randomGenerator = RandomGeneratorFactory.of("L64X256MixRandom").create(seed);
@@ -44,13 +45,25 @@ public abstract class NetTrainComponent extends JComponent implements NetTrainLi
     createNetTrainDataBatch().run();
   }
 
-  protected abstract void paintComponent(Graphics graphics, NetModel copy);
+  protected void paintComponent(Graphics graphics, NetModel copy) {
+  }
+
+  final int inset = 250;
 
   @Override
   protected void paintComponent(Graphics graphics) {
     if (Objects.nonNull(copy)) {
       RenderQuality.setQuality(graphics);
       NetShows.layers(graphics, new Point(), copy);
+      Dimension dimension = getSize();
+      dimension.width -= inset;
+      dimension.height /= 2;
+      List<Rectangle> list = GraphicsGrid.row(3, new Rectangle(new Point(inset, 0), dimension));
+      {
+        NetShows.loss(netTrain.tloss).render_autoIndent(graphics, list.get(0));
+        NetShows.pMatrix(copy.netLayer()).render_autoIndent(graphics, list.get(1));
+        NetShows.param(netParamStatTracker).render_autoIndent(graphics, list.get(2));
+      }
       paintComponent(graphics, copy);
     }
   }
@@ -66,10 +79,9 @@ public abstract class NetTrainComponent extends JComponent implements NetTrainLi
   }
 
   public List<Rectangle> rectangles(int n) {
-    int inset = 250;
     Dimension dimension = getSize();
-    dimension.width -= inset;
-    return GraphicsGrid.rectangles(n, new Rectangle(new Point(inset, 0), dimension));
+    dimension.height /= 2;
+    return GraphicsGrid.row(n, new Rectangle(new Point(0, dimension.height), dimension));
   }
 
   public final void cancel() {
