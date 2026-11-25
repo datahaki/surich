@@ -5,10 +5,10 @@ import java.util.ArrayList;
 import java.util.List;
 
 import ch.alpine.bridge.ref.ann.ReflectionMarker;
-import ch.alpine.subare.net.NetChain;
-import ch.alpine.subare.net.NetChains;
-import ch.alpine.subare.net.NetLayer;
 import ch.alpine.subare.net.lay.ElementwiseLayers;
+import ch.alpine.subare.net.lay.NetChain;
+import ch.alpine.subare.net.lay.NetChains;
+import ch.alpine.subare.net.lay.NetLayer;
 import ch.alpine.subare.net.lay.ScalarLayer;
 import ch.alpine.subare.net.lay.SwiGLULayer;
 import ch.alpine.tensor.RealScalar;

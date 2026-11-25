@@ -4,11 +4,11 @@ package ch.alpine.surich.net.demo;
 import java.util.function.Supplier;
 
 import ch.alpine.bridge.ref.ann.ReflectionMarker;
-import ch.alpine.subare.net.NetLayer;
-import ch.alpine.subare.net.NetLayers;
-import ch.alpine.subare.net.NetModel;
-import ch.alpine.subare.net.err.SquaredErrorLoss;
+import ch.alpine.subare.net.lay.NetLayer;
+import ch.alpine.subare.net.lay.NetLayers;
 import ch.alpine.subare.net.lay.SwiGLULayer;
+import ch.alpine.subare.net.los.SquaredErrorLoss;
+import ch.alpine.subare.net.mod.NetModel;
 import ch.alpine.subare.net.reg.NoRegularization;
 import ch.alpine.subare.net.run.NetTrain;
 import ch.alpine.subare.net.run.TrainingData;

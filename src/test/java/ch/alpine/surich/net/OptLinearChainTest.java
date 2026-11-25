@@ -5,11 +5,11 @@ import static org.junit.jupiter.api.Assertions.assertInstanceOf;
 
 import org.junit.jupiter.api.Test;
 
-import ch.alpine.subare.net.NetLayer;
-import ch.alpine.subare.net.NetLayers;
-import ch.alpine.subare.net.NetLoss;
-import ch.alpine.subare.net.NetModel;
-import ch.alpine.subare.net.err.SquaredErrorLoss;
+import ch.alpine.subare.net.lay.NetLayer;
+import ch.alpine.subare.net.lay.NetLayers;
+import ch.alpine.subare.net.los.NetLoss;
+import ch.alpine.subare.net.los.SquaredErrorLoss;
+import ch.alpine.subare.net.mod.NetModel;
 import ch.alpine.tensor.RealScalar;
 import ch.alpine.tensor.Scalar;
 import ch.alpine.tensor.Tensor;

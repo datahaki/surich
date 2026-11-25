@@ -8,12 +8,12 @@ import org.junit.jupiter.api.TestFactory;
 
 import ch.alpine.bridge.cgr.InstanceDiscovery;
 import ch.alpine.bridge.cgr.InstanceRecord;
-import ch.alpine.subare.net.LossFunction;
-import ch.alpine.subare.net.NetLayer;
-import ch.alpine.subare.net.NetLayers;
-import ch.alpine.subare.net.NetLoss;
-import ch.alpine.subare.net.NetModel;
-import ch.alpine.subare.net.NetModels;
+import ch.alpine.subare.net.lay.NetLayer;
+import ch.alpine.subare.net.lay.NetLayers;
+import ch.alpine.subare.net.los.LossFunction;
+import ch.alpine.subare.net.los.NetLoss;
+import ch.alpine.subare.net.mod.NetModel;
+import ch.alpine.subare.net.mod.NetModels;
 import ch.alpine.subare.net.opt.NetOptimizers;
 import ch.alpine.subare.net.run.NetTrain;
 import ch.alpine.subare.net.run.TrainingData;

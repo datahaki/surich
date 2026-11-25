@@ -8,8 +8,8 @@ import org.junit.jupiter.api.TestFactory;
 
 import ch.alpine.bridge.cgr.InstanceDiscovery;
 import ch.alpine.bridge.cgr.InstanceRecord;
-import ch.alpine.subare.net.NetModel;
-import ch.alpine.subare.net.NetModels;
+import ch.alpine.subare.net.mod.NetModel;
+import ch.alpine.subare.net.mod.NetModels;
 import ch.alpine.subare.net.run.NetTrain;
 
 /* point_wise

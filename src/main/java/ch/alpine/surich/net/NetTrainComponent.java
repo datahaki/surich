@@ -17,7 +17,7 @@ import ch.alpine.bridge.fig.GraphicsGrid;
 import ch.alpine.bridge.ref.ann.ReflectionMarker;
 import ch.alpine.bridge.wdog.SoftWatchdog;
 import ch.alpine.bridge.wdog.Watchdog;
-import ch.alpine.subare.net.NetModel;
+import ch.alpine.subare.net.mod.NetModel;
 import ch.alpine.subare.net.run.NetParamStatTracker;
 import ch.alpine.subare.net.run.NetTrain;
 import ch.alpine.subare.net.run.NetTrainListener;
