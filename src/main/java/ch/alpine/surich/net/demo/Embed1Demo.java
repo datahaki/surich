@@ -30,7 +30,6 @@ import ch.alpine.tensor.num.Boole;
 import ch.alpine.tensor.opt.nd.CoordinateBoundingBox;
 import ch.alpine.tensor.sca.Clip;
 import ch.alpine.tensor.sca.Clips;
-import ch.alpine.tensor.sca.UnitStep;
 
 @ReflectionMarker
 class Embed1Demo extends BaseNetDemo {
@@ -87,8 +86,6 @@ class Embed1Component implements Supplier<NetTrainComponent> {
       NetLayer netLayer = netModel.netLayer();
       NetLayers.initialize(netLayer, randomGenerator);
       netTrain = new NetTrain(netModel, optParam.create(netLayer));
-      netTrain.addListener(netParamStatTracker);
-      netTrain.addListener(this);
       return new NetTrainDataBatch(netTrain, trainingData, batch_size);
     }
 
@@ -98,7 +95,7 @@ class Embed1Component implements Supplier<NetTrainComponent> {
       List<Rectangle> list = rectangles(1);
       Show show = new Show("even");
       Tensor X = trainingData.xdata();
-      Tensor Y = netLayer.forwardBatch(X).maps(UnitStep.FUNCTION);
+      Tensor Y = netLayer.forwardBatch(X);
       show.add(ListDiscretePlot.of(Flatten.of(X), Y));
       show.render_autoIndent(graphics, list.get(0));
     }

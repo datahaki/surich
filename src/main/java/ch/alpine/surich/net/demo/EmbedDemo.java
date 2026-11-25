@@ -33,7 +33,6 @@ import ch.alpine.tensor.opt.nd.CoordinateBoundingBox;
 import ch.alpine.tensor.sca.Ceiling;
 import ch.alpine.tensor.sca.Clip;
 import ch.alpine.tensor.sca.Clips;
-import ch.alpine.tensor.sca.UnitStep;
 import ch.alpine.tensor.sca.pow.Sqrt;
 
 @ReflectionMarker
@@ -90,8 +89,6 @@ class EmbedComponent implements Supplier<NetTrainComponent> {
       NetLayer netLayer = netModel.netLayer();
       NetLayers.initialize(netLayer, randomGenerator);
       netTrain = new NetTrain(netModel, optParam.create(netLayer));
-      netTrain.addListener(netParamStatTracker);
-      netTrain.addListener(this);
       return new NetTrainDataBatch(netTrain, trainingData, batch_size);
     }
 
@@ -99,7 +96,7 @@ class EmbedComponent implements Supplier<NetTrainComponent> {
     protected void paintComponent(Graphics graphics, NetModel netModel) {
       NetLayer netLayer = netModel.netLayer();
       List<Rectangle> list = rectangles(1);
-      Tensor error = netLayer.forwardBatch(trainingData.xdata()).maps(UnitStep.FUNCTION).subtract(trainingData.ydata());
+      Tensor error = netLayer.forwardBatch(trainingData.xdata()).subtract(trainingData.ydata());
       int N = error.length();
       int ceil = Ceiling.intValueExact(Sqrt.FUNCTION.apply(RealScalar.of(N)));
       error = PadRight.zeros(ceil * ceil).apply(error);

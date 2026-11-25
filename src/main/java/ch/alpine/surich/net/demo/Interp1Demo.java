@@ -90,8 +90,6 @@ class Interp1Component implements Supplier<NetTrainComponent> {
       NetLayer netLayer = optLinearChain.asSUO();
       NetLayers.initialize(netLayer, randomGenerator);
       netTrain = new NetTrain(new NetModel(netLayer, errorType.lossFunction), optParam.create(netLayer));
-      netTrain.addListener(netParamStatTracker);
-      netTrain.addListener(this);
       return new NetTrainDataBatch(netTrain, trainingData, batch_size);
     }
 

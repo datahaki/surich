@@ -98,8 +98,6 @@ class BinaryComponent implements Supplier<NetTrainComponent> {
       NetLayer netLayer = netModel.netLayer();
       NetLayers.initialize(netLayer, randomGenerator);
       netTrain = new NetTrain(netModel, optParam.create(netLayer));
-      netTrain.addListener(netParamStatTracker);
-      netTrain.addListener(this);
       return new NetTrainDataBatch(netTrain, trainingData, batch_size);
     }
 

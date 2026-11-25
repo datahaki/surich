@@ -89,8 +89,6 @@ class DropoutComponent implements Supplier<NetTrainComponent> {
       NetLayer netLayer = optLinear.asSUO();
       NetLayers.initialize(netLayer, randomGenerator);
       netTrain = new NetTrain(new NetModel(netLayer, errorType.lossFunction), optParam.create(netLayer));
-      netTrain.addListener(netParamStatTracker);
-      netTrain.addListener(this);
       return new NetTrainDataBatch(netTrain, trainingData, batch_size);
     }
 

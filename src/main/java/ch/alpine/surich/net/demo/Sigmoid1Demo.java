@@ -38,7 +38,7 @@ import ch.alpine.tensor.sca.Clip;
 import ch.alpine.tensor.sca.Clips;
 
 @ReflectionMarker
-class SigmoidDemo extends BaseNetDemo {
+class Sigmoid1Demo extends BaseNetDemo {
   // parameters of supplier are introduced to the gui
   public final Supplier<NetTrainComponent> supplier = new SigmoidComponent();
 
@@ -48,7 +48,7 @@ class SigmoidDemo extends BaseNetDemo {
   }
 
   static void main() {
-    new SigmoidDemo().runStandalone();
+    new Sigmoid1Demo().runStandalone();
   }
 }
 
@@ -89,8 +89,6 @@ class SigmoidComponent implements Supplier<NetTrainComponent> {
       NetLayers.initialize(netLayer, randomGenerator);
       NetModel netModel = NetModels.sigmoid(netLayer);
       netTrain = new NetTrain(netModel, optParam.create(netLayer));
-      netTrain.addListener(netParamStatTracker);
-      netTrain.addListener(this);
       return new NetTrainDataBatch(netTrain, trainingData, batch_size);
     }
 

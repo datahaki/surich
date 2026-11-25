@@ -48,12 +48,12 @@ class ResidualSynthComponent implements Supplier<NetTrainComponent> {
   public static final Clip DOMAIN = Clips.absoluteOne();
   public Integer seed = 0;
   public Integer samples = 200;
+  public Integer batch_size = 20;
   public Integer dim0 = 6;
   public Integer dim1 = 10;
   public Integer dim2 = 3;
   public Scalar noise_sigma = RealScalar.of(0.0001);
   public final OptParam optParam = new OptParam();
-  public Integer batch_size = 20;
 
   @Override
   public NetTrainComponent get() {
@@ -94,8 +94,6 @@ class ResidualSynthComponent implements Supplier<NetTrainComponent> {
       NetLayers.initialize(netLayer, randomGenerator);
       NetModel netModel = new NetModel(netLayer, SquaredErrorLoss.INSTANCE);
       netTrain = new NetTrain(netModel, optParam.create(netLayer));
-      netTrain.addListener(netParamStatTracker);
-      netTrain.addListener(this);
       return new NetTrainDataBatch(netTrain, trainingData, batch_size);
     }
   }

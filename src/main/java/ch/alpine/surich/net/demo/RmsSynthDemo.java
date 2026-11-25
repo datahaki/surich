@@ -10,11 +10,10 @@ import ch.alpine.bridge.fig.Show;
 import ch.alpine.bridge.fig.plt.ListDiscretePlot;
 import ch.alpine.bridge.ref.ann.ReflectionMarker;
 import ch.alpine.subare.net.NetChain;
-import ch.alpine.subare.net.NetChains;
 import ch.alpine.subare.net.NetLayer;
 import ch.alpine.subare.net.NetLayers;
 import ch.alpine.subare.net.NetModel;
-import ch.alpine.subare.net.err.SquaredErrorLoss;
+import ch.alpine.subare.net.NetModels;
 import ch.alpine.subare.net.lay.LinearLayer;
 import ch.alpine.subare.net.lay.RMSLayer;
 import ch.alpine.subare.net.reg.NoRegularization;
@@ -65,9 +64,9 @@ class RmsSynthComponent implements Supplier<NetTrainComponent> {
       return new RMSLinear(new RMSLayer(), new LinearLayer(3, 1));
     }
 
-    NetLayer consolidate() {
+    NetModel consolidate() {
       linearLayer.netRegularization = NoRegularization.INSTANCE;
-      return NetChains.binary(NetChain.join(rmsLayer, linearLayer));
+      return NetModels.sigmoid(NetChain.join(rmsLayer, linearLayer));
     }
   }
 
@@ -77,7 +76,7 @@ class RmsSynthComponent implements Supplier<NetTrainComponent> {
     public InnerComponent() {
       super(seed);
       RMSLinear rmsLinear = RMSLinear.create();
-      NetLayer netLayer = rmsLinear.consolidate();
+      NetLayer netLayer = rmsLinear.consolidate().netLayer();
       NetLayers.initialize(netLayer, randomGenerator);
       Tensor xdata = RandomVariate.of(DiscreteUniformDistribution.of(-3, 10), randomGenerator, samples, 3);
       Tensor noise = RandomVariate.of(NormalDistribution.of(noise_sigma.zero(), noise_sigma), randomGenerator, samples);
@@ -93,12 +92,10 @@ class RmsSynthComponent implements Supplier<NetTrainComponent> {
     @Override
     public NetTrainDataBatch createNetTrainDataBatch() {
       RMSLinear rmsLinear = RMSLinear.create();
-      NetLayer netLayer = rmsLinear.consolidate();
-      NetModel netModel = new NetModel(netLayer, SquaredErrorLoss.INSTANCE);
+      NetModel netModel = rmsLinear.consolidate();
+      NetLayer netLayer = netModel.netLayer();
       NetLayers.initialize(netLayer, randomGenerator);
       netTrain = new NetTrain(netModel, optParam.create(netLayer));
-      netTrain.addListener(netParamStatTracker);
-      netTrain.addListener(this);
       return new NetTrainDataBatch(netTrain, trainingData, batch_size);
     }
 

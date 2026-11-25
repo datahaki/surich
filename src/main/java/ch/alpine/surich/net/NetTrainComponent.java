@@ -27,7 +27,7 @@ import ch.alpine.tensor.qty.Quantity;
 @ReflectionMarker
 public abstract class NetTrainComponent extends JComponent implements NetTrainListener {
   private final Watchdog watchdog = SoftWatchdog.barking(Quantity.of(50, "ms"));
-  protected final NetParamStatTracker netParamStatTracker = new NetParamStatTracker();
+  private final NetParamStatTracker netParamStatTracker = new NetParamStatTracker();
   private volatile boolean running = true;
   private NetModel copy;
   protected final RandomGenerator randomGenerator;
@@ -42,7 +42,10 @@ public abstract class NetTrainComponent extends JComponent implements NetTrainLi
   public abstract NetTrainDataBatch createNetTrainDataBatch();
 
   public final void runAsBatches() {
-    createNetTrainDataBatch().run();
+    NetTrainDataBatch netTrainDataBatch = createNetTrainDataBatch();
+    netTrain.addListener(netParamStatTracker);
+    netTrain.addListener(this);
+    netTrainDataBatch.run();
   }
 
   protected void paintComponent(Graphics graphics, NetModel copy) {

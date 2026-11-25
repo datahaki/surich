@@ -145,8 +145,6 @@ class SwiGLUInterp1Component implements Supplier<NetTrainComponent> {
       NetLayer netLayer = netModel.netLayer();
       NetLayers.initialize(netLayer, new Random(seed));
       netTrain = new NetTrain(netModel, optParam.create(netLayer));
-      netTrain.addListener(netParamStatTracker);
-      netTrain.addListener(this);
       return new NetTrainDataBatch(netTrain, trainingData, batch_size);
     }
 
