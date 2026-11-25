@@ -12,7 +12,6 @@ import ch.alpine.subare.net.err.BinaryCrossEntropy;
 import ch.alpine.subare.net.lay.ElementwiseLayers;
 import ch.alpine.subare.net.lay.LinearLayer;
 import ch.alpine.subare.net.lay.ScalarLayer;
-import ch.alpine.subare.net.lay.SigmoidWithLogitsLayer;
 import ch.alpine.subare.net.lay.SwiGLULayer;
 import ch.alpine.subare.net.reg.L2Regularization;
 import ch.alpine.subare.net.run.NetTrain;
@@ -85,7 +84,6 @@ class SwiGLUXorComponent implements Supplier<NetTrainComponent> {
       LinearLayer linearLayer2 = new LinearLayer(2, 1);
       linearLayer2.netRegularization = L2Regularization.of(l2);
       swiGLULayer.netRegularization = L2Regularization.of(l2);
-      SigmoidWithLogitsLayer sigmoidLayer = new SigmoidWithLogitsLayer();
       NetModel netModel = new NetModel(NetChain.join( //
           linearLayer1, //
           ElementwiseLayers.TANH.get(),
