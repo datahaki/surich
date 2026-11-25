@@ -13,6 +13,7 @@ import ch.alpine.subare.net.NetLayer;
 import ch.alpine.subare.net.NetLayers;
 import ch.alpine.subare.net.NetLoss;
 import ch.alpine.subare.net.NetModel;
+import ch.alpine.subare.net.NetModels;
 import ch.alpine.subare.net.opt.NetOptimizers;
 import ch.alpine.subare.net.run.NetTrain;
 import ch.alpine.subare.net.run.TrainingData;
@@ -57,6 +58,7 @@ class BaseNetDemoTest {
       NetTrainDataBatch netTrainDataBatch = netTrainComponent.createNetTrainDataBatch();
       NetTrain netTrain = netTrainDataBatch.netTrain();
       NetModel netModel = netTrain.netModel();
+      NetModels.toString(netModel);
       NetLayer netLayer = netModel.netLayer();
       LossFunction lossFunction = netModel.lossFunction();
       TrainingData trainingData = netTrainDataBatch.trainingData();

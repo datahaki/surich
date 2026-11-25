@@ -100,7 +100,7 @@ class SwiGLUXorComponent implements Supplier<NetTrainComponent> {
       // , //
       // sigmoidLayer
       ), //
-          BinaryCrossEntropy.INSTANCE
+          BinaryCrossEntropy.SCALAR
       // sigmoidLayer.crossEntropyLoss()
       );
       NetLayer netLayer = netModel.netLayer();

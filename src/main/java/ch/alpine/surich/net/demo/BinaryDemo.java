@@ -27,19 +27,21 @@ import ch.alpine.surich.net.OptParam;
 import ch.alpine.tensor.RealScalar;
 import ch.alpine.tensor.Scalar;
 import ch.alpine.tensor.Scalars;
+import ch.alpine.tensor.Slash;
 import ch.alpine.tensor.Tensor;
 import ch.alpine.tensor.Tensors;
 import ch.alpine.tensor.api.ScalarBinaryOperator;
+import ch.alpine.tensor.api.TensorScalarFunction;
 import ch.alpine.tensor.col.ColorDataIndexed;
 import ch.alpine.tensor.col.ColorDataLists;
+import ch.alpine.tensor.num.Boole;
 import ch.alpine.tensor.opt.nd.BoxRandomSample;
 import ch.alpine.tensor.opt.nd.CoordinateBoundingBox;
 import ch.alpine.tensor.pdf.RandomSample;
-import ch.alpine.tensor.pdf.RandomVariate;
-import ch.alpine.tensor.pdf.d.BernoulliDistribution;
 import ch.alpine.tensor.sca.Clip;
 import ch.alpine.tensor.sca.Clips;
 import ch.alpine.tensor.sca.UnitStep;
+import ch.alpine.tensor.sca.tri.Sin;
 
 @ReflectionMarker
 class BinaryDemo extends BaseNetDemo {
@@ -81,9 +83,11 @@ class BinaryComponent implements Supplier<NetTrainComponent> {
     public InnerComponent() {
       super(seed);
       // assignment of random labels to points
-      trainingData = new TrainingData( //
-          RandomSample.of(new BoxRandomSample(cbb), randomGenerator, samples), //
-          RandomVariate.of(BernoulliDistribution.of(0.5), randomGenerator, samples));
+      Tensor X = RandomSample.of(new BoxRandomSample(cbb), randomGenerator, samples);
+      TensorScalarFunction tsf = xy -> Boole.of(Scalars.lessEquals(xy.Get(1), //
+          RealScalar.of(0.6).multiply(Sin.FUNCTION.apply(xy.Get(0).multiply(RealScalar.of(8)))) //
+      ));
+      trainingData = new TrainingData(X, Slash.of(X, tsf));
     }
 
     @Override
@@ -116,10 +120,13 @@ class BinaryComponent implements Supplier<NetTrainComponent> {
         show.add(DensityPlot.of(sbo, cbb, cdb));
         Tensor xdata = trainingData.xdata();
         Tensor ydata = trainingData.ydata();
-        Tensor p0 = Tensor.of(IntStream.range(0, xdata.length()).filter(i -> Scalars.isZero(ydata.Get(i))).mapToObj(xdata::get));
-        Tensor p1 = Tensor.of(IntStream.range(0, xdata.length()).filter(i -> !Scalars.isZero(ydata.Get(i))).mapToObj(xdata::get));
-        show.add(ListPlot.of(p0)).setColor(cdi.getColor(0));
-        show.add(ListPlot.of(p1)).setColor(cdi.getColor(1));
+        for (int i = 0; i < 2; ++i) {
+          Scalar label = RealScalar.of(i);
+          Tensor points = Tensor.of(IntStream.range(0, xdata.length()) //
+              .filter(j -> ydata.Get(j).equals(label)) //
+              .mapToObj(xdata::get));
+          show.add(ListPlot.of(points)).setColor(cdi.getColor(i));
+        }
         show.render_autoIndent(graphics, list.get(0));
       }
       {

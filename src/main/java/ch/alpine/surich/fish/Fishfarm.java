@@ -15,7 +15,7 @@ import ch.alpine.tensor.alg.Range;
 import ch.alpine.tensor.sca.Clip;
 import ch.alpine.tensor.sca.Clips;
 import ch.alpine.tensor.sca.Round;
-import ch.alpine.tensor.sca.exp.DLogisticSigmoid;
+import ch.alpine.tensor.sca.exp.LogisticSigmoid;
 
 class Fishfarm extends DeterministicStandardModel implements MonteCarloInterface {
   public final Scalar TERMINAL_LIMIT;
@@ -68,7 +68,7 @@ class Fishfarm extends DeterministicStandardModel implements MonteCarloInterface
     Scalar max_half = max.multiply(RealScalar.of(0.5)); // n/2
     Scalar factor = RealScalar.of(8).divide(max);
     Scalar x = population.subtract(max_half).multiply(factor); // x-n/2
-    Scalar res = DLogisticSigmoid.FUNCTION.apply(x);
+    Scalar res = LogisticSigmoid.DERIVATIVE.apply(x);
     return Round.FUNCTION.apply(res.multiply(max));
   }
 
