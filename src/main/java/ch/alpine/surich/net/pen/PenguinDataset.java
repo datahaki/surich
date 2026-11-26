@@ -1,12 +1,8 @@
 // code by jph
 package ch.alpine.surich.net.pen;
 
-import java.io.IOException;
-import java.nio.file.Path;
-
 import ch.alpine.surich.net.DatasetBuilder;
 import ch.alpine.tensor.Tensor;
-import ch.alpine.tensor.Unprotect;
 import ch.alpine.tensor.io.Import;
 import ch.alpine.tensor.qty.Unit;
 
@@ -16,13 +12,7 @@ public enum PenguinDataset {
   public final DatasetBuilder builder;
 
   private PenguinDataset() {
-    Tensor tensor = null;
-    try {
-      Path path = Unprotect.resourcePath("ch/alpine/surich/net/pen/penguins.csv");
-      tensor = Import.of(path);
-    } catch (IOException e) {
-      e.printStackTrace();
-    }
+    Tensor tensor = Import.of("ch/alpine/surich/net/pen/penguins.csv");
     builder = DatasetBuilder.of(tensor);
     builder.encode(0); // species
     builder.encode(1); // island
