@@ -35,6 +35,7 @@ public abstract class BaseNetDemo implements ManipulateProvider {
         executorService.submit(() -> {
           try {
             netTrainComponent.runAsBatches(optParam, batch_size);
+            netTrainComponent.cancel();
           } catch (Exception exception) {
             exception.printStackTrace();
           }

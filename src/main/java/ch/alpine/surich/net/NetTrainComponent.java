@@ -57,7 +57,7 @@ public abstract class NetTrainComponent extends JComponent implements NetTrainLi
   final int inset = 250;
 
   @Override
-  protected void paintComponent(Graphics graphics) {
+  protected final void paintComponent(Graphics graphics) {
     NetModel copy = ferry;
     if (Objects.nonNull(copy)) {
       RenderQuality.setQuality(graphics);
