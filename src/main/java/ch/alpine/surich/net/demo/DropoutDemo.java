@@ -11,7 +11,6 @@ import ch.alpine.bridge.fig.plt.ListPlot;
 import ch.alpine.bridge.fig.plt.Plot;
 import ch.alpine.bridge.ref.ann.ReflectionMarker;
 import ch.alpine.subare.net.lay.NetLayer;
-import ch.alpine.subare.net.lay.NetLayers;
 import ch.alpine.subare.net.mod.NetModel;
 import ch.alpine.subare.net.run.NetTrain;
 import ch.alpine.subare.net.run.TrainingData;
@@ -87,7 +86,6 @@ class DropoutComponent implements Supplier<NetTrainComponent> {
     @Override
     public NetTrainDataBatch createNetTrainDataBatch() {
       NetLayer netLayer = optLinear.asSUO();
-      NetLayers.initialize(netLayer, randomGenerator);
       netTrain = new NetTrain(new NetModel(netLayer, errorType.lossFunction), optParam.create(netLayer));
       return new NetTrainDataBatch(netTrain, trainingData, batch_size);
     }

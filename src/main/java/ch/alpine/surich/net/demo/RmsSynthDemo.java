@@ -10,10 +10,10 @@ import ch.alpine.bridge.fig.Show;
 import ch.alpine.bridge.fig.plt.ListDiscretePlot;
 import ch.alpine.bridge.ref.ann.ReflectionMarker;
 import ch.alpine.subare.net.lay.LinearLayer;
-import ch.alpine.subare.net.lay.NetChain;
 import ch.alpine.subare.net.lay.NetLayer;
 import ch.alpine.subare.net.lay.NetLayers;
 import ch.alpine.subare.net.lay.RMSLayer;
+import ch.alpine.subare.net.lay.ScalarLayer;
 import ch.alpine.subare.net.mod.NetModel;
 import ch.alpine.subare.net.mod.NetModels;
 import ch.alpine.subare.net.reg.NoRegularization;
@@ -66,7 +66,10 @@ class RmsSynthComponent implements Supplier<NetTrainComponent> {
 
     NetModel consolidate() {
       linearLayer.netRegularization = NoRegularization.INSTANCE;
-      return NetModels.sigmoid(NetChain.join(rmsLayer, linearLayer));
+      return NetModels.sigmoid( //
+          rmsLayer, //
+          linearLayer, //
+          ScalarLayer.VectorToScalar);
     }
   }
 
@@ -94,7 +97,6 @@ class RmsSynthComponent implements Supplier<NetTrainComponent> {
       RMSLinear rmsLinear = RMSLinear.create();
       NetModel netModel = rmsLinear.consolidate();
       NetLayer netLayer = netModel.netLayer();
-      NetLayers.initialize(netLayer, randomGenerator);
       netTrain = new NetTrain(netModel, optParam.create(netLayer));
       return new NetTrainDataBatch(netTrain, trainingData, batch_size);
     }

@@ -12,7 +12,7 @@ import ch.alpine.bridge.ref.ann.ReflectionMarker;
 import ch.alpine.subare.net.lay.ElementwiseLayers;
 import ch.alpine.subare.net.lay.NetChains;
 import ch.alpine.subare.net.lay.NetLayer;
-import ch.alpine.subare.net.lay.NetLayers;
+import ch.alpine.subare.net.lay.ScalarLayer;
 import ch.alpine.subare.net.mod.NetModel;
 import ch.alpine.subare.net.mod.NetModels;
 import ch.alpine.subare.net.run.NetTrain;
@@ -85,9 +85,10 @@ class EmbedComponent implements Supplier<NetTrainComponent> {
     @Override
     public NetTrainDataBatch createNetTrainDataBatch() {
       NetLayer inner = NetChains.linear(between, S * D, 16, 8, 1);
-      NetModel netModel = NetModels.logits(NetChains.embedding(V, D, inner));
+      NetModel netModel = NetModels.logits( //
+          NetChains.embedding(V, D, inner), //
+          ScalarLayer.VectorToScalar);
       NetLayer netLayer = netModel.netLayer();
-      NetLayers.initialize(netLayer, randomGenerator);
       netTrain = new NetTrain(netModel, optParam.create(netLayer));
       return new NetTrainDataBatch(netTrain, trainingData, batch_size);
     }

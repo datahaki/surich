@@ -10,7 +10,6 @@ import ch.alpine.bridge.fig.Show;
 import ch.alpine.bridge.fig.plt.ListPlot;
 import ch.alpine.bridge.ref.ann.ReflectionMarker;
 import ch.alpine.subare.net.lay.NetLayer;
-import ch.alpine.subare.net.lay.NetLayers;
 import ch.alpine.subare.net.los.SquaredErrorLoss;
 import ch.alpine.subare.net.mod.NetModel;
 import ch.alpine.subare.net.run.NetTrain;
@@ -105,7 +104,6 @@ class SwiGLUClassifyComponent implements Supplier<NetTrainComponent> {
       NetModel netModel2 = new NetModel(optLinear.swiGLU(2, 2), SquaredErrorLoss.INSTANCE);
       NetModel netModel = netModel2;
       NetLayer netLayer = netModel.netLayer();
-      NetLayers.initialize(netLayer, randomGenerator);
       netTrain = new NetTrain(netModel, optParam.create(netLayer));
       return new NetTrainDataBatch(netTrain, trainingData, batch_size);
     }

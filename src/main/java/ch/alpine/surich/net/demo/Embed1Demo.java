@@ -9,10 +9,9 @@ import java.util.function.Supplier;
 import ch.alpine.bridge.fig.Show;
 import ch.alpine.bridge.fig.plt.ListDiscretePlot;
 import ch.alpine.bridge.ref.ann.ReflectionMarker;
-import ch.alpine.subare.net.lay.NetChain;
 import ch.alpine.subare.net.lay.NetLayer;
-import ch.alpine.subare.net.lay.NetLayers;
 import ch.alpine.subare.net.lay.ScalarEmbeddingLayer;
+import ch.alpine.subare.net.lay.ScalarLayer;
 import ch.alpine.subare.net.mod.NetModel;
 import ch.alpine.subare.net.mod.NetModels;
 import ch.alpine.subare.net.run.NetTrain;
@@ -23,7 +22,6 @@ import ch.alpine.surich.net.NetTrainDataBatch;
 import ch.alpine.surich.net.OptLinearChain;
 import ch.alpine.surich.net.OptParam;
 import ch.alpine.tensor.Tensor;
-import ch.alpine.tensor.Tensors;
 import ch.alpine.tensor.alg.Flatten;
 import ch.alpine.tensor.alg.Range;
 import ch.alpine.tensor.num.Boole;
@@ -66,9 +64,8 @@ class Embed1Component implements Supplier<NetTrainComponent> {
 
     public InnerComponent() {
       super(0);
-      Tensor value = Range.of(0, V);
-      Tensor xdata = value.maps(Tensors::of);
-      Tensor ydata = value.maps(v -> Boole.of(v.number().intValue() % 2 == 0));
+      Tensor xdata = Range.of(0, V);
+      Tensor ydata = xdata.maps(v -> Boole.of(v.number().intValue() % 2 == 0));
       // assignment of random labels to points
       trainingData = new TrainingData(xdata, ydata);
     }
@@ -80,11 +77,11 @@ class Embed1Component implements Supplier<NetTrainComponent> {
 
     @Override
     public NetTrainDataBatch createNetTrainDataBatch() {
-      NetModel netModel = NetModels.logits(NetChain.join( //
+      NetModel netModel = NetModels.logits( //
           new ScalarEmbeddingLayer(V, D), //
-          optLinearChain.create(D, 1)));
+          optLinearChain.create(D, 1), //
+          ScalarLayer.VectorToScalar);
       NetLayer netLayer = netModel.netLayer();
-      NetLayers.initialize(netLayer, randomGenerator);
       netTrain = new NetTrain(netModel, optParam.create(netLayer));
       return new NetTrainDataBatch(netTrain, trainingData, batch_size);
     }

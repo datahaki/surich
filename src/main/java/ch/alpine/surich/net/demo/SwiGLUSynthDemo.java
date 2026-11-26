@@ -79,7 +79,6 @@ class SwiGLUSynthComponent implements Supplier<NetTrainComponent> {
     @Override
     public NetTrainDataBatch createNetTrainDataBatch() {
       NetLayer netLayer = create();
-      NetLayers.initialize(netLayer, randomGenerator);
       netTrain = new NetTrain( //
           new NetModel(netLayer, SquaredErrorLoss.INSTANCE), //
           optParam.create(netLayer));

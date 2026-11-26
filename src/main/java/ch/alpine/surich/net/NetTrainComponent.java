@@ -17,6 +17,7 @@ import ch.alpine.bridge.fig.GraphicsGrid;
 import ch.alpine.bridge.ref.ann.ReflectionMarker;
 import ch.alpine.bridge.wdog.SoftWatchdog;
 import ch.alpine.bridge.wdog.Watchdog;
+import ch.alpine.subare.net.lay.NetLayers;
 import ch.alpine.subare.net.mod.NetModel;
 import ch.alpine.subare.net.run.NetParamStatTracker;
 import ch.alpine.subare.net.run.NetTrain;
@@ -43,6 +44,7 @@ public abstract class NetTrainComponent extends JComponent implements NetTrainLi
 
   public final void runAsBatches() {
     NetTrainDataBatch netTrainDataBatch = createNetTrainDataBatch();
+    NetLayers.initialize(netTrainDataBatch.netTrain().netModel().netLayer(), randomGenerator);
     netTrain.addListener(netParamStatTracker);
     netTrain.addListener(this);
     netTrainDataBatch.run();

@@ -13,7 +13,7 @@ import ch.alpine.bridge.fig.plt.DensityPlot;
 import ch.alpine.bridge.fig.plt.ListPlot;
 import ch.alpine.bridge.ref.ann.ReflectionMarker;
 import ch.alpine.subare.net.lay.NetLayer;
-import ch.alpine.subare.net.lay.NetLayers;
+import ch.alpine.subare.net.lay.ScalarLayer;
 import ch.alpine.subare.net.mod.NetModel;
 import ch.alpine.subare.net.mod.NetModels;
 import ch.alpine.subare.net.run.NetTrain;
@@ -94,10 +94,10 @@ class BinaryComponent implements Supplier<NetTrainComponent> {
 
     @Override
     public NetTrainDataBatch createNetTrainDataBatch() {
-      NetModel netModel = NetModels.logits(optLinearChain.create(2, 1));
-      NetLayer netLayer = netModel.netLayer();
-      NetLayers.initialize(netLayer, randomGenerator);
-      netTrain = new NetTrain(netModel, optParam.create(netLayer));
+      NetModel netModel = NetModels.logits( //
+          optLinearChain.create(2, 1), //
+          ScalarLayer.VectorToScalar);
+      netTrain = new NetTrain(netModel, optParam.create(netModel.netLayer()));
       return new NetTrainDataBatch(netTrain, trainingData, batch_size);
     }
 

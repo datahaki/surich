@@ -4,7 +4,6 @@ package ch.alpine.surich.net.demo;
 import java.awt.Graphics;
 import java.awt.Rectangle;
 import java.util.List;
-import java.util.Random;
 import java.util.function.Supplier;
 
 import ch.alpine.bridge.fig.Show;
@@ -13,7 +12,6 @@ import ch.alpine.bridge.fig.plt.Plot;
 import ch.alpine.bridge.ref.ann.ReflectionMarker;
 import ch.alpine.subare.net.lay.NetChain;
 import ch.alpine.subare.net.lay.NetLayer;
-import ch.alpine.subare.net.lay.NetLayers;
 import ch.alpine.subare.net.lay.ScalarLayer;
 import ch.alpine.subare.net.lay.SwiGLULayer;
 import ch.alpine.subare.net.los.SquaredErrorLoss;
@@ -143,7 +141,6 @@ class SwiGLUInterp1Component implements Supplier<NetTrainComponent> {
           ScalarLayer.VectorToScalar), //
           SquaredErrorLoss.INSTANCE);
       NetLayer netLayer = netModel.netLayer();
-      NetLayers.initialize(netLayer, new Random(seed));
       netTrain = new NetTrain(netModel, optParam.create(netLayer));
       return new NetTrainDataBatch(netTrain, trainingData, batch_size);
     }

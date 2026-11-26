@@ -91,7 +91,6 @@ class ResidualSynthComponent implements Supplier<NetTrainComponent> {
     @Override
     public NetTrainDataBatch createNetTrainDataBatch() {
       NetLayer netLayer = create();
-      NetLayers.initialize(netLayer, randomGenerator);
       NetModel netModel = new NetModel(netLayer, SquaredErrorLoss.INSTANCE);
       netTrain = new NetTrain(netModel, optParam.create(netLayer));
       return new NetTrainDataBatch(netTrain, trainingData, batch_size);

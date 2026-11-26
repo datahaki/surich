@@ -4,23 +4,17 @@ package ch.alpine.surich.net.demo;
 import java.util.function.Supplier;
 
 import ch.alpine.bridge.ref.ann.ReflectionMarker;
-import ch.alpine.subare.net.lay.ElementwiseLayers;
-import ch.alpine.subare.net.lay.LinearLayer;
-import ch.alpine.subare.net.lay.NetChain;
-import ch.alpine.subare.net.lay.NetLayer;
-import ch.alpine.subare.net.lay.NetLayers;
 import ch.alpine.subare.net.lay.ScalarLayer;
-import ch.alpine.subare.net.lay.SwiGLULayer;
-import ch.alpine.subare.net.los.BinaryCrossEntropy;
 import ch.alpine.subare.net.mod.NetModel;
-import ch.alpine.subare.net.reg.L2Regularization;
+import ch.alpine.subare.net.mod.NetModels;
+import ch.alpine.subare.net.run.MaxEpochListener;
 import ch.alpine.subare.net.run.NetTrain;
 import ch.alpine.subare.net.run.TrainingData;
 import ch.alpine.surich.net.BaseNetDemo;
 import ch.alpine.surich.net.NetTrainComponent;
 import ch.alpine.surich.net.NetTrainDataBatch;
+import ch.alpine.surich.net.OptLinearChain;
 import ch.alpine.surich.net.OptParam;
-import ch.alpine.tensor.RealScalar;
 import ch.alpine.tensor.Scalar;
 import ch.alpine.tensor.Slash;
 import ch.alpine.tensor.Tensor;
@@ -30,9 +24,9 @@ import ch.alpine.tensor.red.Total;
 import ch.alpine.tensor.sca.Mod;
 
 @ReflectionMarker
-class SwiGLUXorDemo extends BaseNetDemo {
+class XorDemo extends BaseNetDemo {
   // parameters of supplier are introduced to the gui
-  public final Supplier<NetTrainComponent> supplier = new SwiGLUXorComponent();
+  public final Supplier<NetTrainComponent> supplier = new XorComponent();
 
   @Override
   protected Supplier<NetTrainComponent> supplier() {
@@ -40,15 +34,15 @@ class SwiGLUXorDemo extends BaseNetDemo {
   }
 
   static void main() {
-    new SwiGLUXorDemo().runStandalone();
+    new XorDemo().runStandalone();
   }
 }
 
 @ReflectionMarker
-class SwiGLUXorComponent implements Supplier<NetTrainComponent> {
+class XorComponent implements Supplier<NetTrainComponent> {
   public Integer seed = 0;
   public Integer batch_size = 4;
-  public Scalar l2 = RealScalar.ZERO;
+  public final OptLinearChain optLinearChain = new OptLinearChain();
   public final OptParam optParam = new OptParam();
 
   @Override
@@ -66,9 +60,8 @@ class SwiGLUXorComponent implements Supplier<NetTrainComponent> {
     public InnerComponent() {
       super(seed);
       Tensor X = Tuples.of(Range.of(0, 2), 2);
-      Tensor Y = Slash.of(X, SwiGLUXorComponent::xor);
+      Tensor Y = Slash.of(X, XorComponent::xor);
       trainingData = new TrainingData(X, Y);
-      IO.println(trainingData);
     }
 
     @Override
@@ -78,27 +71,9 @@ class SwiGLUXorComponent implements Supplier<NetTrainComponent> {
 
     @Override
     public NetTrainDataBatch createNetTrainDataBatch() {
-      LinearLayer linearLayer1 = new LinearLayer(2, 2);
-      linearLayer1.netRegularization = L2Regularization.of(l2);
-      SwiGLULayer swiGLULayer = new SwiGLULayer(8, 4, 4);
-      LinearLayer linearLayer2 = new LinearLayer(2, 1);
-      linearLayer2.netRegularization = L2Regularization.of(l2);
-      swiGLULayer.netRegularization = L2Regularization.of(l2);
-      NetModel netModel = new NetModel(NetChain.join( //
-          linearLayer1, //
-          ElementwiseLayers.TANH.get(),
-          // swiGLULayer, //
-          linearLayer2, //
-          ScalarLayer.VectorToScalar
-      // , //
-      // sigmoidLayer
-      ), //
-          BinaryCrossEntropy.SCALAR
-      // sigmoidLayer.crossEntropyLoss()
-      );
-      NetLayer netLayer = netModel.netLayer();
-      NetLayers.initialize(netLayer, randomGenerator);
-      netTrain = new NetTrain(netModel, optParam.create(netLayer));
+      NetModel netModel = NetModels.logits(optLinearChain.create(2, 1), ScalarLayer.VectorToScalar);
+      netTrain = new NetTrain(netModel, optParam.create(netModel.netLayer()));
+      netTrain.addListener(new MaxEpochListener(50000));
       return new NetTrainDataBatch(netTrain, trainingData, batch_size);
     }
   }

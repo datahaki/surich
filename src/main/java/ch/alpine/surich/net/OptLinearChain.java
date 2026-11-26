@@ -20,6 +20,8 @@ import ch.alpine.tensor.Tensors;
 @ReflectionMarker
 public class OptLinearChain {
   public Tensor lin_dims = Tensors.vector(8, 8);
+  // TODO not yet used!
+  public Scalar l2 = RealScalar.of(1e-3);
   public ElementwiseLayers between = ElementwiseLayers.RELU;
   public Scalar dropout_p = RealScalar.ZERO;
 

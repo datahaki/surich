@@ -13,7 +13,6 @@ import ch.alpine.bridge.fig.plt.PolygonPlot;
 import ch.alpine.bridge.ref.ann.ReflectionMarker;
 import ch.alpine.subare.net.lay.NetChain;
 import ch.alpine.subare.net.lay.NetLayer;
-import ch.alpine.subare.net.lay.NetLayers;
 import ch.alpine.subare.net.lay.ScalarLayer;
 import ch.alpine.subare.net.lay.SwiGLULayer;
 import ch.alpine.subare.net.los.SquaredErrorLoss;
@@ -102,7 +101,6 @@ class SwiGLUInterp2Component implements Supplier<NetTrainComponent> {
           ScalarLayer.VectorToScalar), //
           SquaredErrorLoss.INSTANCE);
       NetLayer netLayer = netModel.netLayer();
-      NetLayers.initialize(netLayer, randomGenerator);
       netTrain = new NetTrain(netModel, optParam.create(netLayer));
       return new NetTrainDataBatch(netTrain, trainingData, batch_size);
     }
