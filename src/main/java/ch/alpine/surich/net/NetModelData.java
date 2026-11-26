@@ -7,7 +7,7 @@ import ch.alpine.subare.net.lay.NetLayers;
 import ch.alpine.subare.net.mod.NetModel;
 import ch.alpine.subare.net.run.TrainingData;
 
-public record NetModelDataBatch(NetModel netModel, TrainingData trainingData, int batch_size) {
+public record NetModelData(NetModel netModel, TrainingData trainingData) {
   public void init(RandomGenerator randomGenerator) {
     NetLayers.initialize(netModel.netLayer(), randomGenerator);
   }

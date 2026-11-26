@@ -36,11 +36,11 @@ class BaseNetDemoTest {
       netTrainComponent.setSize(200, 200);
       OptParam optParam = baseNetDemo.optParam;
       optParam.netOptimizers = netOptimizers;
-      NetModelDataBatch netTrainDataBatch = netTrainComponent.createNetModelDataBatch();
+      NetModelData netTrainDataBatch = netTrainComponent.createNetModelDataBatch();
       NetTrain netTrain = new NetTrain(netTrainDataBatch.netModel(), optParam.create());
       netTrain.setMaxEpochs(10);
       netTrainDataBatch.init(netTrainComponent.randomGenerator);
-      netTrain.runAsBatches(netTrainDataBatch.trainingData(), netTrainDataBatch.batch_size());
+      netTrain.runAsBatches(netTrainDataBatch.trainingData(), baseNetDemo.batch_size);
     }
   }
 
@@ -59,7 +59,7 @@ class BaseNetDemoTest {
       netTrainComponent.setSize(200, 200);
       OptParam optParam = baseNetDemo.optParam;
       optParam.netOptimizers = netOptimizers;
-      NetModelDataBatch netTrainDataBatch = netTrainComponent.createNetModelDataBatch();
+      NetModelData netTrainDataBatch = netTrainComponent.createNetModelDataBatch();
       netTrainDataBatch.init(netTrainComponent.randomGenerator);
       NetModel netModel = netTrainDataBatch.netModel();
       NetTrain netTrain = new NetTrain(netModel, optParam.create());

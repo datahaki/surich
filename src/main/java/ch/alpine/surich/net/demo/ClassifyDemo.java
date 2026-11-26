@@ -6,7 +6,6 @@ import java.awt.Rectangle;
 import java.util.List;
 import java.util.stream.IntStream;
 
-import ch.alpine.bridge.col.HuePalette;
 import ch.alpine.bridge.fig.Show;
 import ch.alpine.bridge.fig.Showable;
 import ch.alpine.bridge.fig.plt.DensityPlot;
@@ -18,16 +17,16 @@ import ch.alpine.subare.net.mod.NetModel;
 import ch.alpine.subare.net.mod.NetModels;
 import ch.alpine.subare.net.run.TrainingData;
 import ch.alpine.surich.net.BaseNetDemo;
-import ch.alpine.surich.net.NetModelDataBatch;
+import ch.alpine.surich.net.ForeAndBackPalettes;
+import ch.alpine.surich.net.NetModelData;
 import ch.alpine.surich.net.NetTrainComponent;
 import ch.alpine.surich.net.NetTrainComponentSupplier;
+import ch.alpine.surich.net.OptColor;
 import ch.alpine.surich.net.OptLinearChain;
 import ch.alpine.tensor.RealScalar;
 import ch.alpine.tensor.Scalar;
 import ch.alpine.tensor.Tensor;
 import ch.alpine.tensor.Tensors;
-import ch.alpine.tensor.col.ColorDataIndexed;
-import ch.alpine.tensor.col.ColorDataLists;
 import ch.alpine.tensor.opt.nd.BoxRandomSample;
 import ch.alpine.tensor.opt.nd.CoordinateBoundingBox;
 import ch.alpine.tensor.pdf.RandomSample;
@@ -57,9 +56,7 @@ class ClassifyComponent extends NetTrainComponentSupplier {
   public Integer samples = 30;
   public Integer labels = 3;
   public final OptLinearChain optLinearChain = new OptLinearChain();
-  public ColorDataLists cdl = ColorDataLists._097;
-  public Scalar sat = RealScalar.of(0.5);
-  public Scalar val = RealScalar.of(0.5);
+  public final OptColor optColor = new OptColor();
 
   @Override
   public NetTrainComponent get() {
@@ -79,21 +76,20 @@ class ClassifyComponent extends NetTrainComponentSupplier {
     }
 
     @Override
-    public NetModelDataBatch createNetModelDataBatch() {
+    public NetModelData createNetModelDataBatch() {
       NetModel netModel = NetModels.softmax_argMax(optLinearChain.create(2, labels));
-      return new NetModelDataBatch(netModel, trainingData, batch_size);
+      return new NetModelData(netModel, trainingData);
     }
 
     @Override
     protected void paintComponent(Graphics graphics, NetModel netModel) {
       NetLayer netLayer = netModel.netLayer();
       List<Rectangle> list = rectangles(1);
-      ColorDataIndexed cdi = cdl.cyclic();
-      ColorDataIndexed cdb = HuePalette.of(cdi).create(sat, val);
+      ForeAndBackPalettes foreAndBackPalettes = optColor.create();
       Clip eval = Clips.operator(RealScalar.of(1.2)::multiply).apply(DOMAIN);
       CoordinateBoundingBox ext = CoordinateBoundingBox.of(eval, eval);
       Show show = new Show();
-      show.add(DensityPlot.of((x, y) -> (Scalar) netLayer.forward(Tensors.of(x, y)), ext, cdb));
+      show.add(DensityPlot.of((x, y) -> (Scalar) netLayer.forward(Tensors.of(x, y)), ext, foreAndBackPalettes.cdb()));
       Tensor xdata = trainingData.xdata();
       Tensor ydata = trainingData.ydata();
       for (int k = 0; k < labels; ++k) {
@@ -101,7 +97,7 @@ class ClassifyComponent extends NetTrainComponentSupplier {
         Tensor p0 = Tensor.of(IntStream.range(0, xdata.length()) //
             .filter(i -> ydata.Get(i).equals(label)).mapToObj(xdata::get));
         Showable showable = show.add(ListPlot.of(p0));
-        showable.setColor(cdi.getColor(k));
+        showable.setColor(foreAndBackPalettes.cdi().getColor(k));
       }
       show.add(PolygonPlot.of(cbb)).setAlpha(64);
       show.render_autoIndent(graphics, list.get(0));

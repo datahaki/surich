@@ -8,5 +8,4 @@ import ch.alpine.bridge.ref.ann.ReflectionMarker;
 @ReflectionMarker
 public abstract class NetTrainComponentSupplier implements Supplier<NetTrainComponent> {
   public Integer seed = 0;
-  public Integer batch_size = 6;
 }

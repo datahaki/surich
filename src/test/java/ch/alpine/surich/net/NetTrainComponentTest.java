@@ -25,7 +25,7 @@ class NetTrainComponentTest {
     BaseNetDemo baseNetDemo = instanceRecord.supplier().get();
     NetTrainComponent netTrainComponent = baseNetDemo.supplier().get();
     netTrainComponent.setSize(200, 200);
-    NetModelDataBatch netTrainDataBatch = netTrainComponent.createNetModelDataBatch();
+    NetModelData netTrainDataBatch = netTrainComponent.createNetModelDataBatch();
     NetModel netModel = netTrainDataBatch.netModel();
     NetModels.toString(netModel);
   }

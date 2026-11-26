@@ -31,24 +31,24 @@ public abstract class NetTrainComponent extends JComponent implements NetTrainLi
   private final NetParamStatTracker netParamStatTracker = new NetParamStatTracker();
   private volatile boolean running = true;
   private NetTrain netTrain;
-  private NetModel copy;
+  private NetModel ferry;
   protected final RandomGenerator randomGenerator;
 
   public NetTrainComponent(int seed) {
     randomGenerator = RandomGeneratorFactory.of("L64X256MixRandom").create(seed);
   }
 
-  public abstract NetModelDataBatch createNetModelDataBatch();
+  public abstract NetModelData createNetModelDataBatch();
 
-  public final void runAsBatches(OptParam optParam) {
-    NetModelDataBatch netTrainDataBatch = createNetModelDataBatch();
+  public final void runAsBatches(OptParam optParam, int batch_size) {
+    NetModelData netTrainDataBatch = createNetModelDataBatch();
     NetModel netModel = netTrainDataBatch.netModel();
     NetLayers.initialize(netModel.netLayer(), randomGenerator);
     netTrain = new NetTrain(netModel, optParam.create());
     netTrain.addListener(netParamStatTracker);
     netTrain.addListener(this);
     netTrain.setMaxEpochs(20000);
-    netTrain.runAsBatches(netTrainDataBatch.trainingData(), netTrainDataBatch.batch_size());
+    netTrain.runAsBatches(netTrainDataBatch.trainingData(), batch_size);
   }
 
   protected void paintComponent(Graphics graphics, NetModel copy) {
@@ -58,6 +58,7 @@ public abstract class NetTrainComponent extends JComponent implements NetTrainLi
 
   @Override
   protected void paintComponent(Graphics graphics) {
+    NetModel copy = ferry;
     if (Objects.nonNull(copy)) {
       RenderQuality.setQuality(graphics);
       NetShows.layers(graphics, new Point(), copy);
@@ -78,7 +79,7 @@ public abstract class NetTrainComponent extends JComponent implements NetTrainLi
   public final boolean epoch(NetTrain netTrain) {
     if (watchdog.isBarking()) {
       watchdog.notifyWatchdog();
-      copy = Serialization.copy(netTrain.netModel());
+      ferry = Serialization.copy(netTrain.netModel());
       repaint();
     }
     return running;

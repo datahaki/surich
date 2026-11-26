@@ -17,7 +17,7 @@ import ch.alpine.subare.net.los.SquaredErrorLoss;
 import ch.alpine.subare.net.mod.NetModel;
 import ch.alpine.subare.net.run.TrainingData;
 import ch.alpine.surich.net.BaseNetDemo;
-import ch.alpine.surich.net.NetModelDataBatch;
+import ch.alpine.surich.net.NetModelData;
 import ch.alpine.surich.net.NetTrainComponent;
 import ch.alpine.surich.net.NetTrainComponentSupplier;
 import ch.alpine.surich.net.OptLinearChain;
@@ -61,7 +61,7 @@ class Interp2Component extends NetTrainComponentSupplier {
   private static final Clip DOMAIN = Clips.absoluteOne();
   public Integer variability = 5;
   public Integer samples = 50;
-  public final OptLinearChain optLinear = new OptLinearChain();
+  public final OptLinearChain optLinearChain = new OptLinearChain();
 
   @Override
   public NetTrainComponent get() {
@@ -84,9 +84,9 @@ class Interp2Component extends NetTrainComponentSupplier {
     }
 
     @Override
-    public NetModelDataBatch createNetModelDataBatch() {
-      NetLayer netLayer = NetChain.join(optLinear.create(2, 1), SingletonLayer.VectorToScalar);
-      return new NetModelDataBatch(new NetModel(netLayer, SquaredErrorLoss.INSTANCE), trainingData, batch_size);
+    public NetModelData createNetModelDataBatch() {
+      NetLayer netLayer = NetChain.join(optLinearChain.create(2, 1), SingletonLayer.VectorToScalar);
+      return new NetModelData(new NetModel(netLayer, SquaredErrorLoss.INSTANCE), trainingData);
     }
 
     @Override

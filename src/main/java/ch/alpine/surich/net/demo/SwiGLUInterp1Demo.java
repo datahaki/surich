@@ -18,7 +18,7 @@ import ch.alpine.subare.net.mod.NetModel;
 import ch.alpine.subare.net.reg.L2Regularization;
 import ch.alpine.subare.net.run.TrainingData;
 import ch.alpine.surich.net.BaseNetDemo;
-import ch.alpine.surich.net.NetModelDataBatch;
+import ch.alpine.surich.net.NetModelData;
 import ch.alpine.surich.net.NetTrainComponent;
 import ch.alpine.surich.net.NetTrainComponentSupplier;
 import ch.alpine.tensor.RealScalar;
@@ -122,7 +122,7 @@ class SwiGLUInterp1Component extends NetTrainComponentSupplier {
     }
 
     @Override
-    public NetModelDataBatch createNetModelDataBatch() {
+    public NetModelData createNetModelDataBatch() {
       SwiGLULayer swiGLULayer = new SwiGLULayer(1, hidden, 1);
       swiGLULayer.netRegularization = L2Regularization.of(l2);
       NetModel netModel = new NetModel(NetChain.join( //
@@ -130,7 +130,7 @@ class SwiGLUInterp1Component extends NetTrainComponentSupplier {
           swiGLULayer, //
           SingletonLayer.VectorToScalar), //
           SquaredErrorLoss.INSTANCE);
-      return new NetModelDataBatch(netModel, trainingData, batch_size);
+      return new NetModelData(netModel, trainingData);
     }
 
     @Override

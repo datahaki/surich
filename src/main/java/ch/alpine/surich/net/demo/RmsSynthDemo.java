@@ -18,7 +18,7 @@ import ch.alpine.subare.net.mod.NetModels;
 import ch.alpine.subare.net.reg.NoRegularization;
 import ch.alpine.subare.net.run.TrainingData;
 import ch.alpine.surich.net.BaseNetDemo;
-import ch.alpine.surich.net.NetModelDataBatch;
+import ch.alpine.surich.net.NetModelData;
 import ch.alpine.surich.net.NetTrainComponent;
 import ch.alpine.surich.net.NetTrainComponentSupplier;
 import ch.alpine.tensor.RealScalar;
@@ -83,10 +83,10 @@ class RmsSynthComponent extends NetTrainComponentSupplier {
     }
 
     @Override
-    public NetModelDataBatch createNetModelDataBatch() {
+    public NetModelData createNetModelDataBatch() {
       RMSLinear rmsLinear = RMSLinear.create();
       NetModel netModel = rmsLinear.consolidate();
-      return new NetModelDataBatch(netModel, trainingData, batch_size);
+      return new NetModelData(netModel, trainingData);
     }
 
     @Override

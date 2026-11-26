@@ -14,7 +14,7 @@ import ch.alpine.subare.net.mod.NetModel;
 import ch.alpine.subare.net.run.TrainingData;
 import ch.alpine.surich.net.BaseNetDemo;
 import ch.alpine.surich.net.ErrorType;
-import ch.alpine.surich.net.NetModelDataBatch;
+import ch.alpine.surich.net.NetModelData;
 import ch.alpine.surich.net.NetTrainComponent;
 import ch.alpine.surich.net.NetTrainComponentSupplier;
 import ch.alpine.surich.net.OptLinearChain;
@@ -75,9 +75,9 @@ class Interp1Component extends NetTrainComponentSupplier {
     }
 
     @Override
-    public NetModelDataBatch createNetModelDataBatch() {
+    public NetModelData createNetModelDataBatch() {
       NetModel netModel = new NetModel(optLinearChain.asSUO(), errorType.lossFunction);
-      return new NetModelDataBatch(netModel, trainingData, batch_size);
+      return new NetModelData(netModel, trainingData);
     }
 
     @Override
