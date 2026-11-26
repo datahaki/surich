@@ -18,11 +18,10 @@ import ch.alpine.subare.net.lay.SwiGLULayer;
 import ch.alpine.subare.net.los.SquaredErrorLoss;
 import ch.alpine.subare.net.mod.NetModel;
 import ch.alpine.subare.net.reg.L2Regularization;
-import ch.alpine.subare.net.run.NetTrain;
 import ch.alpine.subare.net.run.TrainingData;
 import ch.alpine.surich.net.BaseNetDemo;
+import ch.alpine.surich.net.NetModelDataBatch;
 import ch.alpine.surich.net.NetTrainComponent;
-import ch.alpine.surich.net.NetTrainDataBatch;
 import ch.alpine.surich.net.OptParam;
 import ch.alpine.tensor.RealScalar;
 import ch.alpine.tensor.Scalar;
@@ -93,15 +92,14 @@ class SwiGLUInterp2Component implements Supplier<NetTrainComponent> {
     };
 
     @Override
-    public NetTrainDataBatch createNetTrainDataBatch() {
+    public NetModelDataBatch createNetTrainDataBatch() {
       SwiGLULayer swiGLULayer = new SwiGLULayer(2, hidden, 1);
       swiGLULayer.netRegularization = L2Regularization.of(l2);
       NetModel netModel = new NetModel(NetChain.join( //
           swiGLULayer, //
           ScalarLayer.VectorToScalar), //
           SquaredErrorLoss.INSTANCE);
-      netTrain = new NetTrain(netModel, optParam.create());
-      return new NetTrainDataBatch(netTrain, trainingData, batch_size);
+      return new NetModelDataBatch(netModel, trainingData, batch_size);
     }
 
     @Override

@@ -12,12 +12,11 @@ import ch.alpine.bridge.fig.plt.Plot;
 import ch.alpine.bridge.ref.ann.ReflectionMarker;
 import ch.alpine.subare.net.lay.NetLayer;
 import ch.alpine.subare.net.mod.NetModel;
-import ch.alpine.subare.net.run.NetTrain;
 import ch.alpine.subare.net.run.TrainingData;
 import ch.alpine.surich.net.BaseNetDemo;
 import ch.alpine.surich.net.ErrorType;
+import ch.alpine.surich.net.NetModelDataBatch;
 import ch.alpine.surich.net.NetTrainComponent;
-import ch.alpine.surich.net.NetTrainDataBatch;
 import ch.alpine.surich.net.OptLinearChain;
 import ch.alpine.surich.net.OptParam;
 import ch.alpine.tensor.RealScalar;
@@ -85,10 +84,9 @@ class Interp1Component implements Supplier<NetTrainComponent> {
     };
 
     @Override
-    public NetTrainDataBatch createNetTrainDataBatch() {
+    public NetModelDataBatch createNetTrainDataBatch() {
       NetLayer netLayer = optLinearChain.asSUO();
-      netTrain = new NetTrain(new NetModel(netLayer, errorType.lossFunction), optParam.create());
-      return new NetTrainDataBatch(netTrain, trainingData, batch_size);
+      return new NetModelDataBatch(new NetModel(netLayer, errorType.lossFunction), trainingData, batch_size);
     }
 
     @Override

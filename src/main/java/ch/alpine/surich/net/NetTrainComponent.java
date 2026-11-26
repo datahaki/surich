@@ -30,9 +30,9 @@ public abstract class NetTrainComponent extends JComponent implements NetTrainLi
   private final Watchdog watchdog = SoftWatchdog.barking(Quantity.of(50, "ms"));
   private final NetParamStatTracker netParamStatTracker = new NetParamStatTracker();
   private volatile boolean running = true;
+  private NetTrain netTrain;
   private NetModel copy;
   protected final RandomGenerator randomGenerator;
-  public NetTrain netTrain;
 
   public NetTrainComponent(int seed) {
     randomGenerator = RandomGeneratorFactory.of("L64X256MixRandom").create(seed);
@@ -40,14 +40,16 @@ public abstract class NetTrainComponent extends JComponent implements NetTrainLi
 
   public abstract OptParam optParam();
 
-  public abstract NetTrainDataBatch createNetTrainDataBatch();
+  public abstract NetModelDataBatch createNetTrainDataBatch();
 
   public final void runAsBatches() {
-    NetTrainDataBatch netTrainDataBatch = createNetTrainDataBatch();
-    NetLayers.initialize(netTrainDataBatch.netTrain().netModel().netLayer(), randomGenerator);
+    NetModelDataBatch netTrainDataBatch = createNetTrainDataBatch();
+    NetModel netModel = netTrainDataBatch.netModel();
+    NetLayers.initialize(netModel.netLayer(), randomGenerator);
+    netTrain = new NetTrain(netModel, optParam().create());
     netTrain.addListener(netParamStatTracker);
     netTrain.addListener(this);
-    netTrainDataBatch.run();
+    netTrain.runAsBatches(netTrainDataBatch.trainingData(), netTrainDataBatch.batch_size());
   }
 
   protected void paintComponent(Graphics graphics, NetModel copy) {

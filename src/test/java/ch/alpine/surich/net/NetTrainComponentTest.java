@@ -10,7 +10,6 @@ import ch.alpine.bridge.cgr.InstanceDiscovery;
 import ch.alpine.bridge.cgr.InstanceRecord;
 import ch.alpine.subare.net.mod.NetModel;
 import ch.alpine.subare.net.mod.NetModels;
-import ch.alpine.subare.net.run.NetTrain;
 
 /* point_wise
  * sequential */
@@ -26,9 +25,8 @@ class NetTrainComponentTest {
     BaseNetDemo baseNetDemo = instanceRecord.supplier().get();
     NetTrainComponent netTrainComponent = baseNetDemo.supplier().get();
     netTrainComponent.setSize(200, 200);
-    NetTrainDataBatch netTrainDataBatch = netTrainComponent.createNetTrainDataBatch();
-    NetTrain netTrain = netTrainDataBatch.netTrain();
-    NetModel netModel = netTrain.netModel();
+    NetModelDataBatch netTrainDataBatch = netTrainComponent.createNetTrainDataBatch();
+    NetModel netModel = netTrainDataBatch.netModel();
     NetModels.toString(netModel);
   }
 }

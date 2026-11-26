@@ -12,11 +12,10 @@ import ch.alpine.bridge.ref.ann.ReflectionMarker;
 import ch.alpine.subare.net.lay.NetLayer;
 import ch.alpine.subare.net.los.SquaredErrorLoss;
 import ch.alpine.subare.net.mod.NetModel;
-import ch.alpine.subare.net.run.NetTrain;
 import ch.alpine.subare.net.run.TrainingData;
 import ch.alpine.surich.net.BaseNetDemo;
+import ch.alpine.surich.net.NetModelDataBatch;
 import ch.alpine.surich.net.NetTrainComponent;
-import ch.alpine.surich.net.NetTrainDataBatch;
 import ch.alpine.surich.net.OptLinearChain;
 import ch.alpine.surich.net.OptParam;
 import ch.alpine.tensor.Slash;
@@ -100,12 +99,9 @@ class SwiGLUClassifyComponent implements Supplier<NetTrainComponent> {
     };
 
     @Override
-    public NetTrainDataBatch createNetTrainDataBatch() {
-      NetModel netModel2 = new NetModel(optLinear.swiGLU(2, 2), SquaredErrorLoss.INSTANCE);
-      NetModel netModel = netModel2;
-      NetLayer netLayer = netModel.netLayer();
-      netTrain = new NetTrain(netModel, optParam.create());
-      return new NetTrainDataBatch(netTrain, trainingData, batch_size);
+    public NetModelDataBatch createNetTrainDataBatch() {
+      NetModel netModel = new NetModel(optLinear.swiGLU(2, 2), SquaredErrorLoss.INSTANCE);
+      return new NetModelDataBatch(netModel, trainingData, batch_size);
     }
 
     @Override

@@ -35,10 +35,11 @@ class BaseNetDemoTest {
       netTrainComponent.setSize(200, 200);
       OptParam optParam = netTrainComponent.optParam();
       optParam.netOptimizers = netOptimizers;
-      NetTrainDataBatch netTrainDataBatch = netTrainComponent.createNetTrainDataBatch();
-      netTrainDataBatch.netTrain().setMaxEpochs(10);
+      NetModelDataBatch netTrainDataBatch = netTrainComponent.createNetTrainDataBatch();
+      NetTrain netTrain = new NetTrain(netTrainDataBatch.netModel(), optParam.create());
+      netTrain.setMaxEpochs(10);
       netTrainDataBatch.init(netTrainComponent.randomGenerator);
-      netTrainDataBatch.run();
+      netTrain.runAsBatches(netTrainDataBatch.trainingData(), netTrainDataBatch.batch_size());
     }
   }
 
@@ -56,10 +57,10 @@ class BaseNetDemoTest {
       netTrainComponent.setSize(200, 200);
       OptParam optParam = netTrainComponent.optParam();
       optParam.netOptimizers = netOptimizers;
-      NetTrainDataBatch netTrainDataBatch = netTrainComponent.createNetTrainDataBatch();
+      NetModelDataBatch netTrainDataBatch = netTrainComponent.createNetTrainDataBatch();
       netTrainDataBatch.init(netTrainComponent.randomGenerator);
-      NetTrain netTrain = netTrainDataBatch.netTrain();
-      NetModel netModel = netTrain.netModel();
+      NetModel netModel = netTrainDataBatch.netModel();
+      NetTrain netTrain = new NetTrain(netModel, optParam.create());
       NetModels.toString(netModel);
       NetLayer netLayer = netModel.netLayer();
       LossFunction lossFunction = netModel.lossFunction();

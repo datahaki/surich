@@ -16,11 +16,10 @@ import ch.alpine.subare.net.lay.NetLayer;
 import ch.alpine.subare.net.lay.ScalarLayer;
 import ch.alpine.subare.net.mod.NetModel;
 import ch.alpine.subare.net.mod.NetModels;
-import ch.alpine.subare.net.run.NetTrain;
 import ch.alpine.subare.net.run.TrainingData;
 import ch.alpine.surich.net.BaseNetDemo;
+import ch.alpine.surich.net.NetModelDataBatch;
 import ch.alpine.surich.net.NetTrainComponent;
-import ch.alpine.surich.net.NetTrainDataBatch;
 import ch.alpine.surich.net.OptLinearChain;
 import ch.alpine.surich.net.OptParam;
 import ch.alpine.tensor.RealScalar;
@@ -93,12 +92,11 @@ class BinaryComponent implements Supplier<NetTrainComponent> {
     };
 
     @Override
-    public NetTrainDataBatch createNetTrainDataBatch() {
+    public NetModelDataBatch createNetTrainDataBatch() {
       NetModel netModel = NetModels.logits( //
           optLinearChain.create(2, 1), //
           ScalarLayer.VectorToScalar);
-      netTrain = new NetTrain(netModel, optParam.create());
-      return new NetTrainDataBatch(netTrain, trainingData, batch_size);
+      return new NetModelDataBatch(netModel, trainingData, batch_size);
     }
 
     @Override
