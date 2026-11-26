@@ -12,7 +12,7 @@ import ch.alpine.bridge.fig.plt.PolygonPlot;
 import ch.alpine.bridge.ref.ann.ReflectionMarker;
 import ch.alpine.subare.net.lay.NetChain;
 import ch.alpine.subare.net.lay.NetLayer;
-import ch.alpine.subare.net.lay.ScalarLayer;
+import ch.alpine.subare.net.lay.SingletonLayer;
 import ch.alpine.subare.net.lay.SwiGLULayer;
 import ch.alpine.subare.net.los.SquaredErrorLoss;
 import ch.alpine.subare.net.mod.NetModel;
@@ -88,7 +88,7 @@ class SwiGLUInterp2Component extends NetTrainComponentSupplier {
       swiGLULayer.netRegularization = L2Regularization.of(l2);
       NetModel netModel = new NetModel(NetChain.join( //
           swiGLULayer, //
-          ScalarLayer.VectorToScalar), //
+          SingletonLayer.VectorToScalar), //
           SquaredErrorLoss.INSTANCE);
       return new NetModelDataBatch(netModel, trainingData, batch_size);
     }

@@ -11,7 +11,7 @@ import ch.alpine.bridge.fig.plt.DensityPlot;
 import ch.alpine.bridge.fig.plt.ListPlot;
 import ch.alpine.bridge.ref.ann.ReflectionMarker;
 import ch.alpine.subare.net.lay.NetLayer;
-import ch.alpine.subare.net.lay.ScalarLayer;
+import ch.alpine.subare.net.lay.SingletonLayer;
 import ch.alpine.subare.net.mod.NetModel;
 import ch.alpine.subare.net.mod.NetModels;
 import ch.alpine.subare.net.run.TrainingData;
@@ -78,7 +78,7 @@ class SigmoidComponent extends NetTrainComponentSupplier {
       NetLayer netLayer = optLinearChain.create(2, 1);
       NetModel netModel = NetModels.sigmoid( //
           netLayer, //
-          ScalarLayer.VectorToScalar);
+          SingletonLayer.VectorToScalar);
       return new NetModelDataBatch(netModel, trainingData, batch_size);
     }
 

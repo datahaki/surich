@@ -13,7 +13,7 @@ import ch.alpine.subare.net.lay.EmbeddingLayer;
 import ch.alpine.subare.net.lay.Flatten1Layer;
 import ch.alpine.subare.net.lay.NetChains;
 import ch.alpine.subare.net.lay.NetLayer;
-import ch.alpine.subare.net.lay.ScalarLayer;
+import ch.alpine.subare.net.lay.SingletonLayer;
 import ch.alpine.subare.net.mod.NetModel;
 import ch.alpine.subare.net.mod.NetModels;
 import ch.alpine.subare.net.run.TrainingData;
@@ -81,7 +81,7 @@ class EmbedComponent extends NetTrainComponentSupplier {
           new EmbeddingLayer(V, D), //
           new Flatten1Layer(), //
           NetChains.linear(between, S * D, 16, 8, 1), //
-          ScalarLayer.VectorToScalar);
+          SingletonLayer.VectorToScalar);
       return new NetModelDataBatch(netModel, trainingData, batch_size);
     }
 

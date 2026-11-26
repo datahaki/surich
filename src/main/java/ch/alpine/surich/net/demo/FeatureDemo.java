@@ -16,7 +16,7 @@ import ch.alpine.subare.net.lay.NetChain;
 import ch.alpine.subare.net.lay.NetLayer;
 import ch.alpine.subare.net.lay.OneHotLayer;
 import ch.alpine.subare.net.lay.ScalarEmbeddingLayer;
-import ch.alpine.subare.net.lay.ScalarLayer;
+import ch.alpine.subare.net.lay.SingletonLayer;
 import ch.alpine.subare.net.los.SquaredErrorLoss;
 import ch.alpine.subare.net.mod.NetModel;
 import ch.alpine.subare.net.run.TrainingData;
@@ -109,13 +109,13 @@ class FeatureComponent extends NetTrainComponentSupplier {
     public NetModelDataBatch createNetModelDataBatch() {
       NetLayer netLayer = NetChain.join( //
           FeatureEmbeddingLayer.of( //
-              ScalarLayer.ScalarToVector, //
+              SingletonLayer.ScalarToVector, //
               oneHot //
                   ? new OneHotLayer(V)
                   : new ScalarEmbeddingLayer(V, D)), //
           new Flatten1Layer(), //
           optLinearChain.create(d_emb(), 1), //
-          ScalarLayer.VectorToScalar);
+          SingletonLayer.VectorToScalar);
       NetModel netModel = new NetModel(netLayer, SquaredErrorLoss.INSTANCE);
       return new NetModelDataBatch(netModel, trainingData, batch_size);
     }

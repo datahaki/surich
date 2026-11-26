@@ -19,6 +19,7 @@ public abstract class BaseNetDemo implements ManipulateProvider {
   // ---
   @FieldFuse
   public transient Boolean retrain = false;
+  public final OptParam optParam = new OptParam();
   private NetTrainComponent netTrainComponent;
 
   protected abstract NetTrainComponentSupplier supplier();
@@ -32,7 +33,7 @@ public abstract class BaseNetDemo implements ManipulateProvider {
         netTrainComponent = netTrainComponentSupplier.get();
         executorService.submit(() -> {
           try {
-            netTrainComponent.runAsBatches(netTrainComponentSupplier.optParam);
+            netTrainComponent.runAsBatches(optParam);
           } catch (Exception exception) {
             exception.printStackTrace();
           }

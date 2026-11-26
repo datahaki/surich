@@ -12,7 +12,7 @@ import ch.alpine.bridge.fig.plt.PolygonPlot;
 import ch.alpine.bridge.ref.ann.ReflectionMarker;
 import ch.alpine.subare.net.lay.NetChain;
 import ch.alpine.subare.net.lay.NetLayer;
-import ch.alpine.subare.net.lay.ScalarLayer;
+import ch.alpine.subare.net.lay.SingletonLayer;
 import ch.alpine.subare.net.los.SquaredErrorLoss;
 import ch.alpine.subare.net.mod.NetModel;
 import ch.alpine.subare.net.run.TrainingData;
@@ -85,7 +85,7 @@ class Interp2Component extends NetTrainComponentSupplier {
 
     @Override
     public NetModelDataBatch createNetModelDataBatch() {
-      NetLayer netLayer = NetChain.join(optLinear.create(2, 1), ScalarLayer.VectorToScalar);
+      NetLayer netLayer = NetChain.join(optLinear.create(2, 1), SingletonLayer.VectorToScalar);
       return new NetModelDataBatch(new NetModel(netLayer, SquaredErrorLoss.INSTANCE), trainingData, batch_size);
     }
 

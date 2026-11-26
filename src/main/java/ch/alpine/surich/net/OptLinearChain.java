@@ -9,7 +9,7 @@ import ch.alpine.subare.net.lay.ElementwiseLayers;
 import ch.alpine.subare.net.lay.NetChain;
 import ch.alpine.subare.net.lay.NetChains;
 import ch.alpine.subare.net.lay.NetLayer;
-import ch.alpine.subare.net.lay.ScalarLayer;
+import ch.alpine.subare.net.lay.SingletonLayer;
 import ch.alpine.subare.net.lay.SwiGLULayer;
 import ch.alpine.subare.net.reg.L2Regularization;
 import ch.alpine.tensor.RealScalar;
@@ -42,8 +42,8 @@ public class OptLinearChain {
 
   public NetLayer asSUO() {
     return NetChain.join( //
-        ScalarLayer.ScalarToVector, //
+        SingletonLayer.ScalarToVector, //
         create(1, 1), //
-        ScalarLayer.VectorToScalar);
+        SingletonLayer.VectorToScalar);
   }
 }

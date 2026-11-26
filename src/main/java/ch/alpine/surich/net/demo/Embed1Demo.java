@@ -10,7 +10,7 @@ import ch.alpine.bridge.fig.plt.ListDiscretePlot;
 import ch.alpine.bridge.ref.ann.ReflectionMarker;
 import ch.alpine.subare.net.lay.NetLayer;
 import ch.alpine.subare.net.lay.ScalarEmbeddingLayer;
-import ch.alpine.subare.net.lay.ScalarLayer;
+import ch.alpine.subare.net.lay.SingletonLayer;
 import ch.alpine.subare.net.mod.NetModel;
 import ch.alpine.subare.net.mod.NetModels;
 import ch.alpine.subare.net.run.TrainingData;
@@ -71,7 +71,7 @@ class Embed1Component extends NetTrainComponentSupplier {
       NetModel netModel = NetModels.logits( //
           new ScalarEmbeddingLayer(max, D), //
           optLinearChain.create(D, 1), //
-          ScalarLayer.VectorToScalar);
+          SingletonLayer.VectorToScalar);
       return new NetModelDataBatch(netModel, trainingData, batch_size);
     }
 

@@ -9,5 +9,4 @@ import ch.alpine.bridge.ref.ann.ReflectionMarker;
 public abstract class NetTrainComponentSupplier implements Supplier<NetTrainComponent> {
   public Integer seed = 0;
   public Integer batch_size = 6;
-  public final OptParam optParam = new OptParam();
 }

@@ -12,7 +12,7 @@ import ch.alpine.subare.net.lay.LinearLayer;
 import ch.alpine.subare.net.lay.NetLayer;
 import ch.alpine.subare.net.lay.NetLayers;
 import ch.alpine.subare.net.lay.RMSLayer;
-import ch.alpine.subare.net.lay.ScalarLayer;
+import ch.alpine.subare.net.lay.SingletonLayer;
 import ch.alpine.subare.net.mod.NetModel;
 import ch.alpine.subare.net.mod.NetModels;
 import ch.alpine.subare.net.reg.NoRegularization;
@@ -64,7 +64,7 @@ class RmsSynthComponent extends NetTrainComponentSupplier {
       return NetModels.sigmoid( //
           rmsLayer, //
           linearLayer, //
-          ScalarLayer.VectorToScalar);
+          SingletonLayer.VectorToScalar);
     }
   }
 
