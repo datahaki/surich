@@ -9,14 +9,14 @@ import ch.alpine.bridge.fig.Show;
 import ch.alpine.bridge.fig.plt.ListDiscretePlot;
 import ch.alpine.bridge.math.Unitless;
 import ch.alpine.bridge.ref.ann.ReflectionMarker;
-import ch.alpine.subare.net.lay.FeatureEmbeddingLayer;
 import ch.alpine.subare.net.lay.Flatten1Layer;
 import ch.alpine.subare.net.lay.IdentityLayer;
 import ch.alpine.subare.net.lay.NetChain;
 import ch.alpine.subare.net.lay.NetLayer;
-import ch.alpine.subare.net.lay.OneHotLayer;
 import ch.alpine.subare.net.lay.SingletonLayer;
+import ch.alpine.subare.net.lay.SlicedLayer;
 import ch.alpine.subare.net.lay.TakeListLayer;
+import ch.alpine.subare.net.lay.UnitVectorLayer;
 import ch.alpine.subare.net.mod.NetModel;
 import ch.alpine.subare.net.mod.NetModels;
 import ch.alpine.subare.net.run.TrainingData;
@@ -73,12 +73,12 @@ class PenguinSexComponent extends NetTrainComponentSupplier {
     public NetModelData createNetModelDataBatch() {
       int vs = datasetBuilder.distinctCount(0); // species
       int vi = datasetBuilder.distinctCount(1); // island
-      NetLayer fs = NetChain.join(SingletonLayer.VectorToScalar, new OneHotLayer(vs));
-      NetLayer fi = NetChain.join(SingletonLayer.VectorToScalar, new OneHotLayer(vi));
+      NetLayer fs = NetChain.join(SingletonLayer.VectorToScalar, new UnitVectorLayer(vs));
+      NetLayer fi = NetChain.join(SingletonLayer.VectorToScalar, new UnitVectorLayer(vi));
       NetLayer fn = IdentityLayer.INSTANCE;
       NetModel netModel = NetModels.logits( //
           new TakeListLayer(1, 1, 4), //
-          FeatureEmbeddingLayer.of(fs, fi, fn), //
+          SlicedLayer.of(fs, fi, fn), //
           new Flatten1Layer(), //
           optLinearChain.create(vs + vi + 4, 1), //
           SingletonLayer.VectorToScalar);

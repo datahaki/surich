@@ -10,13 +10,13 @@ import ch.alpine.bridge.fig.Showable;
 import ch.alpine.bridge.fig.plt.ListPlot;
 import ch.alpine.bridge.fig.plt.Plot;
 import ch.alpine.bridge.ref.ann.ReflectionMarker;
-import ch.alpine.subare.net.lay.FeatureEmbeddingLayer;
+import ch.alpine.subare.net.lay.EmbeddingLayer;
 import ch.alpine.subare.net.lay.Flatten1Layer;
 import ch.alpine.subare.net.lay.NetChain;
 import ch.alpine.subare.net.lay.NetLayer;
-import ch.alpine.subare.net.lay.OneHotLayer;
-import ch.alpine.subare.net.lay.ScalarEmbeddingLayer;
 import ch.alpine.subare.net.lay.SingletonLayer;
+import ch.alpine.subare.net.lay.SlicedLayer;
+import ch.alpine.subare.net.lay.UnitVectorLayer;
 import ch.alpine.subare.net.los.SquaredErrorLoss;
 import ch.alpine.subare.net.mod.NetModel;
 import ch.alpine.subare.net.run.TrainingData;
@@ -108,11 +108,11 @@ class FeatureComponent extends NetTrainComponentSupplier {
     @Override
     public NetModelData createNetModelDataBatch() {
       NetLayer netLayer = NetChain.join( //
-          FeatureEmbeddingLayer.of( //
+          SlicedLayer.of( //
               SingletonLayer.ScalarToVector, //
               oneHot //
-                  ? new OneHotLayer(V)
-                  : new ScalarEmbeddingLayer(V, D)), //
+                  ? new UnitVectorLayer(V)
+                  : new EmbeddingLayer(V, D)), //
           new Flatten1Layer(), //
           optLinearChain.create(d_emb(), 1), //
           SingletonLayer.VectorToScalar);

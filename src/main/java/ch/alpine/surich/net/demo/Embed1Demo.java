@@ -8,8 +8,8 @@ import java.util.List;
 import ch.alpine.bridge.fig.Show;
 import ch.alpine.bridge.fig.plt.ListDiscretePlot;
 import ch.alpine.bridge.ref.ann.ReflectionMarker;
+import ch.alpine.subare.net.lay.EmbeddingLayer;
 import ch.alpine.subare.net.lay.NetLayer;
-import ch.alpine.subare.net.lay.ScalarEmbeddingLayer;
 import ch.alpine.subare.net.lay.SingletonLayer;
 import ch.alpine.subare.net.mod.NetModel;
 import ch.alpine.subare.net.mod.NetModels;
@@ -69,7 +69,7 @@ class Embed1Component extends NetTrainComponentSupplier {
     @Override
     public NetModelData createNetModelDataBatch() {
       NetModel netModel = NetModels.logits( //
-          new ScalarEmbeddingLayer(max, D), //
+          new EmbeddingLayer(max, D), //
           optLinearChain.create(D, 1), //
           SingletonLayer.VectorToScalar);
       return new NetModelData(netModel, trainingData);

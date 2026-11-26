@@ -8,16 +8,17 @@ import java.util.List;
 import ch.alpine.bridge.fig.Show;
 import ch.alpine.bridge.fig.plt.ListDiscretePlot;
 import ch.alpine.bridge.ref.ann.ReflectionMarker;
-import ch.alpine.subare.net.lay.FeatureEmbeddingLayer;
 import ch.alpine.subare.net.lay.Flatten1Layer;
 import ch.alpine.subare.net.lay.IdentityLayer;
 import ch.alpine.subare.net.lay.NetChain;
 import ch.alpine.subare.net.lay.NetLayer;
-import ch.alpine.subare.net.lay.OneHotLayer;
 import ch.alpine.subare.net.lay.SingletonLayer;
+import ch.alpine.subare.net.lay.SlicedLayer;
 import ch.alpine.subare.net.lay.TakeListLayer;
+import ch.alpine.subare.net.lay.UnitVectorLayer;
 import ch.alpine.subare.net.los.SquaredErrorLoss;
 import ch.alpine.subare.net.mod.NetModel;
+import ch.alpine.subare.net.mod.NetModels;
 import ch.alpine.subare.net.run.TrainingData;
 import ch.alpine.surich.net.BaseNetDemo;
 import ch.alpine.surich.net.DatasetBuilder;
@@ -69,14 +70,18 @@ class PenguinSpxComponent extends NetTrainComponentSupplier {
     @Override
     public NetModelData createNetModelDataBatch() {
       int vi = datasetBuilder.distinctCount(1); // island
-      NetLayer fi = NetChain.join(SingletonLayer.VectorToScalar, new OneHotLayer(vi));
+      NetLayer fi = NetChain.join(SingletonLayer.VectorToScalar, new UnitVectorLayer(vi));
       NetLayer fn = IdentityLayer.INSTANCE;
-      NetModel netModel = new NetModel(NetChain.join( //
+      NetLayer netLayer = NetChain.join( //
           new TakeListLayer(1, 4), //
-          FeatureEmbeddingLayer.of(fi, fn), //
+          SlicedLayer.of(fi, fn), //
           new Flatten1Layer(), //
-          optLinearChain.create(vi + 4, 2)), //
-          SquaredErrorLoss.INSTANCE);
+          optLinearChain.create(vi + 4, 4), //
+          new TakeListLayer(3, 1));
+      // TODO bad API design
+      NetModel m1 = NetModels.softmax_argMax(IdentityLayer.INSTANCE);
+      NetModel m2 = new NetModel(SingletonLayer.VectorToScalar, SquaredErrorLoss.INSTANCE);
+      NetModel netModel = NetModels.output(netLayer, List.of(m1, m2));
       return new NetModelData(netModel, trainingData);
     }
 
