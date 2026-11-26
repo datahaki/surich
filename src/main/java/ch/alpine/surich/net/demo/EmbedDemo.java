@@ -9,6 +9,8 @@ import ch.alpine.bridge.fig.Show;
 import ch.alpine.bridge.fig.plt.ArrayPlot;
 import ch.alpine.bridge.ref.ann.ReflectionMarker;
 import ch.alpine.subare.net.lay.ElementwiseLayers;
+import ch.alpine.subare.net.lay.EmbeddingLayer;
+import ch.alpine.subare.net.lay.Flatten1Layer;
 import ch.alpine.subare.net.lay.NetChains;
 import ch.alpine.subare.net.lay.NetLayer;
 import ch.alpine.subare.net.lay.ScalarLayer;
@@ -75,9 +77,10 @@ class EmbedComponent extends NetTrainComponentSupplier {
 
     @Override
     public NetModelDataBatch createNetModelDataBatch() {
-      NetLayer inner = NetChains.linear(between, S * D, 16, 8, 1);
       NetModel netModel = NetModels.logits( //
-          NetChains.embedding(V, D, inner), //
+          new EmbeddingLayer(V, D), //
+          new Flatten1Layer(), //
+          NetChains.linear(between, S * D, 16, 8, 1), //
           ScalarLayer.VectorToScalar);
       return new NetModelDataBatch(netModel, trainingData, batch_size);
     }
