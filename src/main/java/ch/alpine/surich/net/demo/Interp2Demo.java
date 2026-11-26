@@ -96,7 +96,7 @@ class Interp2Component implements Supplier<NetTrainComponent> {
     @Override
     public NetTrainDataBatch createNetTrainDataBatch() {
       NetLayer netLayer = NetChain.join(optLinear.create(2, 1), ScalarLayer.VectorToScalar);
-      netTrain = new NetTrain(new NetModel(netLayer, SquaredErrorLoss.INSTANCE), optParam.create(netLayer));
+      netTrain = new NetTrain(new NetModel(netLayer, SquaredErrorLoss.INSTANCE), optParam.create());
       return new NetTrainDataBatch(netTrain, trainingData, batch_size);
     }
 

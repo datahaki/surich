@@ -100,8 +100,7 @@ class SwiGLUInterp2Component implements Supplier<NetTrainComponent> {
           swiGLULayer, //
           ScalarLayer.VectorToScalar), //
           SquaredErrorLoss.INSTANCE);
-      NetLayer netLayer = netModel.netLayer();
-      netTrain = new NetTrain(netModel, optParam.create(netLayer));
+      netTrain = new NetTrain(netModel, optParam.create());
       return new NetTrainDataBatch(netTrain, trainingData, batch_size);
     }
 

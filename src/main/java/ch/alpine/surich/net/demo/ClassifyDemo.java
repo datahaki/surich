@@ -91,7 +91,7 @@ class ClassifyComponent implements Supplier<NetTrainComponent> {
     @Override
     public NetTrainDataBatch createNetTrainDataBatch() {
       NetModel netModel = NetModels.softmax_argMax(optLinear.create(2, labels));
-      netTrain = new NetTrain(netModel, optParam.create(netModel.netLayer()));
+      netTrain = new NetTrain(netModel, optParam.create());
       return new NetTrainDataBatch(netTrain, trainingData, batch_size);
     }
 

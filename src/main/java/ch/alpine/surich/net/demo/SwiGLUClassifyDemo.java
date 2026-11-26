@@ -104,7 +104,7 @@ class SwiGLUClassifyComponent implements Supplier<NetTrainComponent> {
       NetModel netModel2 = new NetModel(optLinear.swiGLU(2, 2), SquaredErrorLoss.INSTANCE);
       NetModel netModel = netModel2;
       NetLayer netLayer = netModel.netLayer();
-      netTrain = new NetTrain(netModel, optParam.create(netLayer));
+      netTrain = new NetTrain(netModel, optParam.create());
       return new NetTrainDataBatch(netTrain, trainingData, batch_size);
     }
 

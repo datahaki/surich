@@ -98,7 +98,7 @@ class MatrixSynthComponent implements Supplier<NetTrainComponent> {
       NetLayer netLayer = create();
       netTrain = new NetTrain( //
           new NetModel(netLayer, SquaredErrorLoss.INSTANCE), //
-          optParam.create(netLayer));
+          optParam.create());
       return new NetTrainDataBatch(netTrain, trainingData, batch_size);
     }
 

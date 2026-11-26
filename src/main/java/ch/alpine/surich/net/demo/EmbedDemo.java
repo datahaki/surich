@@ -88,8 +88,7 @@ class EmbedComponent implements Supplier<NetTrainComponent> {
       NetModel netModel = NetModels.logits( //
           NetChains.embedding(V, D, inner), //
           ScalarLayer.VectorToScalar);
-      NetLayer netLayer = netModel.netLayer();
-      netTrain = new NetTrain(netModel, optParam.create(netLayer));
+      netTrain = new NetTrain(netModel, optParam.create());
       return new NetTrainDataBatch(netTrain, trainingData, batch_size);
     }
 

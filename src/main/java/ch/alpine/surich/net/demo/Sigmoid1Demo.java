@@ -89,7 +89,7 @@ class SigmoidComponent implements Supplier<NetTrainComponent> {
       NetModel netModel = NetModels.sigmoid( //
           netLayer, //
           ScalarLayer.VectorToScalar);
-      netTrain = new NetTrain(netModel, optParam.create(netLayer));
+      netTrain = new NetTrain(netModel, optParam.create());
       return new NetTrainDataBatch(netTrain, trainingData, batch_size);
     }
 

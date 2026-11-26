@@ -97,7 +97,7 @@ class BinaryComponent implements Supplier<NetTrainComponent> {
       NetModel netModel = NetModels.logits( //
           optLinearChain.create(2, 1), //
           ScalarLayer.VectorToScalar);
-      netTrain = new NetTrain(netModel, optParam.create(netModel.netLayer()));
+      netTrain = new NetTrain(netModel, optParam.create());
       return new NetTrainDataBatch(netTrain, trainingData, batch_size);
     }
 

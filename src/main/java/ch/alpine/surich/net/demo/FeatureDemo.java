@@ -117,18 +117,17 @@ class FeatureComponent implements Supplier<NetTrainComponent> {
 
     @Override
     public NetTrainDataBatch createNetTrainDataBatch() {
-      NetLayer embed = FeatureEmbeddingLayer.of( //
-          ScalarLayer.ScalarToVector, //
-          oneHot //
-              ? new OneHotLayer(V)
-              : new ScalarEmbeddingLayer(V, D));
       NetLayer netLayer = NetChain.join( //
-          embed, //
+          FeatureEmbeddingLayer.of( //
+              ScalarLayer.ScalarToVector, //
+              oneHot //
+                  ? new OneHotLayer(V)
+                  : new ScalarEmbeddingLayer(V, D)), //
           new Flatten1Layer(), //
           optLinearChain.create(d_emb(), 1), //
           ScalarLayer.VectorToScalar);
       NetModel netModel = new NetModel(netLayer, SquaredErrorLoss.INSTANCE);
-      netTrain = new NetTrain(netModel, optParam.create(netLayer));
+      netTrain = new NetTrain(netModel, optParam.create());
       return new NetTrainDataBatch(netTrain, trainingData, batch_size);
     }
 

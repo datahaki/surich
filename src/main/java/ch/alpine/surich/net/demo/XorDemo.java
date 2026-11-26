@@ -5,7 +5,6 @@ import java.util.function.Supplier;
 
 import ch.alpine.bridge.ref.ann.ReflectionMarker;
 import ch.alpine.subare.net.lay.ScalarLayer;
-import ch.alpine.subare.net.mod.NetModel;
 import ch.alpine.subare.net.mod.NetModels;
 import ch.alpine.subare.net.run.MaxEpochListener;
 import ch.alpine.subare.net.run.NetTrain;
@@ -71,8 +70,9 @@ class XorComponent implements Supplier<NetTrainComponent> {
 
     @Override
     public NetTrainDataBatch createNetTrainDataBatch() {
-      NetModel netModel = NetModels.logits(optLinearChain.create(2, 1), ScalarLayer.VectorToScalar);
-      netTrain = new NetTrain(netModel, optParam.create(netModel.netLayer()));
+      netTrain = new NetTrain( //
+          NetModels.logits(optLinearChain.create(2, 1), ScalarLayer.VectorToScalar), //
+          optParam.create());
       netTrain.addListener(new MaxEpochListener(50000));
       return new NetTrainDataBatch(netTrain, trainingData, batch_size);
     }

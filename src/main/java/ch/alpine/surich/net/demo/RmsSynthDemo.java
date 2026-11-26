@@ -96,8 +96,7 @@ class RmsSynthComponent implements Supplier<NetTrainComponent> {
     public NetTrainDataBatch createNetTrainDataBatch() {
       RMSLinear rmsLinear = RMSLinear.create();
       NetModel netModel = rmsLinear.consolidate();
-      NetLayer netLayer = netModel.netLayer();
-      netTrain = new NetTrain(netModel, optParam.create(netLayer));
+      netTrain = new NetTrain(netModel, optParam.create());
       return new NetTrainDataBatch(netTrain, trainingData, batch_size);
     }
 

@@ -47,11 +47,11 @@ class Embed1Demo extends BaseNetDemo {
 @ReflectionMarker
 class Embed1Component implements Supplier<NetTrainComponent> {
   public static final Clip DOMAIN = Clips.absoluteOne();
-  public Integer V = 30;
+  public Integer max = 30;
+  public Integer batch_size = 10;
   public Integer D = 3;
   public final OptLinearChain optLinearChain = new OptLinearChain();
   public final OptParam optParam = new OptParam();
-  public Integer batch_size = 10;
 
   @Override
   public NetTrainComponent get() {
@@ -64,7 +64,7 @@ class Embed1Component implements Supplier<NetTrainComponent> {
 
     public InnerComponent() {
       super(0);
-      Tensor xdata = Range.of(0, V);
+      Tensor xdata = Range.of(0, max);
       Tensor ydata = xdata.maps(v -> Boole.of(v.number().intValue() % 2 == 0));
       // assignment of random labels to points
       trainingData = new TrainingData(xdata, ydata);
@@ -78,11 +78,10 @@ class Embed1Component implements Supplier<NetTrainComponent> {
     @Override
     public NetTrainDataBatch createNetTrainDataBatch() {
       NetModel netModel = NetModels.logits( //
-          new ScalarEmbeddingLayer(V, D), //
+          new ScalarEmbeddingLayer(max, D), //
           optLinearChain.create(D, 1), //
           ScalarLayer.VectorToScalar);
-      NetLayer netLayer = netModel.netLayer();
-      netTrain = new NetTrain(netModel, optParam.create(netLayer));
+      netTrain = new NetTrain(netModel, optParam.create());
       return new NetTrainDataBatch(netTrain, trainingData, batch_size);
     }
 

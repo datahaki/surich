@@ -40,6 +40,7 @@ public class OptLinearChain {
     return new SwiGLULayer(d_in, depth, d_out);
   }
 
+  @Deprecated
   public NetLayer asSUO() {
     return NetChain.join(ScalarLayer.ScalarToVector, create(1, 1), ScalarLayer.VectorToScalar);
   }
