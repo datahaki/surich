@@ -5,7 +5,6 @@ import java.awt.Container;
 import java.util.Objects;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
-import java.util.function.Supplier;
 
 import javax.swing.JLabel;
 import javax.swing.SwingConstants;
@@ -22,17 +21,18 @@ public abstract class BaseNetDemo implements ManipulateProvider {
   public transient Boolean retrain = false;
   private NetTrainComponent netTrainComponent;
 
-  protected abstract Supplier<NetTrainComponent> supplier();
+  protected abstract NetTrainComponentSupplier supplier();
 
   @Override
   public Container getContainer() {
     if (retrain) {
       retrain = false;
       if (Objects.isNull(netTrainComponent) || !netTrainComponent.isRunning()) {
-        netTrainComponent = supplier().get();
+        NetTrainComponentSupplier netTrainComponentSupplier = supplier();
+        netTrainComponent = netTrainComponentSupplier.get();
         executorService.submit(() -> {
           try {
-            netTrainComponent.runAsBatches();
+            netTrainComponent.runAsBatches(netTrainComponentSupplier.optParam);
           } catch (Exception exception) {
             exception.printStackTrace();
           }

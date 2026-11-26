@@ -11,6 +11,7 @@ import ch.alpine.subare.net.lay.NetChains;
 import ch.alpine.subare.net.lay.NetLayer;
 import ch.alpine.subare.net.lay.ScalarLayer;
 import ch.alpine.subare.net.lay.SwiGLULayer;
+import ch.alpine.subare.net.reg.L2Regularization;
 import ch.alpine.tensor.RealScalar;
 import ch.alpine.tensor.Scalar;
 import ch.alpine.tensor.Scalars;
@@ -20,7 +21,6 @@ import ch.alpine.tensor.Tensors;
 @ReflectionMarker
 public class OptLinearChain {
   public Tensor lin_dims = Tensors.vector(8, 8);
-  // TODO not yet used!
   public Scalar l2 = RealScalar.of(1e-3);
   public ElementwiseLayers between = ElementwiseLayers.RELU;
   public Scalar dropout_p = RealScalar.ZERO;
@@ -32,7 +32,7 @@ public class OptLinearChain {
     for (int i = 0; i < depth; ++i)
       list.add(Scalars.intValueExact(lin_dims.Get(i)));
     list.add(d_out);
-    return NetChains.linearWith(list, between, dropout_p);
+    return NetChains.linearWith(list, between, L2Regularization.of(l2), dropout_p);
   }
 
   public NetLayer swiGLU(int d_in, int d_out) {
@@ -40,8 +40,10 @@ public class OptLinearChain {
     return new SwiGLULayer(d_in, depth, d_out);
   }
 
-  @Deprecated
   public NetLayer asSUO() {
-    return NetChain.join(ScalarLayer.ScalarToVector, create(1, 1), ScalarLayer.VectorToScalar);
+    return NetChain.join( //
+        ScalarLayer.ScalarToVector, //
+        create(1, 1), //
+        ScalarLayer.VectorToScalar);
   }
 }

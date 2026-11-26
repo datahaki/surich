@@ -4,7 +4,6 @@ package ch.alpine.surich.net.demo;
 import java.awt.Graphics;
 import java.awt.Rectangle;
 import java.util.List;
-import java.util.function.Supplier;
 
 import ch.alpine.bridge.fig.Show;
 import ch.alpine.bridge.fig.plt.ListDiscretePlot;
@@ -18,8 +17,8 @@ import ch.alpine.subare.net.run.TrainingData;
 import ch.alpine.surich.net.BaseNetDemo;
 import ch.alpine.surich.net.NetModelDataBatch;
 import ch.alpine.surich.net.NetTrainComponent;
+import ch.alpine.surich.net.NetTrainComponentSupplier;
 import ch.alpine.surich.net.OptLinearChain;
-import ch.alpine.surich.net.OptParam;
 import ch.alpine.tensor.Tensor;
 import ch.alpine.tensor.alg.Flatten;
 import ch.alpine.tensor.alg.Range;
@@ -31,10 +30,10 @@ import ch.alpine.tensor.sca.Clips;
 @ReflectionMarker
 class Embed1Demo extends BaseNetDemo {
   // parameters of supplier are introduced to the gui
-  public final Supplier<NetTrainComponent> supplier = new Embed1Component();
+  public final NetTrainComponentSupplier supplier = new Embed1Component();
 
   @Override
-  protected Supplier<NetTrainComponent> supplier() {
+  protected NetTrainComponentSupplier supplier() {
     return supplier;
   }
 
@@ -44,13 +43,11 @@ class Embed1Demo extends BaseNetDemo {
 }
 
 @ReflectionMarker
-class Embed1Component implements Supplier<NetTrainComponent> {
+class Embed1Component extends NetTrainComponentSupplier {
   public static final Clip DOMAIN = Clips.absoluteOne();
   public Integer max = 30;
-  public Integer batch_size = 10;
   public Integer D = 3;
   public final OptLinearChain optLinearChain = new OptLinearChain();
-  public final OptParam optParam = new OptParam();
 
   @Override
   public NetTrainComponent get() {
@@ -62,7 +59,7 @@ class Embed1Component implements Supplier<NetTrainComponent> {
     final TrainingData trainingData;
 
     public InnerComponent() {
-      super(0);
+      super(seed);
       Tensor xdata = Range.of(0, max);
       Tensor ydata = xdata.maps(v -> Boole.of(v.number().intValue() % 2 == 0));
       // assignment of random labels to points
@@ -70,12 +67,7 @@ class Embed1Component implements Supplier<NetTrainComponent> {
     }
 
     @Override
-    public OptParam optParam() {
-      return optParam;
-    };
-
-    @Override
-    public NetModelDataBatch createNetTrainDataBatch() {
+    public NetModelDataBatch createNetModelDataBatch() {
       NetModel netModel = NetModels.logits( //
           new ScalarEmbeddingLayer(max, D), //
           optLinearChain.create(D, 1), //

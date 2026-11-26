@@ -4,7 +4,6 @@ package ch.alpine.surich.net.demo;
 import java.awt.Graphics;
 import java.awt.Rectangle;
 import java.util.List;
-import java.util.function.Supplier;
 import java.util.stream.IntStream;
 
 import ch.alpine.bridge.fig.Show;
@@ -19,8 +18,8 @@ import ch.alpine.subare.net.run.TrainingData;
 import ch.alpine.surich.net.BaseNetDemo;
 import ch.alpine.surich.net.NetModelDataBatch;
 import ch.alpine.surich.net.NetTrainComponent;
+import ch.alpine.surich.net.NetTrainComponentSupplier;
 import ch.alpine.surich.net.OptLinearChain;
-import ch.alpine.surich.net.OptParam;
 import ch.alpine.tensor.RealScalar;
 import ch.alpine.tensor.Scalar;
 import ch.alpine.tensor.Scalars;
@@ -39,10 +38,10 @@ import ch.alpine.tensor.sca.Clips;
 @ReflectionMarker
 class Sigmoid1Demo extends BaseNetDemo {
   // parameters of supplier are introduced to the gui
-  public final Supplier<NetTrainComponent> supplier = new SigmoidComponent();
+  public final NetTrainComponentSupplier supplier = new SigmoidComponent();
 
   @Override
-  protected Supplier<NetTrainComponent> supplier() {
+  protected NetTrainComponentSupplier supplier() {
     return supplier;
   }
 
@@ -52,13 +51,10 @@ class Sigmoid1Demo extends BaseNetDemo {
 }
 
 @ReflectionMarker
-class SigmoidComponent implements Supplier<NetTrainComponent> {
+class SigmoidComponent extends NetTrainComponentSupplier {
   public static final Clip DOMAIN = Clips.absoluteOne();
-  public Integer seed = 0;
   public Integer samples = 30;
   public final OptLinearChain optLinearChain = new OptLinearChain();
-  public final OptParam optParam = new OptParam();
-  public Integer batch_size = 10;
 
   @Override
   public NetTrainComponent get() {
@@ -78,12 +74,7 @@ class SigmoidComponent implements Supplier<NetTrainComponent> {
     }
 
     @Override
-    public OptParam optParam() {
-      return optParam;
-    };
-
-    @Override
-    public NetModelDataBatch createNetTrainDataBatch() {
+    public NetModelDataBatch createNetModelDataBatch() {
       NetLayer netLayer = optLinearChain.create(2, 1);
       NetModel netModel = NetModels.sigmoid( //
           netLayer, //

@@ -4,7 +4,6 @@ package ch.alpine.surich.net.demo;
 import java.awt.Graphics;
 import java.awt.Rectangle;
 import java.util.List;
-import java.util.function.Supplier;
 
 import ch.alpine.bridge.fig.Show;
 import ch.alpine.bridge.fig.plt.ArrayPlot;
@@ -19,7 +18,7 @@ import ch.alpine.subare.net.run.TrainingData;
 import ch.alpine.surich.net.BaseNetDemo;
 import ch.alpine.surich.net.NetModelDataBatch;
 import ch.alpine.surich.net.NetTrainComponent;
-import ch.alpine.surich.net.OptParam;
+import ch.alpine.surich.net.NetTrainComponentSupplier;
 import ch.alpine.tensor.RealScalar;
 import ch.alpine.tensor.Tensor;
 import ch.alpine.tensor.alg.ArrayReshape;
@@ -37,10 +36,10 @@ import ch.alpine.tensor.sca.pow.Sqrt;
 @ReflectionMarker
 class EmbedDemo extends BaseNetDemo {
   // parameters of supplier are introduced to the gui
-  public final Supplier<NetTrainComponent> supplier = new EmbedComponent();
+  public final NetTrainComponentSupplier supplier = new EmbedComponent();
 
   @Override
-  protected Supplier<NetTrainComponent> supplier() {
+  protected NetTrainComponentSupplier supplier() {
     return supplier;
   }
 
@@ -50,14 +49,12 @@ class EmbedDemo extends BaseNetDemo {
 }
 
 @ReflectionMarker
-class EmbedComponent implements Supplier<NetTrainComponent> {
+class EmbedComponent extends NetTrainComponentSupplier {
   public static final Clip DOMAIN = Clips.absoluteOne();
   public Integer S = 3;
   public Integer V = 4;
   public Integer D = 8;
   public ElementwiseLayers between = ElementwiseLayers.RELU;
-  public final OptParam optParam = new OptParam();
-  public Integer batch_size = 10;
 
   @Override
   public NetTrainComponent get() {
@@ -77,12 +74,7 @@ class EmbedComponent implements Supplier<NetTrainComponent> {
     }
 
     @Override
-    public OptParam optParam() {
-      return optParam;
-    };
-
-    @Override
-    public NetModelDataBatch createNetTrainDataBatch() {
+    public NetModelDataBatch createNetModelDataBatch() {
       NetLayer inner = NetChains.linear(between, S * D, 16, 8, 1);
       NetModel netModel = NetModels.logits( //
           NetChains.embedding(V, D, inner), //

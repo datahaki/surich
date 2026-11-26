@@ -4,7 +4,6 @@ package ch.alpine.surich.net.demo;
 import java.awt.Graphics;
 import java.awt.Rectangle;
 import java.util.List;
-import java.util.function.Supplier;
 
 import ch.alpine.bridge.fig.Show;
 import ch.alpine.bridge.fig.plt.DensityPlot;
@@ -19,8 +18,8 @@ import ch.alpine.subare.net.run.TrainingData;
 import ch.alpine.surich.net.BaseNetDemo;
 import ch.alpine.surich.net.NetModelDataBatch;
 import ch.alpine.surich.net.NetTrainComponent;
+import ch.alpine.surich.net.NetTrainComponentSupplier;
 import ch.alpine.surich.net.OptLinearChain;
-import ch.alpine.surich.net.OptParam;
 import ch.alpine.tensor.RealScalar;
 import ch.alpine.tensor.Scalar;
 import ch.alpine.tensor.Slash;
@@ -43,10 +42,10 @@ import ch.alpine.tensor.sca.Clips;
 @ReflectionMarker
 class Sigmoid2Demo extends BaseNetDemo {
   // parameters of supplier are introduced to the gui
-  public final Supplier<NetTrainComponent> supplier = new Sigmoid2Component();
+  public final NetTrainComponentSupplier supplier = new Sigmoid2Component();
 
   @Override
-  protected Supplier<NetTrainComponent> supplier() {
+  protected NetTrainComponentSupplier supplier() {
     return supplier;
   }
 
@@ -56,14 +55,11 @@ class Sigmoid2Demo extends BaseNetDemo {
 }
 
 @ReflectionMarker
-class Sigmoid2Component implements Supplier<NetTrainComponent> {
+class Sigmoid2Component extends NetTrainComponentSupplier {
   private static final Clip DOMAIN = Clips.absoluteOne();
-  public Integer seed = 0;
   public Integer variability = 5;
   public Integer samples = 50;
-  public Integer batch_size = 10;
   public final OptLinearChain optLinearChain = new OptLinearChain();
-  public final OptParam optParam = new OptParam();
 
   @Override
   public NetTrainComponent get() {
@@ -86,12 +82,7 @@ class Sigmoid2Component implements Supplier<NetTrainComponent> {
     }
 
     @Override
-    public OptParam optParam() {
-      return optParam;
-    };
-
-    @Override
-    public NetModelDataBatch createNetTrainDataBatch() {
+    public NetModelDataBatch createNetModelDataBatch() {
       NetModel netModel = NetModels.sigmoid( //
           optLinearChain.create(2, 1), //
           ScalarLayer.VectorToScalar);

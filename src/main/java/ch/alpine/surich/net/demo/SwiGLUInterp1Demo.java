@@ -4,7 +4,6 @@ package ch.alpine.surich.net.demo;
 import java.awt.Graphics;
 import java.awt.Rectangle;
 import java.util.List;
-import java.util.function.Supplier;
 
 import ch.alpine.bridge.fig.Show;
 import ch.alpine.bridge.fig.plt.ListPlot;
@@ -21,7 +20,7 @@ import ch.alpine.subare.net.run.TrainingData;
 import ch.alpine.surich.net.BaseNetDemo;
 import ch.alpine.surich.net.NetModelDataBatch;
 import ch.alpine.surich.net.NetTrainComponent;
-import ch.alpine.surich.net.OptParam;
+import ch.alpine.surich.net.NetTrainComponentSupplier;
 import ch.alpine.tensor.RealScalar;
 import ch.alpine.tensor.Scalar;
 import ch.alpine.tensor.Tensor;
@@ -40,10 +39,10 @@ import ch.alpine.tensor.sca.tri.Sin;
 @ReflectionMarker
 class SwiGLUInterp1Demo extends BaseNetDemo {
   // parameters of supplier are introduced to the gui
-  public final Supplier<NetTrainComponent> supplier = new SwiGLUInterp1Component();
+  public final NetTrainComponentSupplier supplier = new SwiGLUInterp1Component();
 
   @Override
-  protected Supplier<NetTrainComponent> supplier() {
+  protected NetTrainComponentSupplier supplier() {
     return supplier;
   }
 
@@ -53,7 +52,7 @@ class SwiGLUInterp1Demo extends BaseNetDemo {
 }
 
 @ReflectionMarker
-class SwiGLUInterp1Component implements Supplier<NetTrainComponent> {
+class SwiGLUInterp1Component extends NetTrainComponentSupplier {
   enum SwiGluFunc implements ScalarUnaryOperator {
     X2 {
       @Override
@@ -99,14 +98,11 @@ class SwiGLUInterp1Component implements Supplier<NetTrainComponent> {
     },
   }
 
-  public Integer seed = 0;
   public Scalar domain = RealScalar.ONE;
   public Integer samples = 100;
-  public Integer batch_size = 10;
   public Integer hidden = 10;
   public Scalar l2 = RealScalar.ZERO;
   public SwiGluFunc swiGluFunc = SwiGluFunc.X2_COS;
-  public final OptParam optParam = new OptParam();
 
   @Override
   public NetTrainComponent get() {
@@ -126,12 +122,7 @@ class SwiGLUInterp1Component implements Supplier<NetTrainComponent> {
     }
 
     @Override
-    public OptParam optParam() {
-      return optParam;
-    };
-
-    @Override
-    public NetModelDataBatch createNetTrainDataBatch() {
+    public NetModelDataBatch createNetModelDataBatch() {
       SwiGLULayer swiGLULayer = new SwiGLULayer(1, hidden, 1);
       swiGLULayer.netRegularization = L2Regularization.of(l2);
       NetModel netModel = new NetModel(NetChain.join( //

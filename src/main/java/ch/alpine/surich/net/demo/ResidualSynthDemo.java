@@ -1,8 +1,6 @@
 // code by jph
 package ch.alpine.surich.net.demo;
 
-import java.util.function.Supplier;
-
 import ch.alpine.bridge.ref.ann.ReflectionMarker;
 import ch.alpine.subare.net.lay.LinearLayer;
 import ch.alpine.subare.net.lay.MatrixLayer;
@@ -17,7 +15,7 @@ import ch.alpine.subare.net.run.TrainingData;
 import ch.alpine.surich.net.BaseNetDemo;
 import ch.alpine.surich.net.NetModelDataBatch;
 import ch.alpine.surich.net.NetTrainComponent;
-import ch.alpine.surich.net.OptParam;
+import ch.alpine.surich.net.NetTrainComponentSupplier;
 import ch.alpine.tensor.RealScalar;
 import ch.alpine.tensor.Scalar;
 import ch.alpine.tensor.Tensor;
@@ -30,10 +28,10 @@ import ch.alpine.tensor.sca.Clips;
 @ReflectionMarker
 class ResidualSynthDemo extends BaseNetDemo {
   // parameters of supplier are introduced to the gui
-  public final Supplier<NetTrainComponent> supplier = new ResidualSynthComponent();
+  public final NetTrainComponentSupplier supplier = new ResidualSynthComponent();
 
   @Override
-  protected Supplier<NetTrainComponent> supplier() {
+  protected NetTrainComponentSupplier supplier() {
     return supplier;
   }
 
@@ -43,16 +41,13 @@ class ResidualSynthDemo extends BaseNetDemo {
 }
 
 @ReflectionMarker
-class ResidualSynthComponent implements Supplier<NetTrainComponent> {
+class ResidualSynthComponent extends NetTrainComponentSupplier {
   public static final Clip DOMAIN = Clips.absoluteOne();
-  public Integer seed = 0;
   public Integer samples = 200;
-  public Integer batch_size = 20;
   public Integer dim0 = 6;
   public Integer dim1 = 10;
   public Integer dim2 = 3;
   public Scalar noise_sigma = RealScalar.of(0.0001);
-  public final OptParam optParam = new OptParam();
 
   @Override
   public NetTrainComponent get() {
@@ -83,12 +78,7 @@ class ResidualSynthComponent implements Supplier<NetTrainComponent> {
     }
 
     @Override
-    public OptParam optParam() {
-      return optParam;
-    };
-
-    @Override
-    public NetModelDataBatch createNetTrainDataBatch() {
+    public NetModelDataBatch createNetModelDataBatch() {
       NetLayer netLayer = create();
       NetModel netModel = new NetModel(netLayer, SquaredErrorLoss.INSTANCE);
       return new NetModelDataBatch(netModel, trainingData, batch_size);

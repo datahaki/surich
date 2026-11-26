@@ -4,7 +4,6 @@ package ch.alpine.surich.net.demo;
 import java.awt.Graphics;
 import java.awt.Rectangle;
 import java.util.List;
-import java.util.function.Supplier;
 
 import ch.alpine.bridge.fig.Show;
 import ch.alpine.bridge.fig.Showable;
@@ -24,8 +23,8 @@ import ch.alpine.subare.net.run.TrainingData;
 import ch.alpine.surich.net.BaseNetDemo;
 import ch.alpine.surich.net.NetModelDataBatch;
 import ch.alpine.surich.net.NetTrainComponent;
+import ch.alpine.surich.net.NetTrainComponentSupplier;
 import ch.alpine.surich.net.OptLinearChain;
-import ch.alpine.surich.net.OptParam;
 import ch.alpine.tensor.RealScalar;
 import ch.alpine.tensor.Scalar;
 import ch.alpine.tensor.Slash;
@@ -44,10 +43,10 @@ import ch.alpine.tensor.sca.ply.Chebyshev;
 @ReflectionMarker
 class FeatureDemo extends BaseNetDemo {
   // parameters of supplier are introduced to the gui
-  public final Supplier<NetTrainComponent> supplier = new FeatureComponent();
+  public final NetTrainComponentSupplier supplier = new FeatureComponent();
 
   @Override
-  protected Supplier<NetTrainComponent> supplier() {
+  protected NetTrainComponentSupplier supplier() {
     return supplier;
   }
 
@@ -74,17 +73,14 @@ enum FeatureFunc {
 }
 
 @ReflectionMarker
-class FeatureComponent implements Supplier<NetTrainComponent> {
+class FeatureComponent extends NetTrainComponentSupplier {
   public static final Clip DOMAIN = Clips.absoluteOne();
-  public Integer seed = 0;
   public Integer samples = 500;
-  public Integer batch_size = 50;
   public FeatureFunc featureFunc = FeatureFunc.Chebyshev_T;
   public Integer V = 4;
   public Integer D = 3;
   public Boolean oneHot = false;
   public final OptLinearChain optLinearChain = new OptLinearChain();
-  public final OptParam optParam = new OptParam();
 
   private int d_emb() {
     return 1 + (oneHot ? V : D);
@@ -110,12 +106,7 @@ class FeatureComponent implements Supplier<NetTrainComponent> {
     }
 
     @Override
-    public OptParam optParam() {
-      return optParam;
-    };
-
-    @Override
-    public NetModelDataBatch createNetTrainDataBatch() {
+    public NetModelDataBatch createNetModelDataBatch() {
       NetLayer netLayer = NetChain.join( //
           FeatureEmbeddingLayer.of( //
               ScalarLayer.ScalarToVector, //

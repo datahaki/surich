@@ -38,17 +38,16 @@ public abstract class NetTrainComponent extends JComponent implements NetTrainLi
     randomGenerator = RandomGeneratorFactory.of("L64X256MixRandom").create(seed);
   }
 
-  public abstract OptParam optParam();
+  public abstract NetModelDataBatch createNetModelDataBatch();
 
-  public abstract NetModelDataBatch createNetTrainDataBatch();
-
-  public final void runAsBatches() {
-    NetModelDataBatch netTrainDataBatch = createNetTrainDataBatch();
+  public final void runAsBatches(OptParam optParam) {
+    NetModelDataBatch netTrainDataBatch = createNetModelDataBatch();
     NetModel netModel = netTrainDataBatch.netModel();
     NetLayers.initialize(netModel.netLayer(), randomGenerator);
-    netTrain = new NetTrain(netModel, optParam().create());
+    netTrain = new NetTrain(netModel, optParam.create());
     netTrain.addListener(netParamStatTracker);
     netTrain.addListener(this);
+    netTrain.setMaxEpochs(20000);
     netTrain.runAsBatches(netTrainDataBatch.trainingData(), netTrainDataBatch.batch_size());
   }
 

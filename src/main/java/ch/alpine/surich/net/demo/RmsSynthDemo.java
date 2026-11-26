@@ -4,7 +4,6 @@ package ch.alpine.surich.net.demo;
 import java.awt.Graphics;
 import java.awt.Rectangle;
 import java.util.List;
-import java.util.function.Supplier;
 
 import ch.alpine.bridge.fig.Show;
 import ch.alpine.bridge.fig.plt.ListDiscretePlot;
@@ -21,7 +20,7 @@ import ch.alpine.subare.net.run.TrainingData;
 import ch.alpine.surich.net.BaseNetDemo;
 import ch.alpine.surich.net.NetModelDataBatch;
 import ch.alpine.surich.net.NetTrainComponent;
-import ch.alpine.surich.net.OptParam;
+import ch.alpine.surich.net.NetTrainComponentSupplier;
 import ch.alpine.tensor.RealScalar;
 import ch.alpine.tensor.Scalar;
 import ch.alpine.tensor.Tensor;
@@ -33,10 +32,10 @@ import ch.alpine.tensor.pdf.d.DiscreteUniformDistribution;
 @ReflectionMarker
 class RmsSynthDemo extends BaseNetDemo {
   // parameters of supplier are introduced to the gui
-  public final Supplier<NetTrainComponent> supplier = new RmsSynthComponent();
+  public final NetTrainComponentSupplier supplier = new RmsSynthComponent();
 
   @Override
-  protected Supplier<NetTrainComponent> supplier() {
+  protected NetTrainComponentSupplier supplier() {
     return supplier;
   }
 
@@ -46,12 +45,9 @@ class RmsSynthDemo extends BaseNetDemo {
 }
 
 @ReflectionMarker
-class RmsSynthComponent implements Supplier<NetTrainComponent> {
-  public Integer seed = 0;
+class RmsSynthComponent extends NetTrainComponentSupplier {
   public Integer samples = 30;
   public Scalar noise_sigma = RealScalar.of(0.0001);
-  public final OptParam optParam = new OptParam();
-  public Integer batch_size = 6;
 
   @Override
   public NetTrainComponent get() {
@@ -87,12 +83,7 @@ class RmsSynthComponent implements Supplier<NetTrainComponent> {
     }
 
     @Override
-    public OptParam optParam() {
-      return optParam;
-    };
-
-    @Override
-    public NetModelDataBatch createNetTrainDataBatch() {
+    public NetModelDataBatch createNetModelDataBatch() {
       RMSLinear rmsLinear = RMSLinear.create();
       NetModel netModel = rmsLinear.consolidate();
       return new NetModelDataBatch(netModel, trainingData, batch_size);

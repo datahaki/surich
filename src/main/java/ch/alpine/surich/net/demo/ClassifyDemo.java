@@ -4,7 +4,6 @@ package ch.alpine.surich.net.demo;
 import java.awt.Graphics;
 import java.awt.Rectangle;
 import java.util.List;
-import java.util.function.Supplier;
 import java.util.stream.IntStream;
 
 import ch.alpine.bridge.col.HuePalette;
@@ -21,8 +20,8 @@ import ch.alpine.subare.net.run.TrainingData;
 import ch.alpine.surich.net.BaseNetDemo;
 import ch.alpine.surich.net.NetModelDataBatch;
 import ch.alpine.surich.net.NetTrainComponent;
+import ch.alpine.surich.net.NetTrainComponentSupplier;
 import ch.alpine.surich.net.OptLinearChain;
-import ch.alpine.surich.net.OptParam;
 import ch.alpine.tensor.RealScalar;
 import ch.alpine.tensor.Scalar;
 import ch.alpine.tensor.Tensor;
@@ -40,10 +39,10 @@ import ch.alpine.tensor.sca.Clips;
 @ReflectionMarker
 class ClassifyDemo extends BaseNetDemo {
   // parameters of supplier are introduced to the gui
-  public final Supplier<NetTrainComponent> supplier = new ClassifyComponent();
+  public final NetTrainComponentSupplier supplier = new ClassifyComponent();
 
   @Override
-  protected Supplier<NetTrainComponent> supplier() {
+  protected NetTrainComponentSupplier supplier() {
     return supplier;
   }
 
@@ -53,14 +52,11 @@ class ClassifyDemo extends BaseNetDemo {
 }
 
 @ReflectionMarker
-class ClassifyComponent implements Supplier<NetTrainComponent> {
+class ClassifyComponent extends NetTrainComponentSupplier {
   public static final Clip DOMAIN = Clips.absoluteOne();
-  public Integer seed = 0;
   public Integer samples = 30;
   public Integer labels = 3;
-  public final OptLinearChain optLinear = new OptLinearChain();
-  public final OptParam optParam = new OptParam();
-  public Integer batch_size = 6;
+  public final OptLinearChain optLinearChain = new OptLinearChain();
   public ColorDataLists cdl = ColorDataLists._097;
   public Scalar sat = RealScalar.of(0.5);
   public Scalar val = RealScalar.of(0.5);
@@ -83,13 +79,8 @@ class ClassifyComponent implements Supplier<NetTrainComponent> {
     }
 
     @Override
-    public OptParam optParam() {
-      return optParam;
-    };
-
-    @Override
-    public NetModelDataBatch createNetTrainDataBatch() {
-      NetModel netModel = NetModels.softmax_argMax(optLinear.create(2, labels));
+    public NetModelDataBatch createNetModelDataBatch() {
+      NetModel netModel = NetModels.softmax_argMax(optLinearChain.create(2, labels));
       return new NetModelDataBatch(netModel, trainingData, batch_size);
     }
 

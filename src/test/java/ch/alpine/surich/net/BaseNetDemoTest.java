@@ -31,11 +31,12 @@ class BaseNetDemoTest {
   private static void acceptBatch(InstanceRecord<BaseNetDemo> instanceRecord) {
     BaseNetDemo baseNetDemo = instanceRecord.supplier().get();
     for (NetOptimizers netOptimizers : NetOptimizers.values()) {
-      NetTrainComponent netTrainComponent = baseNetDemo.supplier().get();
+      NetTrainComponentSupplier netTrainComponentSupplier = baseNetDemo.supplier();
+      NetTrainComponent netTrainComponent = netTrainComponentSupplier.get();
       netTrainComponent.setSize(200, 200);
-      OptParam optParam = netTrainComponent.optParam();
+      OptParam optParam = netTrainComponentSupplier.optParam;
       optParam.netOptimizers = netOptimizers;
-      NetModelDataBatch netTrainDataBatch = netTrainComponent.createNetTrainDataBatch();
+      NetModelDataBatch netTrainDataBatch = netTrainComponent.createNetModelDataBatch();
       NetTrain netTrain = new NetTrain(netTrainDataBatch.netModel(), optParam.create());
       netTrain.setMaxEpochs(10);
       netTrainDataBatch.init(netTrainComponent.randomGenerator);
@@ -53,11 +54,12 @@ class BaseNetDemoTest {
   private static void acceptSingle(InstanceRecord<BaseNetDemo> instanceRecord) {
     BaseNetDemo baseNetDemo = instanceRecord.supplier().get();
     for (NetOptimizers netOptimizers : NetOptimizers.values()) {
-      NetTrainComponent netTrainComponent = baseNetDemo.supplier().get();
+      NetTrainComponentSupplier netTrainComponentSupplier = baseNetDemo.supplier();
+      NetTrainComponent netTrainComponent = netTrainComponentSupplier.get();
       netTrainComponent.setSize(200, 200);
-      OptParam optParam = netTrainComponent.optParam();
+      OptParam optParam = netTrainComponentSupplier.optParam;
       optParam.netOptimizers = netOptimizers;
-      NetModelDataBatch netTrainDataBatch = netTrainComponent.createNetTrainDataBatch();
+      NetModelDataBatch netTrainDataBatch = netTrainComponent.createNetModelDataBatch();
       netTrainDataBatch.init(netTrainComponent.randomGenerator);
       NetModel netModel = netTrainDataBatch.netModel();
       NetTrain netTrain = new NetTrain(netModel, optParam.create());

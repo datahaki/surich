@@ -1,8 +1,6 @@
 // code by jph
 package ch.alpine.surich.net.demo;
 
-import java.util.function.Supplier;
-
 import ch.alpine.bridge.ref.ann.ReflectionMarker;
 import ch.alpine.subare.net.lay.ScalarLayer;
 import ch.alpine.subare.net.mod.NetModel;
@@ -11,8 +9,8 @@ import ch.alpine.subare.net.run.TrainingData;
 import ch.alpine.surich.net.BaseNetDemo;
 import ch.alpine.surich.net.NetModelDataBatch;
 import ch.alpine.surich.net.NetTrainComponent;
+import ch.alpine.surich.net.NetTrainComponentSupplier;
 import ch.alpine.surich.net.OptLinearChain;
-import ch.alpine.surich.net.OptParam;
 import ch.alpine.tensor.Scalar;
 import ch.alpine.tensor.Slash;
 import ch.alpine.tensor.Tensor;
@@ -24,10 +22,10 @@ import ch.alpine.tensor.sca.Mod;
 @ReflectionMarker
 class XorDemo extends BaseNetDemo {
   // parameters of supplier are introduced to the gui
-  public final Supplier<NetTrainComponent> supplier = new XorComponent();
+  public final NetTrainComponentSupplier supplier = new XorComponent();
 
   @Override
-  protected Supplier<NetTrainComponent> supplier() {
+  protected NetTrainComponentSupplier supplier() {
     return supplier;
   }
 
@@ -37,11 +35,8 @@ class XorDemo extends BaseNetDemo {
 }
 
 @ReflectionMarker
-class XorComponent implements Supplier<NetTrainComponent> {
-  public Integer seed = 0;
-  public Integer batch_size = 4;
+class XorComponent extends NetTrainComponentSupplier {
   public final OptLinearChain optLinearChain = new OptLinearChain();
-  public final OptParam optParam = new OptParam();
 
   @Override
   public NetTrainComponent get() {
@@ -63,12 +58,7 @@ class XorComponent implements Supplier<NetTrainComponent> {
     }
 
     @Override
-    public OptParam optParam() {
-      return optParam;
-    };
-
-    @Override
-    public NetModelDataBatch createNetTrainDataBatch() {
+    public NetModelDataBatch createNetModelDataBatch() {
       NetModel netModel = NetModels.logits(optLinearChain.create(2, 1), ScalarLayer.VectorToScalar);
       return new NetModelDataBatch(netModel, trainingData, batch_size);
     }

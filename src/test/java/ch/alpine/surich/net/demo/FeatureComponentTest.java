@@ -11,7 +11,7 @@ class FeatureComponentTest {
   void test() {
     FeatureComponent featureComponent = new FeatureComponent();
     NetTrainComponent netTrainComponent = featureComponent.get();
-    NetModelDataBatch netTrainDataBatch = netTrainComponent.createNetTrainDataBatch();
+    NetModelDataBatch netTrainDataBatch = netTrainComponent.createNetModelDataBatch();
     // NetTrain netTrain = netTrainDataBatch.netTrain();
     // NetLayers.parametersAsMatrix(netTrain.netLayer());
   }

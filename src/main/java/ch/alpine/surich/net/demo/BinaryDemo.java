@@ -4,7 +4,6 @@ package ch.alpine.surich.net.demo;
 import java.awt.Graphics;
 import java.awt.Rectangle;
 import java.util.List;
-import java.util.function.Supplier;
 import java.util.stream.IntStream;
 
 import ch.alpine.bridge.col.HuePalette;
@@ -20,8 +19,8 @@ import ch.alpine.subare.net.run.TrainingData;
 import ch.alpine.surich.net.BaseNetDemo;
 import ch.alpine.surich.net.NetModelDataBatch;
 import ch.alpine.surich.net.NetTrainComponent;
+import ch.alpine.surich.net.NetTrainComponentSupplier;
 import ch.alpine.surich.net.OptLinearChain;
-import ch.alpine.surich.net.OptParam;
 import ch.alpine.tensor.RealScalar;
 import ch.alpine.tensor.Scalar;
 import ch.alpine.tensor.Scalars;
@@ -43,10 +42,10 @@ import ch.alpine.tensor.sca.tri.Sin;
 @ReflectionMarker
 class BinaryDemo extends BaseNetDemo {
   // parameters of supplier are introduced to the gui
-  public final Supplier<NetTrainComponent> supplier = new BinaryComponent();
+  public final NetTrainComponentSupplier supplier = new BinaryComponent();
 
   @Override
-  protected Supplier<NetTrainComponent> supplier() {
+  protected NetTrainComponentSupplier supplier() {
     return supplier;
   }
 
@@ -56,13 +55,10 @@ class BinaryDemo extends BaseNetDemo {
 }
 
 @ReflectionMarker
-class BinaryComponent implements Supplier<NetTrainComponent> {
+class BinaryComponent extends NetTrainComponentSupplier {
   public static final Clip DOMAIN = Clips.absoluteOne();
-  public Integer seed = 0;
   public Integer samples = 30;
   public final OptLinearChain optLinearChain = new OptLinearChain();
-  public final OptParam optParam = new OptParam();
-  public Integer batch_size = 10;
   public ColorDataLists cdl = ColorDataLists._097;
   public Scalar sat = RealScalar.of(0.5);
   public Scalar val = RealScalar.of(0.5);
@@ -87,12 +83,7 @@ class BinaryComponent implements Supplier<NetTrainComponent> {
     }
 
     @Override
-    public OptParam optParam() {
-      return optParam;
-    };
-
-    @Override
-    public NetModelDataBatch createNetTrainDataBatch() {
+    public NetModelDataBatch createNetModelDataBatch() {
       NetModel netModel = NetModels.logits( //
           optLinearChain.create(2, 1), //
           ScalarLayer.VectorToScalar);

@@ -4,7 +4,6 @@ package ch.alpine.surich.net.demo;
 import java.awt.Graphics;
 import java.awt.Rectangle;
 import java.util.List;
-import java.util.function.Supplier;
 
 import ch.alpine.bridge.fig.Show;
 import ch.alpine.bridge.fig.plt.ListPlot;
@@ -16,8 +15,8 @@ import ch.alpine.subare.net.run.TrainingData;
 import ch.alpine.surich.net.BaseNetDemo;
 import ch.alpine.surich.net.NetModelDataBatch;
 import ch.alpine.surich.net.NetTrainComponent;
+import ch.alpine.surich.net.NetTrainComponentSupplier;
 import ch.alpine.surich.net.OptLinearChain;
-import ch.alpine.surich.net.OptParam;
 import ch.alpine.tensor.Slash;
 import ch.alpine.tensor.Tensor;
 import ch.alpine.tensor.Tensors;
@@ -32,10 +31,10 @@ import ch.alpine.tensor.sca.Clips;
 @ReflectionMarker
 class SwiGLUClassifyDemo extends BaseNetDemo {
   // parameters of supplier are introduced to the gui
-  public final Supplier<NetTrainComponent> supplier = new SwiGLUClassifyComponent();
+  public final NetTrainComponentSupplier supplier = new SwiGLUClassifyComponent();
 
   @Override
-  protected Supplier<NetTrainComponent> supplier() {
+  protected NetTrainComponentSupplier supplier() {
     return supplier;
   }
 
@@ -45,13 +44,10 @@ class SwiGLUClassifyDemo extends BaseNetDemo {
 }
 
 @ReflectionMarker
-class SwiGLUClassifyComponent implements Supplier<NetTrainComponent> {
+class SwiGLUClassifyComponent extends NetTrainComponentSupplier {
   public static final Clip DOMAIN = Clips.absolute(2);
-  public Integer seed = 0;
   public Integer samples = 30;
   public final OptLinearChain optLinear = new OptLinearChain();
-  public final OptParam optParam = new OptParam();
-  public Integer batch_size = 6;
 
   @Override
   public NetTrainComponent get() {
@@ -94,12 +90,7 @@ class SwiGLUClassifyComponent implements Supplier<NetTrainComponent> {
     }
 
     @Override
-    public OptParam optParam() {
-      return optParam;
-    };
-
-    @Override
-    public NetModelDataBatch createNetTrainDataBatch() {
+    public NetModelDataBatch createNetModelDataBatch() {
       NetModel netModel = new NetModel(optLinear.swiGLU(2, 2), SquaredErrorLoss.INSTANCE);
       return new NetModelDataBatch(netModel, trainingData, batch_size);
     }
