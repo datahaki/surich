@@ -67,7 +67,11 @@ public abstract class NetTrainComponent extends JComponent implements NetTrainLi
       dimension.height /= 2;
       List<Rectangle> list = GraphicsGrid.row(3, new Rectangle(new Point(inset, 0), dimension));
       {
-        NetShows.loss(netTrain.tloss).render_autoIndent(graphics, list.get(0));
+        try {
+          NetShows.loss(netTrain.tloss).render_autoIndent(graphics, list.get(0));
+        } catch (Exception e) {
+          IO.println(netTrain.tloss.getTable());
+        }
         NetShows.pMatrix(copy.netLayer()).render_autoIndent(graphics, list.get(1));
         NetShows.param(netParamStatTracker).render_autoIndent(graphics, list.get(2));
       }

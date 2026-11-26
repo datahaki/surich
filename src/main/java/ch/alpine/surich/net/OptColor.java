@@ -1,11 +1,14 @@
+// code by jph
 package ch.alpine.surich.net;
 
 import ch.alpine.bridge.col.HuePalette;
+import ch.alpine.bridge.ref.ann.ReflectionMarker;
 import ch.alpine.tensor.RealScalar;
 import ch.alpine.tensor.Scalar;
 import ch.alpine.tensor.col.ColorDataIndexed;
 import ch.alpine.tensor.col.ColorDataLists;
 
+@ReflectionMarker
 public class OptColor {
   public ColorDataLists cdl = ColorDataLists._097;
   public Scalar sat = RealScalar.of(0.5);

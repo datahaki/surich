@@ -19,7 +19,7 @@ public abstract class BaseNetDemo implements ManipulateProvider {
   // ---
   @FieldFuse
   public transient Boolean retrain = false;
-  public Integer batch_size = 6;
+  public Integer batch_size = 20;
   public final OptParam optParam = new OptParam();
   private NetTrainComponent netTrainComponent;
 
