@@ -29,11 +29,8 @@ import ch.alpine.surich.net.OptLinearChain;
 import ch.alpine.tensor.Slash;
 import ch.alpine.tensor.Tensor;
 import ch.alpine.tensor.alg.Range;
-import ch.alpine.tensor.opt.nd.CoordinateBoundingBox;
+import ch.alpine.tensor.red.Entrywise;
 import ch.alpine.tensor.red.Mean;
-import ch.alpine.tensor.sca.Abs;
-import ch.alpine.tensor.sca.Clip;
-import ch.alpine.tensor.sca.Clips;
 import ch.alpine.tensor.sca.Round;
 
 @ReflectionMarker
@@ -53,7 +50,6 @@ class PenguinSexDemo extends BaseNetDemo {
 
 @ReflectionMarker
 class PenguinSexComponent extends NetTrainComponentSupplier {
-  public static final Clip DOMAIN = Clips.absoluteOne();
   private final DatasetBuilder datasetBuilder = PenguinDataset.INSTANCE.builder;
   public final OptLinearChain optLinearChain = new OptLinearChain();
 
@@ -63,7 +59,6 @@ class PenguinSexComponent extends NetTrainComponentSupplier {
   }
 
   class InnerComponent extends NetTrainComponent {
-    final CoordinateBoundingBox cbb = CoordinateBoundingBox.of(DOMAIN, DOMAIN);
     final TrainingData trainingData;
 
     public InnerComponent() {
@@ -98,8 +93,8 @@ class PenguinSexComponent extends NetTrainComponentSupplier {
       Tensor ydata = trainingData.ydata();
       Tensor ypred = Slash.of(xdata, netLayer::forward);
       Tensor x = Range.of(0, xdata.length());
-      Tensor y = ypred.subtract(ydata);
-      Tensor eperc = Unitless.PERCENT.unitConvert().apply(Mean.ofVector(y.maps(Abs.FUNCTION))).maps(Round._1);
+      Tensor y = Entrywise.neq().apply(ypred, ydata);
+      Tensor eperc = Unitless.PERCENT.unitConvert().apply(Mean.ofVector(y)).maps(Round._1);
       Show show = new Show("error " + eperc);
       show.add(ListDiscretePlot.of(x, y));
       show.render_autoIndent(graphics, list.get(0));

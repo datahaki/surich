@@ -29,11 +29,8 @@ import ch.alpine.surich.net.OptLinearChain;
 import ch.alpine.tensor.Slash;
 import ch.alpine.tensor.Tensor;
 import ch.alpine.tensor.alg.Range;
-import ch.alpine.tensor.opt.nd.CoordinateBoundingBox;
 import ch.alpine.tensor.red.Mean;
 import ch.alpine.tensor.sca.Abs;
-import ch.alpine.tensor.sca.Clip;
-import ch.alpine.tensor.sca.Clips;
 import ch.alpine.tensor.sca.Round;
 
 @ReflectionMarker
@@ -53,7 +50,6 @@ class PenguinWeightDemo extends BaseNetDemo {
 
 @ReflectionMarker
 class PenguinWeightComponent extends NetTrainComponentSupplier {
-  public static final Clip DOMAIN = Clips.absoluteOne();
   private final DatasetBuilder datasetBuilder = PenguinDataset.INSTANCE.builder;
   public final OptLinearChain optLinearChain = new OptLinearChain();
 
@@ -63,7 +59,6 @@ class PenguinWeightComponent extends NetTrainComponentSupplier {
   }
 
   class InnerComponent extends NetTrainComponent {
-    final CoordinateBoundingBox cbb = CoordinateBoundingBox.of(DOMAIN, DOMAIN);
     final TrainingData trainingData;
 
     public InnerComponent() {

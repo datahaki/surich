@@ -13,7 +13,7 @@ import ch.alpine.tensor.sca.Round;
 enum FVPE_RaceTrack {
   ;
   static void main() {
-    Racetrack racetrack = new Racetrack(Import.of("ch/alpine/subare/ch05/track0.png"), 3);
+    Racetrack racetrack = new Racetrack(Import.of("ch/alpine/surich/ch05/track0.png"), 3);
     FirstVisitPolicyEvaluation fvpe = new FirstVisitPolicyEvaluation( //
         racetrack, null);
     Policy policy = EquiprobablePolicy.create(racetrack);
