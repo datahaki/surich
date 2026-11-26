@@ -60,8 +60,9 @@ class BaseNetDemoTest {
       OptParam optParam = baseNetDemo.optParam;
       optParam.netOptimizers = netOptimizers;
       NetModelData netTrainDataBatch = netTrainComponent.createNetModelDataBatch();
-      netTrainDataBatch.init(netTrainComponent.randomGenerator);
       NetModel netModel = netTrainDataBatch.netModel();
+      NetModels.toString(netModel);
+      netTrainDataBatch.init(netTrainComponent.randomGenerator);
       NetTrain netTrain = new NetTrain(netModel, optParam.create());
       NetModels.toString(netModel);
       NetLayer netLayer = netModel.netLayer();

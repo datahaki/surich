@@ -27,6 +27,8 @@ import ch.alpine.tensor.Scalar;
 import ch.alpine.tensor.Tensor;
 import ch.alpine.tensor.Tensors;
 import ch.alpine.tensor.Unprotect;
+import ch.alpine.tensor.alg.Reverse;
+import ch.alpine.tensor.alg.Transpose;
 import ch.alpine.tensor.io.Import;
 import ch.alpine.tensor.itp.Interpolation;
 import ch.alpine.tensor.itp.LinearInterpolation;
@@ -50,6 +52,13 @@ class ImageApproxDemo extends BaseNetDemo {
 
 @ReflectionMarker
 class ImageApproxComponent extends NetTrainComponentSupplier {
+  enum ImageName {
+    gray_wa,
+    gray_ma,
+    gray_ec,
+  }
+  
+  public ImageName imageName = ImageName.gray_ma;
   public Integer samples = 20;
   public final OptLinearChain optLinearChain = new OptLinearChain();
 
@@ -65,7 +74,7 @@ class ImageApproxComponent extends NetTrainComponentSupplier {
 
     public InnerComponent() {
       super(seed);
-      image = Import.of("ch/alpine/surich/net/img/gray_ma.jpg").divide(RealScalar.of(255));
+      image = Import.of("ch/alpine/surich/net/img/"+imageName.name()+".jpg").divide(RealScalar.of(255.0));
       Dimension dimension = new Dimension(Unprotect.dimension1(image), image.length());
       Scalar redux = RealScalar.of((double) Math.max(dimension.width, dimension.height));
       meshgrid = Meshgrid.of(CoordinateBoundingBox.of( //
@@ -75,10 +84,12 @@ class ImageApproxComponent extends NetTrainComponentSupplier {
       Tensor py = meshgrid.py_decr();
       Tensor xdata = Tensors.reserve(samples * samples);
       Tensor ydata = Tensors.reserve(samples * samples);
-      Interpolation interpolation = LinearInterpolation.of(image);
+      Interpolation interpolation = LinearInterpolation.of(Transpose.of(Reverse.of(image)));
+      image.set(RealScalar.ZERO, 0, 0);
+      image.set(RealScalar.ONE, 1, 0);
       for (Tensor x : px) {
         for (Tensor y : py) {
-          Tensor p = Unprotect.byRef(y, x);
+          Tensor p = Unprotect.byRef(x, y);
           xdata.append(p);
           ydata.append(interpolation.get(p.multiply(redux)));
         }
@@ -104,17 +115,10 @@ class ImageApproxComponent extends NetTrainComponentSupplier {
       {
         Show show = new Show("function");
         Tensor image2 = meshgrid.image(netLayer::forward);
+        image2.set(RealScalar.ZERO, 0, 0);
+        image2.set(RealScalar.ONE, 1, 0);
         show.add(ArrayPlot.of(image2));
         show.render_autoIndent(graphics, list.get(1));
-        // Show show = new Show("error");
-        // ScalarBinaryOperator sbo = (x, y) -> {
-        // Tensor p = Unprotect.using(List.of(x, y));
-        // return (Scalar) netLayer.forward(p).subtract(truth.apply(p));
-        // };
-        // show.add(DensityPlot.of(sbo, ext, cdg));
-        // show.add(PolygonPlot.of(cbb));
-        // show.add(ListPlot.of(trainingData.xdata()));
-        // show.render_autoIndent(graphics, list.get(1));
       }
     };
   }
