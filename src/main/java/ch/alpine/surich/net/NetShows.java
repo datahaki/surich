@@ -4,6 +4,7 @@ package ch.alpine.surich.net;
 import java.awt.Graphics;
 import java.awt.Point;
 import java.util.List;
+import java.util.Optional;
 
 import ch.alpine.bridge.fig.Show;
 import ch.alpine.bridge.fig.grd.AxisMaps;
@@ -13,6 +14,7 @@ import ch.alpine.subare.net.lay.NetLayer;
 import ch.alpine.subare.net.lay.NetLayers;
 import ch.alpine.subare.net.mod.NetModel;
 import ch.alpine.subare.net.mod.NetModels;
+import ch.alpine.subare.net.run.NetParamDeltaTracker;
 import ch.alpine.subare.net.run.NetParamStatTracker;
 import ch.alpine.subare.net.run.NetTrain;
 import ch.alpine.tensor.Tensor;
@@ -23,28 +25,14 @@ import ch.alpine.tensor.sca.Sign;
 
 public enum NetShows {
   ;
-  public static void layers(Graphics graphics, Point point, NetModel netModel) {
+  public static int layers(Graphics graphics, Point point, NetModel netModel) {
     List<String> list = NetModels.toString(netModel);
-    int piy = 0;
+    int piy = 16;
     for (String string : list) {
-      piy += 16;
       graphics.drawString(string, point.x, point.y + piy);
+      piy += 16;
     }
-  }
-
-  public static Show param(NetParamStatTracker netParamStatTracker) {
-    Show show = new Show("parameter stats");
-    Tensor[] tensors = netParamStatTracker.tableBuilder().oneToMany();
-    for (int i = 0; i < tensors.length; ++i)
-      show.add(ListLinePlot.of(tensors[i])).setLabel(NetParamStatTracker.LABELS[i]);
-    return show;
-  }
-
-  public static Show pMatrix(NetLayer netLayer) {
-    Show show = new Show("parameters");
-    Tensor matrix = NetLayers.parametersAsMatrix(netLayer);
-    show.add(MatrixPlot.of(matrix, ColorDataGradients.THERMOMETER, true));
-    return show;
+    return piy;
   }
 
   public static Show loss(TableBuilder tloss) {
@@ -56,6 +44,49 @@ public enum NetShows {
         show.add(ListLinePlot.of(XY)).setLabel(NetTrain.LOSS_LABELS[i]);
     }
     show.showOptions.axisOptionsY.axisMap = AxisMaps.LOG10;
+    return show;
+  }
+
+  public static Show pMatrix(NetLayer netLayer) {
+    Show show = new Show("parameter matrix");
+    Tensor matrix = NetLayers.parametersAsMatrix(netLayer);
+    show.add(MatrixPlot.of(matrix, ColorDataGradients.THERMOMETER, true));
+    return show;
+  }
+
+  public static Show delta(NetParamDeltaTracker netParamDeltaTracker) {
+    Show show = new Show("delta");
+    Optional<Tensor> optional = netParamDeltaTracker.getDelta();
+    if (optional.isPresent()) {
+      Tensor matrix = NetLayers.parametersAsMatrix(optional.get());
+      show.add(MatrixPlot.of(matrix, ColorDataGradients.THERMOMETER, true));
+    }
+    return show;
+  }
+
+  public static Show delta2(NetParamDeltaTracker netParamDeltaTracker) {
+    Show show = new Show("delta");
+    Optional<Tensor> optional = netParamDeltaTracker.getDelta2nd();
+    if (optional.isPresent()) {
+      Tensor matrix = NetLayers.parametersAsMatrix(optional.get());
+      show.add(MatrixPlot.of(matrix, ColorDataGradients.THERMOMETER, true));
+    }
+    return show;
+  }
+
+  public static Show param(NetParamStatTracker netParamStatTracker) {
+    Show show = new Show("parameter stats");
+    Tensor[] tensors = netParamStatTracker.tableBuilder().oneToMany();
+    for (int i = 0; i < tensors.length; ++i)
+      show.add(ListLinePlot.of(tensors[i])).setLabel(NetParamStatTracker.LABELS[i]);
+    return show;
+  }
+
+  public static Show paramLog(NetParamStatTracker netParamStatTracker) {
+    Show show = new Show("parameter stats");
+    Tensor[] tensors = netParamStatTracker.tableBuilder().oneToMany();
+    for (int i = 0; i < tensors.length; ++i)
+      show.add(ListLinePlot.of(tensors[i])).setLabel(NetParamStatTracker.LABELS[i]);
     return show;
   }
 }

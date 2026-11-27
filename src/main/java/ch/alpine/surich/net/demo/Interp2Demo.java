@@ -10,11 +10,10 @@ import ch.alpine.bridge.fig.plt.DensityPlot;
 import ch.alpine.bridge.fig.plt.ListPlot;
 import ch.alpine.bridge.fig.plt.PolygonPlot;
 import ch.alpine.bridge.ref.ann.ReflectionMarker;
-import ch.alpine.subare.net.lay.EnhanceLayer;
-import ch.alpine.subare.net.lay.FourierFrequencies;
 import ch.alpine.subare.net.lay.NetChain;
 import ch.alpine.subare.net.lay.NetLayer;
 import ch.alpine.subare.net.lay.SingletonLayer;
+import ch.alpine.subare.net.lay.TrainableFourierLayer;
 import ch.alpine.subare.net.los.SquaredErrorLoss;
 import ch.alpine.subare.net.mod.NetModel;
 import ch.alpine.subare.net.run.TrainingData;
@@ -89,9 +88,8 @@ class Interp2Component extends NetTrainComponentSupplier {
 
     @Override
     public NetModelData createNetModelDataBatch() {
-      Tensor B = FourierFrequencies.sampleB(numFreq, sigma, randomGenerator);
-      EnhanceLayer enhanceLayer = new EnhanceLayer(B);
-      NetLayer netLayer = NetChain.join(enhanceLayer, optLinearChain.create(2 * numFreq, 1), SingletonLayer.VectorToScalar);
+      TrainableFourierLayer fourierLayer = new TrainableFourierLayer(2, numFreq, sigma);
+      NetLayer netLayer = NetChain.join(fourierLayer, optLinearChain.create(2 * numFreq, 1), SingletonLayer.VectorToScalar);
       return new NetModelData(new NetModel(netLayer, SquaredErrorLoss.INSTANCE), trainingData);
     }
 

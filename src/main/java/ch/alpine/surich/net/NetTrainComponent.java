@@ -5,6 +5,7 @@ import java.awt.Dimension;
 import java.awt.Graphics;
 import java.awt.Point;
 import java.awt.Rectangle;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
 import java.util.random.RandomGenerator;
@@ -19,6 +20,7 @@ import ch.alpine.bridge.wdog.SoftWatchdog;
 import ch.alpine.bridge.wdog.Watchdog;
 import ch.alpine.subare.net.lay.NetLayers;
 import ch.alpine.subare.net.mod.NetModel;
+import ch.alpine.subare.net.run.NetParamDeltaTracker;
 import ch.alpine.subare.net.run.NetParamStatTracker;
 import ch.alpine.subare.net.run.NetTrain;
 import ch.alpine.subare.net.run.NetTrainListener;
@@ -29,10 +31,12 @@ import ch.alpine.tensor.qty.Quantity;
 public abstract class NetTrainComponent extends JComponent implements NetTrainListener {
   private final Watchdog watchdog = SoftWatchdog.barking(Quantity.of(50, "ms"));
   private final NetParamStatTracker netParamStatTracker = new NetParamStatTracker();
+  private final NetParamDeltaTracker netParamDeltaTracker = new NetParamDeltaTracker();
   private volatile boolean running = true;
   private NetTrain netTrain;
   private NetModel ferry;
   protected final RandomGenerator randomGenerator;
+  protected final List<String> notes = new ArrayList<>();
 
   public NetTrainComponent(int seed) {
     randomGenerator = RandomGeneratorFactory.of("L64X256MixRandom").create(seed);
@@ -46,6 +50,7 @@ public abstract class NetTrainComponent extends JComponent implements NetTrainLi
     NetLayers.initialize(netModel.netLayer(), randomGenerator);
     netTrain = new NetTrain(netModel, optParam.create());
     netTrain.addListener(netParamStatTracker);
+    netTrain.addListener(netParamDeltaTracker);
     netTrain.addListener(this);
     netTrain.setMaxEpochs(20000);
     netTrain.runAsBatches(netTrainDataBatch.trainingData(), batch_size);
@@ -54,14 +59,21 @@ public abstract class NetTrainComponent extends JComponent implements NetTrainLi
   protected void paintComponent(Graphics graphics, NetModel copy) {
   }
 
-  final int inset = 250;
+  final int inset = 300;
 
   @Override
   protected final void paintComponent(Graphics graphics) {
     NetModel copy = ferry;
     if (Objects.nonNull(copy)) {
       RenderQuality.setQuality(graphics);
-      NetShows.layers(graphics, new Point(), copy);
+      {
+        int piy = NetShows.layers(graphics, new Point(), copy);
+        piy += 16;
+        for (String s : notes) {
+          graphics.drawString(s, 0, piy);
+          piy += 16;
+        }
+      }
       Dimension dimension = getSize();
       dimension.width -= inset;
       dimension.height /= 2;
@@ -81,6 +93,7 @@ public abstract class NetTrainComponent extends JComponent implements NetTrainLi
 
   @Override
   public final boolean epoch(NetTrain netTrain) {
+    // dont draw more often than per epoch
     if (watchdog.isBarking()) {
       watchdog.notifyWatchdog();
       ferry = Serialization.copy(netTrain.netModel());
