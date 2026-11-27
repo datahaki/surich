@@ -7,7 +7,7 @@ import java.util.List;
 
 import ch.alpine.bridge.fig.Show;
 import ch.alpine.bridge.fig.plt.ListDiscretePlot;
-import ch.alpine.bridge.math.Unitless;
+import ch.alpine.bridge.math.SI;
 import ch.alpine.bridge.ref.ann.ReflectionMarker;
 import ch.alpine.subare.net.lay.Flatten1Layer;
 import ch.alpine.subare.net.lay.IdentityLayer;
@@ -91,7 +91,7 @@ class PenguinSpeciesComponent extends NetTrainComponentSupplier {
       Tensor ypred = Slash.of(xdata, netLayer::forward);
       Tensor x = Range.of(0, xdata.length());
       Tensor y = Entrywise.neq().apply(ypred, ydata);
-      Tensor eperc = Unitless.PERCENT.unitConvert().apply(Mean.ofVector(y)).maps(Round._1);
+      Tensor eperc = SI.PERCENT.unitConvert(Mean.ofVector(y)).maps(Round._1);
       Show show = new Show("error " + eperc);
       show.add(ListDiscretePlot.of(x, y));
       show.render_autoIndent(graphics, list.get(0));
