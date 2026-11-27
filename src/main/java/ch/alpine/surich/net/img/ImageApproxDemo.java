@@ -8,7 +8,7 @@ import java.util.List;
 
 import ch.alpine.bridge.awt.AwtUtil;
 import ch.alpine.bridge.fig.Show;
-import ch.alpine.bridge.fig.plt.ArrayPlot;
+import ch.alpine.bridge.fig.plt.ImagePlot;
 import ch.alpine.bridge.math.Meshgrid;
 import ch.alpine.bridge.ref.ann.ReflectionMarker;
 import ch.alpine.subare.net.lay.NetChain;
@@ -29,6 +29,7 @@ import ch.alpine.tensor.Tensors;
 import ch.alpine.tensor.Unprotect;
 import ch.alpine.tensor.alg.Reverse;
 import ch.alpine.tensor.alg.Transpose;
+import ch.alpine.tensor.io.ImageFormat;
 import ch.alpine.tensor.io.Import;
 import ch.alpine.tensor.itp.Interpolation;
 import ch.alpine.tensor.itp.LinearInterpolation;
@@ -57,7 +58,7 @@ class ImageApproxComponent extends NetTrainComponentSupplier {
     gray_ma,
     gray_ec,
   }
-  
+
   public ImageName imageName = ImageName.gray_ma;
   public Integer samples = 20;
   public final OptLinearChain optLinearChain = new OptLinearChain();
@@ -74,7 +75,7 @@ class ImageApproxComponent extends NetTrainComponentSupplier {
 
     public InnerComponent() {
       super(seed);
-      image = Import.of("ch/alpine/surich/net/img/"+imageName.name()+".jpg").divide(RealScalar.of(255.0));
+      image = Import.of("ch/alpine/surich/net/img/" + imageName.name() + ".jpg");
       Dimension dimension = new Dimension(Unprotect.dimension1(image), image.length());
       Scalar redux = RealScalar.of((double) Math.max(dimension.width, dimension.height));
       meshgrid = Meshgrid.of(CoordinateBoundingBox.of( //
@@ -85,8 +86,6 @@ class ImageApproxComponent extends NetTrainComponentSupplier {
       Tensor xdata = Tensors.reserve(samples * samples);
       Tensor ydata = Tensors.reserve(samples * samples);
       Interpolation interpolation = LinearInterpolation.of(Transpose.of(Reverse.of(image)));
-      image.set(RealScalar.ZERO, 0, 0);
-      image.set(RealScalar.ONE, 1, 0);
       for (Tensor x : px) {
         for (Tensor y : py) {
           Tensor p = Unprotect.byRef(x, y);
@@ -109,15 +108,13 @@ class ImageApproxComponent extends NetTrainComponentSupplier {
       List<Rectangle> list = rectangles(2);
       {
         Show show = new Show("function");
-        show.add(ArrayPlot.of(image));
+        show.add(ImagePlot.of(ImageFormat.of(image)));
         show.render_autoIndent(graphics, list.get(0));
       }
       {
         Show show = new Show("function");
         Tensor image2 = meshgrid.image(netLayer::forward);
-        image2.set(RealScalar.ZERO, 0, 0);
-        image2.set(RealScalar.ONE, 1, 0);
-        show.add(ArrayPlot.of(image2));
+        show.add(ImagePlot.of(ImageFormat.of(image2.maps(Clips.positive(255)))));
         show.render_autoIndent(graphics, list.get(1));
       }
     };
