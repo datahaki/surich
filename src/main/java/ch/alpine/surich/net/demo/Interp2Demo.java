@@ -10,6 +10,8 @@ import ch.alpine.bridge.fig.plt.DensityPlot;
 import ch.alpine.bridge.fig.plt.ListPlot;
 import ch.alpine.bridge.fig.plt.PolygonPlot;
 import ch.alpine.bridge.ref.ann.ReflectionMarker;
+import ch.alpine.subare.net.lay.EnhanceLayer;
+import ch.alpine.subare.net.lay.FourierFrequencies;
 import ch.alpine.subare.net.lay.NetChain;
 import ch.alpine.subare.net.lay.NetLayer;
 import ch.alpine.subare.net.lay.SingletonLayer;
@@ -61,6 +63,8 @@ class Interp2Component extends NetTrainComponentSupplier {
   private static final Clip DOMAIN = Clips.absoluteOne();
   public Integer variability = 5;
   public Integer samples = 50;
+  public Integer numFreq = 10;
+  public Scalar sigma = RealScalar.of(10);
   public final OptLinearChain optLinearChain = new OptLinearChain();
 
   @Override
@@ -85,7 +89,9 @@ class Interp2Component extends NetTrainComponentSupplier {
 
     @Override
     public NetModelData createNetModelDataBatch() {
-      NetLayer netLayer = NetChain.join(optLinearChain.create(2, 1), SingletonLayer.VectorToScalar);
+      Tensor B = FourierFrequencies.sampleB(numFreq, sigma, randomGenerator);
+      EnhanceLayer enhanceLayer = new EnhanceLayer(B);
+      NetLayer netLayer = NetChain.join(enhanceLayer, optLinearChain.create(2 * numFreq, 1), SingletonLayer.VectorToScalar);
       return new NetModelData(new NetModel(netLayer, SquaredErrorLoss.INSTANCE), trainingData);
     }
 

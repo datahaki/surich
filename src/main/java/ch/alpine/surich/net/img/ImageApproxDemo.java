@@ -11,6 +11,8 @@ import ch.alpine.bridge.fig.Show;
 import ch.alpine.bridge.fig.plt.ImagePlot;
 import ch.alpine.bridge.math.Meshgrid;
 import ch.alpine.bridge.ref.ann.ReflectionMarker;
+import ch.alpine.subare.net.lay.EnhanceLayer;
+import ch.alpine.subare.net.lay.FourierFrequencies;
 import ch.alpine.subare.net.lay.NetChain;
 import ch.alpine.subare.net.lay.NetLayer;
 import ch.alpine.subare.net.lay.SingletonLayer;
@@ -59,8 +61,11 @@ class ImageApproxComponent extends NetTrainComponentSupplier {
     gray_ec,
   }
 
+  private static final Scalar xFF = RealScalar.of(255.0);
   public ImageName imageName = ImageName.gray_ma;
   public Integer samples = 20;
+  public Integer numFreq = 10;
+  public Scalar sigma = RealScalar.of(10);
   public final OptLinearChain optLinearChain = new OptLinearChain();
 
   @Override
@@ -71,21 +76,24 @@ class ImageApproxComponent extends NetTrainComponentSupplier {
   class InnerComponent extends NetTrainComponent {
     final TrainingData trainingData;
     final Tensor image;
+    final Dimension dimension;
+    final CoordinateBoundingBox cbb;
     final Meshgrid meshgrid;
 
     public InnerComponent() {
       super(seed);
       image = Import.of("ch/alpine/surich/net/img/" + imageName.name() + ".jpg");
-      Dimension dimension = new Dimension(Unprotect.dimension1(image), image.length());
+      dimension = new Dimension(Unprotect.dimension1(image), image.length());
       Scalar redux = RealScalar.of((double) Math.max(dimension.width, dimension.height));
-      meshgrid = Meshgrid.of(CoordinateBoundingBox.of( //
+      cbb = CoordinateBoundingBox.of( //
           Clips.positive(RealScalar.of(dimension.width).divide(redux)), //
-          Clips.positive(RealScalar.of(dimension.height).divide(redux))), AwtUtil.aspect(samples, dimension));
+          Clips.positive(RealScalar.of(dimension.height).divide(redux)));
+      meshgrid = Meshgrid.of(cbb, AwtUtil.aspect(samples, dimension));
       Tensor px = meshgrid.px_incr();
       Tensor py = meshgrid.py_decr();
       Tensor xdata = Tensors.reserve(samples * samples);
       Tensor ydata = Tensors.reserve(samples * samples);
-      Interpolation interpolation = LinearInterpolation.of(Transpose.of(Reverse.of(image)));
+      Interpolation interpolation = LinearInterpolation.of(Transpose.of(Reverse.of(image.divide(xFF))));
       for (Tensor x : px) {
         for (Tensor y : py) {
           Tensor p = Unprotect.byRef(x, y);
@@ -98,7 +106,11 @@ class ImageApproxComponent extends NetTrainComponentSupplier {
 
     @Override
     public NetModelData createNetModelDataBatch() {
-      NetLayer netLayer = NetChain.join(optLinearChain.create(2, 1), SingletonLayer.VectorToScalar);
+      Tensor B = FourierFrequencies.sampleB(numFreq, sigma, randomGenerator);
+      EnhanceLayer enhanceLayer = new EnhanceLayer(B);
+      NetLayer netLayer = NetChain.join( //
+          enhanceLayer, //
+          optLinearChain.create(2 * numFreq, 1), SingletonLayer.VectorToScalar);
       return new NetModelData(new NetModel(netLayer, SquaredErrorLoss.INSTANCE), trainingData);
     }
 
@@ -107,14 +119,14 @@ class ImageApproxComponent extends NetTrainComponentSupplier {
       NetLayer netLayer = netModel.netLayer();
       List<Rectangle> list = rectangles(2);
       {
-        Show show = new Show("function");
+        Show show = new Show("original");
         show.add(ImagePlot.of(ImageFormat.of(image)));
         show.render_autoIndent(graphics, list.get(0));
       }
       {
-        Show show = new Show("function");
-        Tensor image2 = meshgrid.image(netLayer::forward);
-        show.add(ImagePlot.of(ImageFormat.of(image2.maps(Clips.positive(255)))));
+        Show show = new Show("approximation");
+        Tensor image2 = Meshgrid.of(cbb, dimension).image(netLayer::forward);
+        show.add(ImagePlot.of(ImageFormat.of(image2.multiply(xFF).maps(Clips.positive(255)))));
         show.render_autoIndent(graphics, list.get(1));
       }
     };
