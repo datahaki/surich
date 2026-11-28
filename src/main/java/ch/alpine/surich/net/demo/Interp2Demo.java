@@ -1,19 +1,22 @@
 // code by jph
 package ch.alpine.surich.net.demo;
 
+import java.awt.Dimension;
 import java.awt.Graphics;
 import java.awt.Rectangle;
+import java.awt.image.BufferedImage;
 import java.util.List;
 
+import ch.alpine.bridge.fig.Rasterize;
 import ch.alpine.bridge.fig.Show;
 import ch.alpine.bridge.fig.plt.DensityPlot;
 import ch.alpine.bridge.fig.plt.ListPlot;
 import ch.alpine.bridge.fig.plt.PolygonPlot;
 import ch.alpine.bridge.ref.ann.ReflectionMarker;
+import ch.alpine.subare.net.lay.FourierLayer;
 import ch.alpine.subare.net.lay.NetChain;
 import ch.alpine.subare.net.lay.NetLayer;
 import ch.alpine.subare.net.lay.SingletonLayer;
-import ch.alpine.subare.net.lay.TrainableFourierLayer;
 import ch.alpine.subare.net.los.SquaredErrorLoss;
 import ch.alpine.subare.net.mod.NetModel;
 import ch.alpine.subare.net.run.TrainingData;
@@ -32,6 +35,7 @@ import ch.alpine.tensor.api.ScalarBinaryOperator;
 import ch.alpine.tensor.api.ScalarUnaryOperator;
 import ch.alpine.tensor.api.TensorUnaryOperator;
 import ch.alpine.tensor.col.ColorDataGradients;
+import ch.alpine.tensor.ext.Cache;
 import ch.alpine.tensor.itp.BSplineInterpolation;
 import ch.alpine.tensor.itp.Interpolation;
 import ch.alpine.tensor.itp.LinearInterpolation;
@@ -62,9 +66,10 @@ class Interp2Component extends NetTrainComponentSupplier {
   private static final Clip DOMAIN = Clips.absoluteOne();
   public Integer variability = 5;
   public Integer samples = 50;
-  public Integer numFreq = 10;
+  public Integer numFreq = 40;
   public Scalar sigma = RealScalar.of(10);
   public final OptLinearChain optLinearChain = new OptLinearChain();
+  public Integer plotPoints = 20;
 
   @Override
   public NetTrainComponent get() {
@@ -74,6 +79,22 @@ class Interp2Component extends NetTrainComponentSupplier {
   class InnerComponent extends NetTrainComponent {
     final TensorUnaryOperator truth;
     final TrainingData trainingData;
+    private final Cache<Dimension, BufferedImage> cache = Cache.of(this::compute, 1);
+
+    BufferedImage compute(Dimension dimension) {
+      CoordinateBoundingBox cbb = CoordinateBoundingBox.of(DOMAIN, DOMAIN);
+      Clip clip = Clips.operator(RealScalar.of(1.05)::multiply).apply(DOMAIN);
+      CoordinateBoundingBox ext = CoordinateBoundingBox.of(clip, clip);
+      ColorDataGradients cdg = ColorDataGradients.COPPER;
+      Show show = new Show("function");
+      ScalarBinaryOperator sbo = (x, y) -> (Scalar) truth.apply(Tensors.of(x, y));
+      DensityPlot densityPlot = DensityPlot.of(sbo, ext, cdg);
+      densityPlot.setPlotPoints(plotPoints);
+      show.add(densityPlot);
+      show.add(ListPlot.of(trainingData.xdata()));
+      show.add(PolygonPlot.of(cbb));
+      return new Rasterize(show, dimension).image();
+    }
 
     public InnerComponent() {
       super(seed);
@@ -88,7 +109,7 @@ class Interp2Component extends NetTrainComponentSupplier {
 
     @Override
     public NetModelData createNetModelDataBatch() {
-      TrainableFourierLayer fourierLayer = new TrainableFourierLayer(2, numFreq, sigma);
+      FourierLayer fourierLayer = new FourierLayer(2, numFreq, sigma);
       NetLayer netLayer = NetChain.join(fourierLayer, optLinearChain.create(2 * numFreq, 1), SingletonLayer.VectorToScalar);
       return new NetModelData(new NetModel(netLayer, SquaredErrorLoss.INSTANCE), trainingData);
     }
@@ -97,17 +118,14 @@ class Interp2Component extends NetTrainComponentSupplier {
     protected void paintComponent(Graphics graphics, NetModel netModel) {
       NetLayer netLayer = netModel.netLayer();
       CoordinateBoundingBox cbb = CoordinateBoundingBox.of(DOMAIN, DOMAIN);
-      Clip clip = Clips.operator(RealScalar.of(1.2)::multiply).apply(DOMAIN);
+      Clip clip = Clips.operator(RealScalar.of(1.05)::multiply).apply(DOMAIN);
       CoordinateBoundingBox ext = CoordinateBoundingBox.of(clip, clip);
       List<Rectangle> list = rectangles(2);
       ColorDataGradients cdg = ColorDataGradients.COPPER;
       {
-        Show show = new Show("function");
-        ScalarBinaryOperator sbo = (x, y) -> (Scalar) truth.apply(Tensors.of(x, y));
-        show.add(DensityPlot.of(sbo, ext, cdg));
-        show.add(PolygonPlot.of(cbb));
-        show.add(ListPlot.of(trainingData.xdata()));
-        show.render_autoIndent(graphics, list.get(0));
+        Rectangle rectangle = list.get(0);
+        BufferedImage bufferedImage = cache.apply(rectangle.getSize());
+        graphics.drawImage(bufferedImage, rectangle.x, rectangle.y, null);
       }
       {
         Show show = new Show("error");
@@ -115,9 +133,11 @@ class Interp2Component extends NetTrainComponentSupplier {
           Tensor p = Unprotect.using(List.of(x, y));
           return (Scalar) netLayer.forward(p).subtract(truth.apply(p));
         };
-        show.add(DensityPlot.of(sbo, ext, cdg));
-        show.add(PolygonPlot.of(cbb));
+        DensityPlot densityPlot = DensityPlot.of(sbo, ext, cdg);
+        densityPlot.setPlotPoints(plotPoints);
+        show.add(densityPlot);
         show.add(ListPlot.of(trainingData.xdata()));
+        show.add(PolygonPlot.of(cbb));
         show.render_autoIndent(graphics, list.get(1));
       }
     };

@@ -11,10 +11,10 @@ import ch.alpine.bridge.fig.Show;
 import ch.alpine.bridge.fig.plt.ImagePlot;
 import ch.alpine.bridge.math.Meshgrid;
 import ch.alpine.bridge.ref.ann.ReflectionMarker;
+import ch.alpine.subare.net.lay.FourierLayer;
 import ch.alpine.subare.net.lay.NetChain;
 import ch.alpine.subare.net.lay.NetLayer;
 import ch.alpine.subare.net.lay.SingletonLayer;
-import ch.alpine.subare.net.lay.TrainableFourierLayer;
 import ch.alpine.subare.net.los.SquaredErrorLoss;
 import ch.alpine.subare.net.mod.NetModel;
 import ch.alpine.subare.net.run.TrainingData;
@@ -62,8 +62,8 @@ class ImageApproxComponent extends NetTrainComponentSupplier {
 
   private static final Scalar xFF = RealScalar.of(255.0);
   public ImageName imageName = ImageName.gray_ma;
-  public Integer samples = 20;
-  public Integer numFreq = 10;
+  public Integer samples = 60;
+  public Integer numFreq = 40;
   public Scalar sigma = RealScalar.of(10);
   public final OptLinearChain optLinearChain = new OptLinearChain();
 
@@ -92,9 +92,10 @@ class ImageApproxComponent extends NetTrainComponentSupplier {
             Clips.positive(RealScalar.of(dimension.height).divide(redux)));
       }
       Scalar redux = RealScalar.of((double) Math.max(dimension.width - 1, dimension.height - 1));
-      notes.add("network domain: " + networkDomain);
+      notes.add("network domain: ");
+      notes.add(networkDomain);
       meshgrid = Meshgrid.of(networkDomain, AwtUtil.aspect(samples, dimension));
-      notes.add("mesh grid: " + meshgrid);
+      notes.add(meshgrid);
       Tensor px = meshgrid.px_incr();
       Tensor py = meshgrid.py_decr();
       Tensor xdata = Tensors.reserve(samples * samples);
@@ -111,7 +112,7 @@ class ImageApproxComponent extends NetTrainComponentSupplier {
 
     @Override
     public NetModelData createNetModelDataBatch() {
-      NetLayer enhanceLayer = new TrainableFourierLayer(2, numFreq, sigma);
+      NetLayer enhanceLayer = new FourierLayer(2, numFreq, sigma);
       NetLayer netLayer = NetChain.join( //
           enhanceLayer, //
           optLinearChain.create(2 * numFreq, 1), SingletonLayer.VectorToScalar);

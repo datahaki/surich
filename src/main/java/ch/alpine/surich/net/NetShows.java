@@ -55,7 +55,7 @@ public enum NetShows {
   }
 
   public static Show delta(NetParamDeltaTracker netParamDeltaTracker) {
-    Show show = new Show("delta");
+    Show show = new Show("parameter change");
     Optional<Tensor> optional = netParamDeltaTracker.getDelta();
     if (optional.isPresent()) {
       Tensor matrix = NetLayers.parametersAsMatrix(optional.get());

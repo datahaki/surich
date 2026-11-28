@@ -24,8 +24,11 @@ import ch.alpine.subare.net.run.NetParamDeltaTracker;
 import ch.alpine.subare.net.run.NetParamStatTracker;
 import ch.alpine.subare.net.run.NetTrain;
 import ch.alpine.subare.net.run.NetTrainListener;
+import ch.alpine.tensor.Scalar;
 import ch.alpine.tensor.ext.Serialization;
 import ch.alpine.tensor.qty.Quantity;
+import ch.alpine.tensor.qty.Timing;
+import ch.alpine.tensor.sca.Round;
 
 @ReflectionMarker
 public abstract class NetTrainComponent extends JComponent implements NetTrainListener {
@@ -36,7 +39,8 @@ public abstract class NetTrainComponent extends JComponent implements NetTrainLi
   private NetTrain netTrain;
   private NetModel ferry;
   protected final RandomGenerator randomGenerator;
-  protected final List<String> notes = new ArrayList<>();
+  protected final List<Object> notes = new ArrayList<>();
+  private Scalar drawDuration = Quantity.of(0, "s");
 
   public NetTrainComponent(int seed) {
     randomGenerator = RandomGeneratorFactory.of("L64X256MixRandom").create(seed);
@@ -69,10 +73,14 @@ public abstract class NetTrainComponent extends JComponent implements NetTrainLi
       {
         int piy = NetShows.layers(graphics, new Point(), copy);
         piy += 16;
-        for (String s : notes) {
-          graphics.drawString(s, 0, piy);
+        for (Object object : notes) {
+          graphics.drawString(object.toString(), 0, piy);
           piy += 16;
         }
+        graphics.drawString(netTrain.getEpochAverage().toString(), 0, piy);
+        piy += 16;
+        graphics.drawString(drawDuration.maps(Round._2).toString(), 0, piy);
+        piy += 16;
       }
       Dimension dimension = getSize();
       dimension.width -= inset;
@@ -84,10 +92,13 @@ public abstract class NetTrainComponent extends JComponent implements NetTrainLi
         } catch (Exception e) {
           IO.println(netTrain.tloss.getTable());
         }
-        NetShows.pMatrix(copy.netLayer()).render_autoIndent(graphics, list.get(1));
+        // NetShows.pMatrix(copy.netLayer()).render_autoIndent(graphics, list.get(1));
+        NetShows.delta(netParamDeltaTracker).render_autoIndent(graphics, list.get(1));
         NetShows.param(netParamStatTracker).render_autoIndent(graphics, list.get(2));
       }
+      Timing timing = Timing.started();
       paintComponent(graphics, copy);
+      drawDuration = timing.seconds();
     }
   }
 

@@ -1,7 +1,9 @@
 // code by jph
-package ch.alpine.surich.net;
+package ch.alpine.surich.net.res;
 
 import java.awt.Container;
+import java.util.Random;
+import java.util.random.RandomGenerator;
 
 import ch.alpine.bridge.fig.Show;
 import ch.alpine.bridge.fig.ShowGridComponent;
@@ -15,9 +17,10 @@ import ch.alpine.subare.net.lay.NetLayers;
 import ch.alpine.subare.net.lay.ResidualLayer;
 import ch.alpine.subare.net.mod.NetModel;
 import ch.alpine.subare.net.mod.NetModels;
-import ch.alpine.subare.net.run.NetParamTracker;
 import ch.alpine.subare.net.run.NetTrain;
 import ch.alpine.subare.net.run.TrainingData;
+import ch.alpine.surich.net.NetShows;
+import ch.alpine.surich.net.OptParam;
 import ch.alpine.tensor.Tensor;
 import ch.alpine.tensor.io.TableBuilder;
 import ch.alpine.tensor.pdf.RandomVariate;
@@ -25,6 +28,7 @@ import ch.alpine.tensor.pdf.c.NormalDistribution;
 
 @ReflectionMarker
 class ResidualDemo implements ManipulateProvider {
+  public Integer seed = 0;
   public Integer dinout = 4;
   public Integer hidden = 10;
   public Integer samples = 20;
@@ -37,8 +41,9 @@ class ResidualDemo implements ManipulateProvider {
     NetModel netModel = NetModels.softmax_argMax( //
         new ResidualLayer(NetChains.linear(ElementwiseLayers.GELU, dinout, hidden, dinout)));
     NetLayer netLayer = netModel.netLayer();
-    NetLayers.initialize(netLayer);
-    Tensor xdata = RandomVariate.of(NormalDistribution.standard(), samples, dinout);
+    RandomGenerator randomGenerator = new Random(seed);
+    NetLayers.initialize(netLayer, randomGenerator);
+    Tensor xdata = RandomVariate.of(NormalDistribution.standard(), randomGenerator, samples, dinout);
     Tensor ydata = netLayer.forwardBatch(xdata);
     // ---
     NetLayers.initialize(netLayer);
